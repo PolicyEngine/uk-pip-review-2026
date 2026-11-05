@@ -35,3 +35,30 @@ Versions will be frozen and recorded before the event. Microdata are licensed an
 ## Licence
 
 AGPL-3.0, as for other PolicyEngine repositories. See [LICENSE](LICENSE).
+
+## How to run (template)
+
+```sh
+uv sync --extra dev                 # analysis package and tests, no engine
+uv run pytest -q                    # registry, templates, data limits, publication, households
+uv run pip-review generate          # writes data/results.json and the dashboard copy (placeholder mode)
+uv run python scripts/check_public_data.py
+
+cd dashboard && bun install && bun run dev   # local page on http://localhost:3000
+```
+
+`uv sync --extra model` adds `policyengine[uk]==6.11.1` for real runs and the household calculator (`uv run pip-review household <preset>`).
+
+## Layout
+
+| Path | What it holds |
+|---|---|
+| `src/pip_review/reforms.py` | Measure registry: every candidate recommendation with its route; all placeholders |
+| `src/pip_review/measures/` | Hand-written modifiers, one per module (none yet) |
+| `src/pip_review/measure_templates.py` | Parameter builders (`rate_change`, `threshold_change`) |
+| `src/pip_review/data_limits.py`, `model_limits.py` | What the data and the model cannot cost, with the reason |
+| `src/pip_review/publication.py`, `sign_off.py` | Manifest, receipts, disclosure floor, validation; sign-off switch (on) |
+| `src/pip_review/pipeline.py`, `cli.py`, `household.py` | Generation and the household calculator |
+| `data_inputs/` | Official figures, expected effects, drill packet hashes |
+| `docs/` | Method, schema, data contract, colours, runbook, drill, candidate reforms, risk register |
+| `dashboard/` | Next 16, React 19, `@policyengine/ui-kit`, Recharts, bun |
