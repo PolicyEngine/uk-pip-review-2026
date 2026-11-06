@@ -141,7 +141,10 @@ REFORMS: list[Reform] = [
         recommendation="A fast-track pathway for well-evidenced serious conditions",
         likelihood=Likelihood.HIGH,
         route=Route.NOT_COMPUTABLE,
-        route_reason="The data have no health-condition group to select people by.",
+        route_reason=(
+            "The data have no health-condition group to select people by. "
+            "Recorded as a fiscal line from any official figure."
+        ),
         data_needs=["health_condition"],
         issues=[5],
     ),

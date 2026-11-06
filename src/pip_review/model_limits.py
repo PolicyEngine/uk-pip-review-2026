@@ -84,6 +84,22 @@ LIMITS: tuple[ModelLimit, ...] = (
         ),
         issue=7,
     ),
+    ModelLimit(
+        key="caseload_grows_with_population",
+        paths=(),
+        reason=(
+            "Projected years copy the base-year inputs forward and grow weights "
+            "with population (extend_single_year_dataset), so the caseload does "
+            "not follow DWP's forecast path (policyengine-uk #2889, item 6)."
+        ),
+        public_reason=(
+            "The PIP caseload is set to DWP's figures for 2025-26. In later "
+            "years it grows with the population, not with DWP's caseload "
+            "forecast, so it falls further below DWP's forecast in each later "
+            "year."
+        ),
+        issue=4,
+    ),
 )
 
 
