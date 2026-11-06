@@ -1,27 +1,27 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { catalogue } from "../utils/measures";
+import { catalogue, hasFigures } from "../utils/measures";
 import BaselineTab from "./BaselineTab";
-import HouseholdCalculator from "./HouseholdCalculator";
+import ExampleHouseholds from "./ExampleHouseholds";
 import MethodologyTab from "./MethodologyTab";
-import PlaceholderBanner from "./PlaceholderBanner";
 import PoliciesTab from "./PoliciesTab";
 import PopulationImpactTab, { SUB_VIEWS } from "./PopulationImpactTab";
+import StatusBanner from "./StatusBanner";
 import ViewTabs from "./ViewTabs";
 
 // Tab pattern from the AB2026 dashboard: VIEWS, with the state in ?tab=,
 // ?sub= and ?policies=. Each fact appears once; other tabs link to it.
 export const VIEWS = [
   { value: "impact", label: "Population impact" },
-  { value: "household", label: "Household calculator" },
+  { value: "household", label: "Example households" },
   { value: "baseline", label: "Baseline" },
   { value: "policies", label: "Policies" },
   { value: "method", label: "Methodology" },
 ];
 
 function readState(measures) {
-  const computable = measures.filter((m) => m.computable).map((m) => m.id);
+  const computable = measures.filter(hasFigures).map((m) => m.id);
   if (typeof window === "undefined") return { tab: "impact", sub: "cost", policies: computable };
   const params = new URLSearchParams(window.location.search);
   const tab = VIEWS.some((v) => v.value === params.get("tab")) ? params.get("tab") : "impact";
@@ -47,7 +47,7 @@ export default function Dashboard({ data }) {
 
   return (
     <main className="app-shell min-h-screen">
-      {data.status === "placeholder" && <PlaceholderBanner text={data.banner} />}
+      <StatusBanner status={data.status} text={data.banner} />
       <div className="title-row">
         <div className="mx-auto max-w-[1200px] px-6 py-4">
           <h1>Personal Independence Payment review: costs and who is affected</h1>
@@ -64,9 +64,10 @@ export default function Dashboard({ data }) {
             sub={state.sub}
             onSub={(sub) => update({ sub })}
             onOpenPolicies={() => update({ tab: "policies" })}
+            onOpenMethod={() => update({ tab: "method" })}
           />
         )}
-        {state.tab === "household" && <HouseholdCalculator households={data.households} measures={measures} />}
+        {state.tab === "household" && <ExampleHouseholds households={data.households} measures={measures} year={data.years[0]} />}
         {state.tab === "baseline" && <BaselineTab data={data} />}
         {state.tab === "policies" && <PoliciesTab measures={measures} />}
         {state.tab === "method" && <MethodologyTab data={data} />}

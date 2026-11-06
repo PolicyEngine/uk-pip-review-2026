@@ -1,6 +1,6 @@
 export default function StatTiles({ tiles }) {
   return (
-    <div className="mb-6 grid gap-4 sm:grid-cols-3">
+    <div className="mb-6 grid gap-4 sm:grid-cols-3" data-testid="stat-tiles">
       {tiles.map((tile) => (
         <div key={tile.label} className="metric-card">
           <p className="eyebrow m-0 text-slate-500">{tile.label}</p>

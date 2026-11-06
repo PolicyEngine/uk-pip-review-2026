@@ -465,8 +465,103 @@
   }
 }
 
-/* Pre-release banner: amber band above the title row on every view. */
-.placeholder-banner {
+/* Inter, served with the page by next/font (layout.jsx). :root:root outranks
+   the tokens' own :root, so the families name the self-hosted face first. */
+:root:root {
+  --pe-font-family-body: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --pe-font-family-primary: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  font-family: var(--pe-font-family-body);
+}
+
+/* Lists in panels keep their bullets (Tailwind's preflight removes them). */
+.panel ul.bulleted {
+  list-style: disc;
+}
+
+.panel ul.bulleted li + li {
+  margin-top: 6px;
+}
+
+.empty-state {
+  border: 1px dashed var(--pe-color-border-light);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  color: var(--pe-color-gray-600);
+  font-size: var(--pe-font-size-sm);
+}
+
+.pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.pill {
+  border: 1px solid var(--pe-color-border-light);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: var(--pe-font-size-sm);
+  background: var(--pe-color-bg-primary);
+  color: var(--pe-color-gray-700);
+}
+
+.pill.active {
+  border-color: var(--pe-color-primary-600);
+  background: color-mix(in srgb, var(--pe-color-primary-600) 12%, var(--pe-color-bg-primary));
+  color: var(--pe-color-primary-800);
+  font-weight: var(--pe-font-weight-semibold);
+}
+
+.measure-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-top: 8px;
+  font-size: var(--pe-font-size-sm);
+  color: var(--pe-color-gray-700);
+}
+
+.measure-key span.swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.household-cards {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .household-table {
+    display: none;
+  }
+
+  .household-cards {
+    display: grid;
+    gap: 12px;
+  }
+}
+
+.site-menu summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.site-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Status banner (placeholder, mock or provisional): amber band above the
+   title row on every view. Absent only on a final page. */
+.status-banner {
   position: relative;
   z-index: 101;
   width: 100%;

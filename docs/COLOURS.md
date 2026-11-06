@@ -11,6 +11,6 @@ Roles copied from the AB2026 dashboard. Literals live only in `dashboard/src/uti
 | No change, baseline | `.noChange`, `.before` | `#9CA3AF` |
 | Official figure (dashed) | `.official` | `#6B7280` |
 | Net total, highlight | `.highlight` | `#285E61` |
-| Measures, in catalogue order | `MEASURE_RAMP` | `#285E61`, `#319795`, `#4FD1C5`, `#81E6D9` |
+| Measures, in catalogue order (never a gain or loss colour) | `MEASURE_RAMP` | `#2B6CB0`, `#805AD5`, `#4A5568`, `#B83280` |
 
 Selected chips change fill and border only.

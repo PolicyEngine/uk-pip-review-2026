@@ -37,6 +37,19 @@ export default function PolicyEngineHeader() {
           />
         </a>
 
+        <details className="site-menu relative ml-auto sm:hidden">
+          <summary aria-label="Menu" className="rounded px-3 py-1 text-[15px] font-medium text-white ring-1 ring-white/40">
+            Menu
+          </summary>
+          <div className="absolute right-0 z-[200] mt-2 flex w-48 flex-col rounded-lg bg-white py-2 shadow-lg">
+            {NAV_LINKS.map((link) => (
+              <a key={link.label} href={link.href} className="px-4 py-2 text-[15px] text-slate-800 no-underline hover:bg-slate-100">
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </details>
+
         <div className="hidden items-center gap-6 sm:flex md:gap-8">
           {NAV_LINKS.map((link) => (
             <a

@@ -18,8 +18,10 @@ export const CHART_COLOURS = {
   highlight: "#285E61",
 };
 
-// Each computable measure's colour, by position in the catalogue.
-export const MEASURE_RAMP = ["#285E61", "#319795", "#4FD1C5", "#81E6D9"];
+// Each modelled measure's colour, by position in the catalogue. Distinct from
+// the gain (teal) and loss (amber) roles, so a measure's colour never reads
+// as a gain or a loss.
+export const MEASURE_RAMP = ["#2B6CB0", "#805AD5", "#4A5568", "#B83280"];
 
 export function measureColour(index) {
   return MEASURE_RAMP[index % MEASURE_RAMP.length];
