@@ -14,6 +14,7 @@ class ModelLimit:
     key: str
     paths: tuple[str, ...]
     reason: str
+    public_reason: str
     issue: int | None = None
 
     def covers(self, path: str) -> bool:
@@ -28,6 +29,10 @@ LIMITS: tuple[ModelLimit, ...] = (
             "pip_dl and pip_m have no country test, and Scottish Adult "
             "Disability Payment is stored as PIP. Mask to England and Wales."
         ),
+        public_reason=(
+            "The model counts Scottish Adult Disability Payment and Northern "
+            "Ireland PIP as PIP. Figures cover England and Wales households only."
+        ),
         issue=1,
     ),
     ModelLimit(
@@ -39,6 +44,11 @@ LIMITS: tuple[ModelLimit, ...] = (
         reason=(
             "carers_allowance_pre_overlap never reads the cared-for person's "
             "award, so a PIP change leaves Carer's Allowance unchanged."
+        ),
+        public_reason=(
+            "Carer's Allowance in the model does not depend on the cared-for "
+            "person's award, so a change to PIP awards leaves carers' "
+            "payments unchanged."
         ),
         issue=2,
     ),
@@ -52,6 +62,10 @@ LIMITS: tuple[ModelLimit, ...] = (
             "UC limited capability for work-related activity follows the "
             "stored flag is_disabled_for_benefits, not PIP."
         ),
+        public_reason=(
+            "The Universal Credit health element follows a recorded disability "
+            "status, not PIP, so a change to PIP does not change it."
+        ),
         issue=6,
     ),
     ModelLimit(
@@ -63,6 +77,10 @@ LIMITS: tuple[ModelLimit, ...] = (
         reason=(
             "Disability flags are stored columns and do not follow a PIP "
             "reform; disability premiums and elements stay unchanged."
+        ),
+        public_reason=(
+            "Recorded disability status does not follow a PIP change, so "
+            "disability premiums and elements in other benefits stay the same."
         ),
         issue=7,
     ),

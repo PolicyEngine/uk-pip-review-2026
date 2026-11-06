@@ -25,9 +25,19 @@ class Route(str, Enum):
 
 
 class Likelihood(str, Enum):
+    """Our pre-report judgement. Internal: kept for the ledger, never published."""
+
     HIGH = "high"
     MEDIUM = "medium"
     LOW = "low"
+
+
+class InReport(str, Enum):
+    """Whether the published report contains the measure; set at G1."""
+
+    YES = "yes"
+    NO = "no"
+    NOT_YET_PUBLISHED = "not-yet-published"
 
 
 class Reform(BaseModel):
@@ -44,6 +54,7 @@ class Reform(BaseModel):
         ..., description="The review recommendation this measure stands for"
     )
     likelihood: Likelihood
+    in_report: InReport = InReport.NOT_YET_PUBLISHED
     route: Route
     route_reason: str = Field(
         ..., description="Why the measure has this route; shown on the page"
@@ -62,6 +73,13 @@ class Reform(BaseModel):
     parameter_changes: dict[str, dict[str, Any]] | None = None
     baseline_parameter_changes: dict[str, dict[str, Any]] | None = None
     simulation_modifier: Callable | None = None
+    withdrawn_reason: str | None = Field(
+        None,
+        description=(
+            "Set to withdraw a published measure (G5). The page then shows it "
+            "as unavailable with this reason, never as £0."
+        ),
+    )
     england_and_wales_only: bool = Field(
         True,
         description=(
@@ -99,8 +117,8 @@ class Reform(BaseModel):
 
     @property
     def publishable(self) -> bool:
-        """A figure may be published: computable and no longer a placeholder."""
-        return self.computable and not self.placeholder
+        """A figure may be published: computable, not a placeholder, not withdrawn."""
+        return self.computable and not self.placeholder and not self.withdrawn_reason
 
     def to_scenario(self):
         """Convert to a policyengine-uk ``Scenario`` (needs the ``model`` extra)."""
@@ -127,12 +145,13 @@ class Reform(BaseModel):
             "name": self.name,
             "description": self.description,
             "recommendation": self.recommendation,
-            "likelihood": self.likelihood.value,
+            "in_report": self.in_report.value,
             "route": self.route.value,
             "route_reason": self.route_reason,
             "placeholder": self.placeholder,
             "computable": self.computable,
             "publishable": self.publishable,
+            "withdrawn_reason": self.withdrawn_reason,
             "data_needs": list(self.data_needs),
             "issues": list(self.issues),
             "parameters": sorted(self.parameter_changes or {}),

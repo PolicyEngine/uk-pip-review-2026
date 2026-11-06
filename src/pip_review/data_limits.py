@@ -21,6 +21,11 @@ class DataLimit:
     issue: int | None = None
     variables: tuple[str, ...] = field(default_factory=tuple)
 
+    @property
+    def public_reason(self) -> str:
+        """The page text: the reason, which names no model variable."""
+        return self.reason
+
     def covers(self, path: str) -> bool:
         return any(path == p or path.startswith(p + ".") for p in self.parameters)
 
