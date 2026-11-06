@@ -30,7 +30,10 @@ def check_file(path: Path) -> list[str]:
     errors: list[str] = []
     text = path.read_text()
     codes = set(AREA_CODE.findall(text))
-    if len(AREA_CODE.findall(text)) > MAX_AREA_CODES and path.name not in REFERENCE_GEOGRAPHY:
+    if (
+        len(AREA_CODE.findall(text)) > MAX_AREA_CODES
+        and path.name not in REFERENCE_GEOGRAPHY
+    ):
         errors.append(f"{path}: carries area codes ({len(codes)} distinct prefixes)")
     if path.suffix == ".csv":
         header = text.splitlines()[0].lower().split(",") if text else []
@@ -50,7 +53,11 @@ def check_file(path: Path) -> list[str]:
 
 def main(argv: list[str]) -> int:
     paths = [Path(p) for p in argv] or [
-        p for d in DEFAULT_DIRS if d.exists() for p in sorted(d.rglob("*")) if p.is_file()
+        p
+        for d in DEFAULT_DIRS
+        if d.exists()
+        for p in sorted(d.rglob("*"))
+        if p.is_file()
     ]
     errors = [e for p in paths if p.suffix in {".json", ".csv"} for e in check_file(p)]
     for error in errors:

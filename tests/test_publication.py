@@ -29,7 +29,10 @@ def test_receipt_is_stable_and_specific():
 
 
 def test_floor_blanks_small_cells_and_drops_counts():
-    rows = [{"decile": 1, "value": 5.0, "n_households": 9}, {"decile": 2, "value": 6.0, "n_households": 40}]
+    rows = [
+        {"decile": 1, "value": 5.0, "n_households": 9},
+        {"decile": 2, "value": 6.0, "n_households": 40},
+    ]
     out = publication.apply_floor(rows, ["value"])
     assert out[0]["value"] is None and out[0]["suppressed"] is True
     assert out[1]["value"] == 6.0
@@ -72,5 +75,10 @@ def test_validation_requires_status_and_banner():
 
 def test_committed_results_match_generator():
     generated = build_placeholder_results()
-    for path in (ROOT / "data" / "results.json", ROOT / "dashboard" / "public" / "data" / "results.json"):
-        assert json.loads(path.read_text()) == generated, f"{path} is stale: run pip-review generate"
+    for path in (
+        ROOT / "data" / "results.json",
+        ROOT / "dashboard" / "public" / "data" / "results.json",
+    ):
+        assert json.loads(path.read_text()) == generated, (
+            f"{path} is stale: run pip-review generate"
+        )

@@ -41,7 +41,9 @@ def test_rate_change_refuses_bad_path():
 def test_threshold_change_warns_when_data_limited():
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
-        threshold_change("gov.dwp.pip.daily_living.points_thresholds.standard", {2027: 6})
+        threshold_change(
+            "gov.dwp.pip.daily_living.points_thresholds.standard", {2027: 6}
+        )
     assert any(issubclass(w.category, DataLimitedWarning) for w in caught)
 
 
@@ -60,7 +62,9 @@ def test_merge_refuses_duplicates():
 def test_points_limits_live():
     keys = {limit.key for limit in data_limits.LIMITS}
     assert {"pip_daily_living_points", "pip_mobility_points"} <= keys
-    assert data_limits.limits_for_paths(["gov.dwp.pip.mobility.points_thresholds.enhanced"])
+    assert data_limits.limits_for_paths(
+        ["gov.dwp.pip.mobility.points_thresholds.enhanced"]
+    )
     assert not data_limits.limits_for_paths(["gov.dwp.pip.mobility.enhanced"])
     assert not data_limits.is_only_data_limited([])
 
@@ -68,4 +72,6 @@ def test_points_limits_live():
 def test_model_limits_cover_pip_rates():
     found = model_limits.limits_for_paths(["gov.dwp.pip.daily_living.standard"])
     assert [limit.key for limit in found] == ["pip_no_country_test"]
-    assert model_limits.limits_for_paths([model_limits.variable_path("carers_allowance")])
+    assert model_limits.limits_for_paths(
+        [model_limits.variable_path("carers_allowance")]
+    )

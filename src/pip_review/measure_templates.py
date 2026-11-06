@@ -53,9 +53,7 @@ def _warn_if_data_limited(path: str) -> None:
     from pip_review.data_limits import limits_for_paths
 
     for limit in limits_for_paths([path]):
-        warnings.warn(
-            f"{path}: {limit.reason}", DataLimitedWarning, stacklevel=3
-        )
+        warnings.warn(f"{path}: {limit.reason}", DataLimitedWarning, stacklevel=3)
 
 
 def rate_change(path: str, values: Mapping) -> dict[str, dict[str, float]]:

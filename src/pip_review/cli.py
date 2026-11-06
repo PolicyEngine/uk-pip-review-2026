@@ -14,15 +14,21 @@ def main(argv: list[str] | None = None) -> int:
     commands = parser.add_subparsers(dest="command", required=True)
 
     generate = commands.add_parser("generate", help="Write data/results.json")
-    generate.add_argument("--mode", choices=["placeholder", "model"], default="placeholder")
-    generate.add_argument("--out", type=Path, default=pipeline.REPO_ROOT / "data" / "results.json")
+    generate.add_argument(
+        "--mode", choices=["placeholder", "model"], default="placeholder"
+    )
+    generate.add_argument(
+        "--out", type=Path, default=pipeline.REPO_ROOT / "data" / "results.json"
+    )
     generate.add_argument(
         "--dashboard-copy",
         type=Path,
         default=pipeline.REPO_ROOT / "dashboard" / "public" / "data" / "results.json",
     )
 
-    household = commands.add_parser("household", help="One preset household (needs the model extra)")
+    household = commands.add_parser(
+        "household", help="One preset household (needs the model extra)"
+    )
     household.add_argument("preset", choices=sorted(PRESETS_BY_ID))
     household.add_argument("--reform")
     household.add_argument("--year", type=int)

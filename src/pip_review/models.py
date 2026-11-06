@@ -80,7 +80,10 @@ class Reform(BaseModel):
         )
         if self.route is Route.DASHBOARD_PARAM and self.parameter_changes is None:
             raise ValueError(f"{self.id}: dashboard-param needs parameter_changes")
-        if self.route is Route.DASHBOARD_STRUCTURAL and self.simulation_modifier is None:
+        if (
+            self.route is Route.DASHBOARD_STRUCTURAL
+            and self.simulation_modifier is None
+        ):
             raise ValueError(f"{self.id}: dashboard-structural needs a modifier")
         if not computable and self.simulation_modifier is not None:
             raise ValueError(f"{self.id}: only a computable route takes a modifier")

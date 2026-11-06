@@ -3,7 +3,9 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location("check_public_data", ROOT / "scripts" / "check_public_data.py")
+spec = importlib.util.spec_from_file_location(
+    "check_public_data", ROOT / "scripts" / "check_public_data.py"
+)
 guard = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(guard)
 

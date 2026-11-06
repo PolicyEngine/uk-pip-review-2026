@@ -34,5 +34,13 @@ def test_pip_award_maximum():
 def test_pip_award_follows_rates():
     preset = PRESETS_BY_ID["single_standard_dl_part_time"]
     base = pip_award(preset)
-    raised = pip_award(preset, {"gov.dwp.pip.daily_living.standard": CURRENT_RATES["gov.dwp.pip.daily_living.standard"] + 1})
+    raised = pip_award(
+        preset,
+        {
+            "gov.dwp.pip.daily_living.standard": CURRENT_RATES[
+                "gov.dwp.pip.daily_living.standard"
+            ]
+            + 1
+        },
+    )
     assert raised - base == pytest.approx(52.0)

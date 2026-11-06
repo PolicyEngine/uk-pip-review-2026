@@ -44,7 +44,9 @@ ENGINE = {
 }
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-OFFICIAL_SPENDING = REPO_ROOT / "data_inputs" / "official" / "dwp_pip_spending_spring_2026.csv"
+OFFICIAL_SPENDING = (
+    REPO_ROOT / "data_inputs" / "official" / "dwp_pip_spending_spring_2026.csv"
+)
 
 
 def _rng(measure_id: str) -> np.random.Generator:
@@ -57,7 +59,11 @@ def _placeholder_figures(measure_id: str) -> dict[str, Any]:
     rng = _rng(measure_id)
     scale = float(rng.uniform(200, 900))
     budgetary = [
-        {"year": year, "fiscal_year": fiscal_label(year), "value_m": round(scale * (1 + 0.06 * i), 0)}
+        {
+            "year": year,
+            "fiscal_year": fiscal_label(year),
+            "value_m": round(scale * (1 + 0.06 * i), 0),
+        }
         for i, year in enumerate(POLICY_YEARS)
     ]
     shape = np.array([0.6, 1.0, 1.1, 1.0, 0.9, 0.8, 0.7, 0.5, 0.4, 0.3])
@@ -93,7 +99,11 @@ def _placeholder_figures(measure_id: str) -> dict[str, Any]:
 def _official_spending() -> list[dict[str, Any]]:
     with OFFICIAL_SPENDING.open() as handle:
         return [
-            {"year": int(row["year"]), "fiscal_year": row["fiscal_year"], "dwp_m": float(row["pip_spend_m"])}
+            {
+                "year": int(row["year"]),
+                "fiscal_year": row["fiscal_year"],
+                "dwp_m": float(row["pip_spend_m"]),
+            }
             for row in csv.DictReader(handle)
         ]
 
@@ -144,7 +154,9 @@ def build_placeholder_results() -> dict[str, Any]:
             "id": preset["id"],
             "label": preset["label"],
             "baseline_pip": pip_award(preset),
-            "reform_pip": {mid: pip_award(preset, rates) for mid, rates in rates_by_measure.items()},
+            "reform_pip": {
+                mid: pip_award(preset, rates) for mid, rates in rates_by_measure.items()
+            },
         }
         for preset in PRESETS
     ]
@@ -161,7 +173,12 @@ def build_placeholder_results() -> dict[str, Any]:
         "spending_path": spending_path,
         "households": households,
         "data_limits": [
-            {"key": limit.key, "missing_input": limit.missing_input, "reason": limit.reason, "issue": limit.issue}
+            {
+                "key": limit.key,
+                "missing_input": limit.missing_input,
+                "reason": limit.reason,
+                "issue": limit.issue,
+            }
             for limit in data_limits.LIMITS
         ],
         "model_limits": [
@@ -187,5 +204,3 @@ def write_results(results: dict[str, Any], *paths: Path) -> None:
     for path in paths:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text)
-
-

@@ -42,7 +42,10 @@ def test_points_threshold_measures_are_not_computable():
 
 def test_computable_measures_change_only_rates():
     computable = [r for r in REFORMS if r.computable]
-    assert {r.id for r in computable} == {"cost_category_tiers", "standard_daily_living_rate"}
+    assert {r.id for r in computable} == {
+        "cost_category_tiers",
+        "standard_daily_living_rate",
+    }
     for reform in computable:
         assert set(reform.parameter_changes) <= set(CURRENT_RATES)
 

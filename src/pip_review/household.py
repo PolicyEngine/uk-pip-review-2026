@@ -156,9 +156,7 @@ def to_situation(preset: dict[str, Any], year: int = BASE_YEAR) -> dict[str, Any
     }
 
 
-def pip_award(
-    preset: dict[str, Any], rates: dict[str, float] | None = None
-) -> float:
+def pip_award(preset: dict[str, Any], rates: dict[str, float] | None = None) -> float:
     """Annual PIP for the household at the given weekly rates (arithmetic only).
 
     Used for the template's placeholder cards. The real calculator runs the
