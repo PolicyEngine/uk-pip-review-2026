@@ -1,8 +1,14 @@
+import { PolicyEngineShell } from "@policyengine/ui-kit/layout";
+import "@policyengine/ui-kit/styles.css";
 import localFont from "next/font/local";
 import PolicyEngineFooter from "../src/components/PolicyEngineFooter";
-import PolicyEngineHeader from "../src/components/PolicyEngineHeader";
+import { SITE_HEADER_STYLES, SITE_NAV_ITEMS } from "../src/utils/siteNav";
 
 import "./globals.css";
+// The PolicyEngine tokens, bundled with the page, after globals.css, as on
+// the AB2026 dashboard.
+import "@policyengine/ui-kit/legacy/tokens.css";
+import "./siteHeader.css";
 
 // Inter, committed with the page (fonts/: the variable face, Latin subset;
 // SIL Open Font License in fonts/OFL.txt), as on the AB2026 dashboard: the
@@ -29,9 +35,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en-GB" className={inter.variable}>
       <body>
-        <PolicyEngineHeader />
-        {children}
-        <PolicyEngineFooter />
+        {/* The site header with policyengine.org's own menu, including the
+            phone menu (src/utils/siteNav.js; siteHeader.css for its look) */}
+        <PolicyEngineShell country="uk" showFooter={false} headerProps={{ navItems: SITE_NAV_ITEMS, styles: SITE_HEADER_STYLES }}>
+          {children}
+          <PolicyEngineFooter />
+        </PolicyEngineShell>
       </body>
     </html>
   );
