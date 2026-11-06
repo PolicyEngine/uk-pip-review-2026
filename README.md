@@ -6,7 +6,7 @@ PolicyEngine UK dashboard for the independent review of Personal Independence Pa
 
 ## What the dashboard will show
 
-- **Cost.** Static cost of each modelled recommendation and of the package, £m a year for 2026-27 to 2030-31, England and Wales, set against the DWP and OBR spending path for PIP.
+- **Cost.** Static cost of each modelled recommendation and of the package, £m a year for 2027-28 to 2030-31, England and Wales, set against the DWP and OBR spending path for PIP.
 - **Who is affected.** Average change in household net income by income decile, the share of households that gain or lose, and changes by age group, family type and region (England and Wales).
 - **People affected.** Number of people whose daily living or mobility award would change, and knock-on effects on Carer's Allowance and the Universal Credit health element where the model supports them.
 - **Poverty.** Change in relative and absolute poverty, before and after housing costs.
@@ -28,9 +28,9 @@ The review reports to the Secretary of State and is expected to set out recommen
 |---|---|
 | policyengine | 6.11.1 (`policyengine[uk]`) |
 | policyengine-uk | 2.151.0 |
-| Dataset | Microcosm UK 2024-25 national build `20261025T091414Z-a6299504` |
+| Dataset | Microcosm UK 2024-25 national build `20261025T091414Z-a6299504`, SHA-256 `b96a8cd625b645a409c063b1de5158532708a2f0d3c3897a794a8fb0bbd5064e` |
 
-Versions will be frozen and recorded before the event. Microdata are licensed and are not stored in this repository; only aggregate outputs that pass a disclosure check are published.
+This is the bundle's certified pair; PIP-specific validation is pending (#1, #4). policyengine 6.11.1 to 6.15.0 all pin the same UK pair, so the 6.11.1 pin stays until the drill on 12 November (its answer key was built on it); the version is frozen again at G0. Microdata are licensed and are not stored in this repository; only aggregate outputs that pass a disclosure check are published.
 
 ## Licence
 
@@ -47,17 +47,19 @@ uv run python scripts/check_public_data.py
 cd dashboard && bun install && bun run dev   # local page on http://localhost:3000
 ```
 
-`uv sync --extra model` adds `policyengine[uk]==6.11.1` for real runs and the household calculator (`uv run pip-review household <preset>`).
+`uv sync --extra model` adds `policyengine[uk]==6.11.1` for model runs (`uv run pip-review generate --mode model`, which takes the heavy-run lock) and preset households (`uv run pip-review household <preset>`). `docs/RUNBOOK.md` has every command for the day.
 
 ## Layout
 
 | Path | What it holds |
 |---|---|
 | `src/pip_review/reforms.py` | Measure registry: every candidate recommendation with its route; all placeholders |
-| `src/pip_review/measures/` | Hand-written modifiers, one per module (none yet) |
+| `src/pip_review/measures/` | Hand-written modifiers, one per module (UC health gateway, move to PIP at 18) |
 | `src/pip_review/measure_templates.py` | Parameter builders (`rate_change`, `threshold_change`) |
+| `src/pip_review/model_run.py`, `aggregate.py`, `heavy.py` | Model mode: one simulation per process, England and Wales tables, the heavy-run lock |
+| `src/pip_review/reconcile.py` | G3 reconciliation against official costings |
 | `src/pip_review/data_limits.py`, `model_limits.py` | What the data and the model cannot cost, with the reason |
-| `src/pip_review/publication.py`, `sign_off.py` | Manifest, receipts, disclosure floor, validation; sign-off switch (on) |
+| `src/pip_review/publication.py`, `sign_off.py` | Page status, manifest, receipts, disclosure floor, validation; sign-off rows enforced once a page is provisional or final |
 | `src/pip_review/pipeline.py`, `cli.py`, `household.py` | Generation and the household calculator |
 | `data_inputs/` | Official figures, expected effects, drill packet hashes |
 | `docs/` | Method, schema, data contract, colours, runbook, drill, candidate reforms, risk register |

@@ -1,6 +1,6 @@
 # Candidate reforms
 
-Probable recommendations, from the terms of reference (October 2025), the interim report (July 2026) and the emerging recommendations annex (September 2026). Likelihood is a judgement of what the final report recommends; the government response could add others.
+Probable recommendations, from the terms of reference (October 2025), the interim report (July 2026) and the emerging recommendations annex (September 2026). Likelihood is our judgement of what the final report recommends, kept here for the ledger and never published on the page; the government response could add others.
 
 | Id | Recommendation | Likelihood | Route today | Data needs | Issues |
 |---|---|---|---|---|---|
@@ -12,10 +12,10 @@ Probable recommendations, from the terms of reference (October 2025), the interi
 | `points_thresholds` | Recalibrate activities, descriptors and points | Medium | not-computable | points | #3 |
 | `single_activity_minimum` | Minimum score in one activity (not expected in the report) | Low | not-computable | per-activity scores | #3 |
 | `standard_daily_living_rate` | Change to component rates | Low | dashboard-param (placeholder) | none | #1, #4 |
-| `uc_health_gateway` | PIP as the gateway to the UC health element | Medium | needs-pe-uk-first | none | #6, #7 |
+| `uc_health_gateway` | PIP as the gateway to the UC health element | Medium | dashboard-structural (placeholder) | none | #6, #7 |
 | `carers_allowance_link` | Carer's Allowance and other passported support | Medium | needs-pe-uk-first | caring outside the household | #2 |
 | `existing_claimants_phasing` | How the changes apply to people already claiming | High | needs-pe-uk-first | none | #7 |
-| `transition_age_18` | Move from child DLA to PIP at 18 | Low | needs-pe-uk-first | none | |
+| `transition_age_18` | Move from child DLA to PIP at 18 | Low | dashboard-structural (placeholder; about 111 records) | none | |
 
 Administrative items (forms, letters, advocacy, decision-making framework, face-to-face capacity, digital services, data collection) have no direct distributional effect and are recorded in the ledger only.
 

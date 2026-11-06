@@ -4,7 +4,7 @@
 
 - Static microsimulation: no behavioural response, no change in claim rates.
 - Cash, fiscal year (year Y is Y-(Y+1)), £ million, nominal.
-- England and Wales only. PIP applies there; Scotland has Adult Disability Payment. Until the model has a country test (#1), every reform is masked to England and Wales.
+- England and Wales only. PIP applies there; Scotland has Adult Disability Payment. The model has no country test (#1), so every table keeps England and Wales households only; in a static run this gives the same figures a country test would.
 - Positive is a cost to the Exchequer.
 - Distribution: change in household net income by equivalised household income decile.
 
@@ -22,9 +22,11 @@ Each recommendation gets one route before anything is coded:
 | `not-computable` | A data limit; shown with the reason, never as £0 |
 | `needs-pe-uk-first` | Needs a model change upstream before it can be costed |
 
+Rate measures are written as changes to each year's current-law rate (`reforms.CURRENT_LAW_RATES`), so CPI uprating never turns an illustrative rise into a cut.
+
 ## What the data hold
 
-PIP awards by component (none, standard or enhanced), not assessment points (#3). No health condition or hospital stays (#5). Carer's Allowance does not follow the cared-for person's award (#2). The UC health element follows a stored disability flag, not PIP (#6, #7). Caseload is 9-10% above DWP for England and Wales (#4).
+PIP awards by component (none, standard or enhanced), not assessment points (#3). No health condition or hospital stays (#5). Carer's Allowance does not follow the cared-for person's award (#2). The UC health element follows a stored disability flag, not PIP (#6, #7); the gateway measure wraps that flag. The modelled caseload is close to DWP's in 2025-26 but flat afterwards, so it falls below DWP's growing forecast in later years (#4).
 
 ## Not modelled
 
