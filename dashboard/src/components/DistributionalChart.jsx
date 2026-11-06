@@ -48,7 +48,7 @@ export default function DistributionalChart({ measures, onMethod }) {
         ))}
       </div>
       <ChartBox>
-        <BarChart data={rows}>
+        <BarChart data={rows} stackOffset="sign">
           <CartesianGrid stroke={CHART_COLOURS.grid} vertical={false} />
           <XAxis dataKey="decile" stroke={CHART_COLOURS.tick} interval={0} />
           <YAxis tickFormatter={unit === "gbp" ? formatPounds : (v) => `${v}%`} stroke={CHART_COLOURS.tick} width={60} />

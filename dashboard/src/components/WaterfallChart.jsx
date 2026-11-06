@@ -21,7 +21,10 @@ export function waterfallRows(measures, year) {
 
 export default function WaterfallChart({ measures, year }) {
   const rows = waterfallRows(measures, year);
-  const phone = useWidth() < 640;
+  // Horizontal bars unless the screen is wide and the names are few, so the
+  // measure names never collide.
+  const phone = useWidth() < 640 || rows.length > 3;
+  const useWidthLabel = useWidth() < 640 ? 120 : 240;
   const tick = millionsAxis(rows.flatMap((r) => [r.base, r.base + r.size]));
   const cells = rows.map((row) => (
     <Cell key={row.name} fill={row.net ? CHART_COLOURS.highlight : row.value >= 0 ? CHART_COLOURS.gain : CHART_COLOURS.loss} />
@@ -34,7 +37,7 @@ export default function WaterfallChart({ measures, year }) {
           <BarChart data={rows} layout="vertical" margin={{ left: 8, right: 16 }}>
             <CartesianGrid stroke={CHART_COLOURS.grid} horizontal={false} />
             <XAxis type="number" tickFormatter={tick} stroke={CHART_COLOURS.tick} tick={{ fontSize: 11 }} />
-            <YAxis type="category" dataKey="name" width={120} interval={0} stroke={CHART_COLOURS.tick} tick={{ fontSize: 11 }} />
+            <YAxis type="category" dataKey="name" width={useWidthLabel} interval={0} stroke={CHART_COLOURS.tick} tick={{ fontSize: 11 }} />
             {tooltip}
             <Bar isAnimationActive={false} dataKey="base" stackId="w" fill="transparent" />
             <Bar isAnimationActive={false} dataKey="size" stackId="w">

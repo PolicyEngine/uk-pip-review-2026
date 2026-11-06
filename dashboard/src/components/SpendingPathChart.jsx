@@ -16,7 +16,7 @@ export default function SpendingPathChart({ path }) {
       moreInfo="The official line is DWP's forecast (see the Baseline tab). The other line adds the selected measures' cost to it."
     >
       <ChartBox>
-        <LineChart data={path} margin={{ left: 8 }}>
+        <LineChart data={path} margin={{ left: 8, right: 28 }}>
           <CartesianGrid stroke={CHART_COLOURS.grid} vertical={false} />
           <XAxis dataKey="fiscal_year" stroke={CHART_COLOURS.tick} interval={0} tick={{ fontSize: 12 }} padding={{ left: 12, right: 12 }} />
           <YAxis tickFormatter={tick} stroke={CHART_COLOURS.tick} width={70} domain={["auto", "auto"]} tickCount={5} />

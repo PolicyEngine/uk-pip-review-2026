@@ -20,7 +20,7 @@ export default function BudgetaryImpactChart({ measures, years, onMethod }) {
       moreInfo="Each bar stacks the selected measures. Measures that are not modelled are listed on the Policies tab and are not shown as zero."
     >
       <ChartBox>
-        <BarChart data={rows} margin={{ bottom: phone ? 24 : 4 }}>
+        <BarChart data={rows} stackOffset="sign" margin={{ bottom: phone ? 24 : 4 }}>
           <CartesianGrid stroke={CHART_COLOURS.grid} vertical={false} />
           <XAxis
             dataKey="fiscal_year"

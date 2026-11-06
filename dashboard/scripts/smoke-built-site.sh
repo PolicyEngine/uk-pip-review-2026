@@ -9,10 +9,12 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 PORT="${PORT:-3107}"
-BASE_PATH="$(node -e 'process.stdout.write(require("./src/lib/basePath.json").basePath)')"
-EXPECTED="${1:-$(node -e 'process.stdout.write(require("./public/data/results.json").status)')}"
+# bun runs the scripts where node is not installed (as on a laptop with bun only)
+JS="$(command -v node || command -v bun)"
+BASE_PATH="$("$JS" -e 'process.stdout.write(require("./src/lib/basePath.json").basePath)')"
+EXPECTED="${1:-$("$JS" -e 'process.stdout.write(require("./public/data/results.json").status)')}"
 
-npx next start -p "$PORT" >/tmp/pip-review-smoke.log 2>&1 &
+bun x next start -p "$PORT" >/tmp/pip-review-smoke.log 2>&1 &
 SERVER=$!
 trap 'kill $SERVER 2>/dev/null || true' EXIT
 for _ in $(seq 1 60); do
