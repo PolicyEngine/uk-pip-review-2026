@@ -179,3 +179,41 @@ def test_phasing_moves_only_the_share(tmp_path):
     assert 0.6 < moved[2028] < 0.9
     # anyone moved in 2027 is still moved in 2028
     assert not (before[2027] & ~after[2027] & after[2028]).any()
+
+
+def test_parameters_that_act_through_points_are_data_limited():
+    """Formula-based detection, cut down from AB2026's data-limit detection.
+
+    For each parameter path a registered measure changes, find the engine
+    source files that read it; if any of them also reads assessment points,
+    which the data do not hold, the path must be covered by a DataLimit.
+    """
+    from pathlib import Path
+
+    import policyengine_uk
+
+    from pip_review import data_limits
+    from pip_review.reforms import REFORMS
+
+    sources = {
+        path: path.read_text()
+        for path in Path(policyengine_uk.__file__).parent.rglob("*.py")
+    }
+    import re
+
+    points = ("pip_dl_points", "pip_m_points")
+    paths = {p for r in REFORMS for p in (r.parameter_changes or {})}
+    flagged = set()
+    for path in paths:
+        # The node a formula reads: the path without its leaf, not followed
+        # by a deeper node.
+        node = re.escape(path.rsplit(".", 1)[0]) + r"(?![.\w])"
+        readers = [f for f, text in sources.items() if re.search(node, text)]
+        if any(any(p in sources[f] for p in points) for f in readers):
+            flagged.add(path)
+            assert data_limits.limits_for_paths([path]), path
+    # The check is live: the points thresholds are found to act through points
+    assert any("points_thresholds" in p for p in flagged)
+    assert not any(
+        p.endswith(("daily_living.standard", "daily_living.enhanced")) for p in flagged
+    )

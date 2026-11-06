@@ -1,8 +1,10 @@
 """Data limits: parameters that act only through an input the data do not hold.
 
 Pruned from the AB2026 dashboard's ``data_limits`` to the entries a PIP event
-touches. The source detects limits by inspecting formulas; this template keeps
-the declarative entries and the lookup, which is all the registry needs.
+touches. The entries are declarative; ``tests/test_model_mode.py`` (with the
+model extra) checks them against the engine's formulas, as AB2026's
+detection does: any measure parameter whose formulas read assessment points
+must be covered here.
 
 A measure that moves only a limited parameter is published as not computable,
 with the reason, and never as £0 (``pip_review.publication``).
