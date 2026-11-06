@@ -1,0 +1,925 @@
+{
+  "schema_version": 2,
+  "status": "placeholder",
+  "banner": "Pre-release template: placeholder figures, not PolicyEngine estimates",
+  "engine": {
+    "policyengine": "6.11.1",
+    "policyengine_uk": "2.151.0",
+    "policyengine_core": "3.33.3",
+    "dataset": "microcosm-uk-2024-25-national-20261025T091414Z-a6299504",
+    "dataset_sha256": "b96a8cd625b645a409c063b1de5158532708a2f0d3c3897a794a8fb0bbd5064e",
+    "certified_pair": true,
+    "pip_validation": "pending (#1, #4)"
+  },
+  "basis": {
+    "cost": "Static, cash, fiscal year, England and Wales, £ million; positive is a cost to the Exchequer",
+    "distribution": "Average change in household net income by equivalised household income decile, England and Wales, in the last policy year",
+    "behaviour": "No behavioural response"
+  },
+  "base_year": 2026,
+  "years": [
+    2027,
+    2028,
+    2029,
+    2030
+  ],
+  "distribution_year": 2030,
+  "measures": [
+    {
+      "id": "fluctuating_conditions",
+      "name": "Assess fluctuating conditions over time",
+      "description": "Replace the rule that a descriptor must apply on more than half of days with a test of fluctuating and cumulative impact.",
+      "recommendation": "Change how fluctuating conditions are assessed",
+      "in_report": "not-yet-published",
+      "route": "not-computable",
+      "route_reason": "Acts through assessment points and the share of days a descriptor applies; the data hold neither.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "withdrawn_reason": null,
+      "data_needs": [
+        "pip_dl_points",
+        "pip_m_points",
+        "pip_activity_points"
+      ],
+      "issues": [
+        3
+      ],
+      "parameters": [],
+      "status": "not-computable",
+      "receipt": "f90d1726432adf00eb9ca36d81130003bc959aba87d1ddb6b82031e5089ef89b",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "people_affected": null,
+      "winners_losers_all": null,
+      "by_region": null,
+      "by_age": null,
+      "poverty": null,
+      "knock_ons": null
+    },
+    {
+      "id": "fewer_award_reviews",
+      "name": "Fewer award reviews for lifelong conditions",
+      "description": "Longer or ongoing awards for lifelong and degenerative conditions.",
+      "recommendation": "Fewer award reviews for lifelong or degenerative conditions",
+      "in_report": "not-yet-published",
+      "route": "ledger",
+      "route_reason": "Changes flows on and off PIP over time; the model is static. Recorded as a fiscal line from any official figure.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "withdrawn_reason": null,
+      "data_needs": [
+        "award_review_state"
+      ],
+      "issues": [],
+      "parameters": [],
+      "status": "ledger",
+      "receipt": "dd1b35a85d168e7785774ff4f3871cce5e68a818e496aa64963c1c710d0260b1",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "people_affected": null,
+      "winners_losers_all": null,
+      "by_region": null,
+      "by_age": null,
+      "poverty": null,
+      "knock_ons": null
+    },
+    {
+      "id": "fast_track_serious_conditions",
+      "name": "Fast track for serious conditions",
+      "description": "A fast-track pathway, paying both components at the enhanced rate, for well-evidenced serious conditions and end-of-life care.",
+      "recommendation": "A fast-track pathway for well-evidenced serious conditions",
+      "in_report": "not-yet-published",
+      "route": "not-computable",
+      "route_reason": "The data have no health-condition group to select people by. Recorded as a fiscal line from any official figure.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "withdrawn_reason": null,
+      "data_needs": [
+        "health_condition"
+      ],
+      "issues": [
+        5
+      ],
+      "parameters": [],
+      "status": "not-computable",
+      "receipt": "65e81ab9a00d46e547663724ef7f166c13a2c5d7c83d0d9a8779d91790624a25",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "people_affected": null,
+      "winners_losers_all": null,
+      "by_region": null,
+      "by_age": null,
+      "poverty": null,
+      "knock_ons": null
+    },
+    {
+      "id": "hospital_rule",
+      "name": "Change the 28-day hospital rule",
+      "description": "Lengthen or remove the period after which PIP stops during an in-patient hospital stay.",
+      "recommendation": "Review the 28-day hospitalisation rule",
+      "in_report": "not-yet-published",
+      "route": "ledger",
+      "route_reason": "No hospital stays in the data or the model.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "withdrawn_reason": null,
+      "data_needs": [
+        "hospital_stay"
+      ],
+      "issues": [
+        5
+      ],
+      "parameters": [],
+      "status": "ledger",
+      "receipt": "a8bc866384bdd580525ac86134a2a9498552d83db41ed2fe7b5b7b5a78860cad",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "people_affected": null,
+      "winners_losers_all": null,
+      "by_region": null,
+      "by_age": null,
+      "poverty": null,
+      "knock_ons": null
+    },
+    {
+      "id": "cost_category_tiers",
+      "name": "Re-tier awards (illustrative)",
+      "description": "Illustrative stand-in for awards set by cost categories: the standard daily living rate £8.30 a week above current law and the enhanced rate £4.60 a week below it. The values are placeholders, not a proposal.",
+      "recommendation": "Awards that reflect the extra costs of disability",
+      "in_report": "not-yet-published",
+      "route": "dashboard-param",
+      "route_reason": "The cash part can be approximated by changing the four rates; any non-cash support is not modelled.",
+      "placeholder": true,
+      "computable": true,
+      "publishable": false,
+      "withdrawn_reason": null,
+      "data_needs": [],
+      "issues": [
+        1
+      ],
+      "parameters": [
+        "gov.dwp.pip.daily_living.enhanced",
+        "gov.dwp.pip.daily_living.standard"
+      ],
+      "status": "held-placeholder",
+      "receipt": "fd0a7328917a99ba0dc8f6a81e24929b9690f725f0a0462312bf017ba24fd6ec",
+      "budgetary_impact": [
+        {
+          "year": 2027,
+          "value_m": 231.0,
+          "fiscal_year": "2027-28"
+        },
+        {
+          "year": 2028,
+          "value_m": 231.0,
+          "fiscal_year": "2028-29"
+        },
+        {
+          "year": 2029,
+          "value_m": 231.0,
+          "fiscal_year": "2029-30"
+        },
+        {
+          "year": 2030,
+          "value_m": 231.0,
+          "fiscal_year": "2030-31"
+        }
+      ],
+      "decile": [
+        {
+          "decile": 1,
+          "avg_change_gbp": 12.0,
+          "pct_change": 0.06,
+          "suppressed": false
+        },
+        {
+          "decile": 2,
+          "avg_change_gbp": 14.0,
+          "pct_change": 0.05,
+          "suppressed": false
+        },
+        {
+          "decile": 3,
+          "avg_change_gbp": 13.0,
+          "pct_change": 0.04,
+          "suppressed": false
+        },
+        {
+          "decile": 4,
+          "avg_change_gbp": 12.0,
+          "pct_change": 0.03,
+          "suppressed": false
+        },
+        {
+          "decile": 5,
+          "avg_change_gbp": 10.0,
+          "pct_change": 0.02,
+          "suppressed": false
+        },
+        {
+          "decile": 6,
+          "avg_change_gbp": 8.0,
+          "pct_change": 0.02,
+          "suppressed": false
+        },
+        {
+          "decile": 7,
+          "avg_change_gbp": 7.0,
+          "pct_change": 0.01,
+          "suppressed": false
+        },
+        {
+          "decile": 8,
+          "avg_change_gbp": 5.0,
+          "pct_change": 0.01,
+          "suppressed": false
+        },
+        {
+          "decile": 9,
+          "avg_change_gbp": 4.0,
+          "pct_change": 0.01,
+          "suppressed": false
+        },
+        {
+          "decile": 10,
+          "avg_change_gbp": 3.0,
+          "pct_change": 0.0,
+          "suppressed": false
+        }
+      ],
+      "winners_losers": [
+        {
+          "decile": 1,
+          "gain_more_5": 2.5,
+          "gain_less_5": 5.9,
+          "no_change": 81.1,
+          "lose_less_5": 8.4,
+          "lose_more_5": 2.1,
+          "suppressed": false
+        },
+        {
+          "decile": 2,
+          "gain_more_5": 2.9,
+          "gain_less_5": 6.8,
+          "no_change": 78.3,
+          "lose_less_5": 9.6,
+          "lose_more_5": 2.4,
+          "suppressed": false
+        },
+        {
+          "decile": 3,
+          "gain_more_5": 2.7,
+          "gain_less_5": 6.4,
+          "no_change": 79.7,
+          "lose_less_5": 9.0,
+          "lose_more_5": 2.2,
+          "suppressed": false
+        },
+        {
+          "decile": 4,
+          "gain_more_5": 2.4,
+          "gain_less_5": 5.5,
+          "no_change": 82.3,
+          "lose_less_5": 7.8,
+          "lose_more_5": 2.0,
+          "suppressed": false
+        },
+        {
+          "decile": 5,
+          "gain_more_5": 2.0,
+          "gain_less_5": 4.7,
+          "no_change": 85.0,
+          "lose_less_5": 6.6,
+          "lose_more_5": 1.7,
+          "suppressed": false
+        },
+        {
+          "decile": 6,
+          "gain_more_5": 1.6,
+          "gain_less_5": 3.8,
+          "no_change": 87.9,
+          "lose_less_5": 5.4,
+          "lose_more_5": 1.3,
+          "suppressed": false
+        },
+        {
+          "decile": 7,
+          "gain_more_5": 1.5,
+          "gain_less_5": 3.4,
+          "no_change": 89.1,
+          "lose_less_5": 4.8,
+          "lose_more_5": 1.2,
+          "suppressed": false
+        },
+        {
+          "decile": 8,
+          "gain_more_5": 1.1,
+          "gain_less_5": 2.5,
+          "no_change": 91.9,
+          "lose_less_5": 3.6,
+          "lose_more_5": 0.9,
+          "suppressed": false
+        },
+        {
+          "decile": 9,
+          "gain_more_5": 0.9,
+          "gain_less_5": 2.1,
+          "no_change": 93.2,
+          "lose_less_5": 3.0,
+          "lose_more_5": 0.8,
+          "suppressed": false
+        },
+        {
+          "decile": 10,
+          "gain_more_5": 0.5,
+          "gain_less_5": 1.3,
+          "no_change": 95.9,
+          "lose_less_5": 1.8,
+          "lose_more_5": 0.5,
+          "suppressed": false
+        }
+      ],
+      "people_affected": {
+        "gain_k": 1700.0,
+        "lose_k": 2100.0,
+        "suppressed": false
+      },
+      "winners_losers_all": null,
+      "by_region": null,
+      "by_age": null,
+      "poverty": null,
+      "knock_ons": null
+    },
+    {
+      "id": "points_thresholds",
+      "name": "Lower the standard-rate points threshold (illustrative)",
+      "description": "Illustrative: the standard rate of each component from 6 points rather than 8.",
+      "recommendation": "Recalibrate activities, descriptors and points",
+      "in_report": "not-yet-published",
+      "route": "not-computable",
+      "route_reason": "The parameter exists but moves no one: the data hold awards, not points, and a stored award overrides points.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "withdrawn_reason": null,
+      "data_needs": [
+        "pip_dl_points",
+        "pip_m_points"
+      ],
+      "issues": [
+        3
+      ],
+      "parameters": [
+        "gov.dwp.pip.daily_living.points_thresholds.standard",
+        "gov.dwp.pip.mobility.points_thresholds.standard"
+      ],
+      "status": "not-computable",
+      "receipt": "5a735ae9cfa0f2b04fce6bbd36836da0f18e2514b4a33efea1dc9d02a9b04779",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "people_affected": null,
+      "winners_losers_all": null,
+      "by_region": null,
+      "by_age": null,
+      "poverty": null,
+      "knock_ons": null
+    },
+    {
+      "id": "single_activity_minimum",
+      "name": "Minimum score in one daily living activity",
+      "description": "Daily living paid only to people who score at least 4 points in one activity.",
+      "recommendation": "A minimum score in one daily living activity",
+      "in_report": "not-yet-published",
+      "route": "not-computable",
+      "route_reason": "Needs a score for each activity, which the data do not hold.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "withdrawn_reason": null,
+      "data_needs": [
+        "pip_activity_points"
+      ],
+      "issues": [
+        3
+      ],
+      "parameters": [],
+      "status": "not-computable",
+      "receipt": "b226b005b44f3cb1fe5a9d8751e69d4771236a8ea60d5195177c766ea5b48d08",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "people_affected": null,
+      "winners_losers_all": null,
+      "by_region": null,
+      "by_age": null,
+      "poverty": null,
+      "knock_ons": null
+    },
+    {
+      "id": "standard_daily_living_rate",
+      "name": "Raise the standard daily living rate (illustrative)",
+      "description": "Illustrative: standard daily living 5% above its current-law rate in each year from 2027-28.",
+      "recommendation": "Rates that contribute fairly to extra costs",
+      "in_report": "not-yet-published",
+      "route": "dashboard-param",
+      "route_reason": "A rate is a parameter; modelled directly.",
+      "placeholder": true,
+      "computable": true,
+      "publishable": false,
+      "withdrawn_reason": null,
+      "data_needs": [],
+      "issues": [
+        1,
+        4
+      ],
+      "parameters": [
+        "gov.dwp.pip.daily_living.standard"
+      ],
+      "status": "held-placeholder",
+      "receipt": "af4956896aca15c90c18230d16cb53b448188275e1e121863a839f39066b5c79",
+      "budgetary_impact": [
+        {
+          "year": 2027,
+          "value_m": 351.0,
+          "fiscal_year": "2027-28"
+        },
+        {
+          "year": 2028,
+          "value_m": 358.0,
+          "fiscal_year": "2028-29"
+        },
+        {
+          "year": 2029,
+          "value_m": 365.0,
+          "fiscal_year": "2029-30"
+        },
+        {
+          "year": 2030,
+          "value_m": 373.0,
+          "fiscal_year": "2030-31"
+        }
+      ],
+      "decile": [
+        {
+          "decile": 1,
+          "avg_change_gbp": 20.0,
+          "pct_change": 0.1,
+          "suppressed": false
+        },
+        {
+          "decile": 2,
+          "avg_change_gbp": 23.0,
+          "pct_change": 0.09,
+          "suppressed": false
+        },
+        {
+          "decile": 3,
+          "avg_change_gbp": 22.0,
+          "pct_change": 0.07,
+          "suppressed": false
+        },
+        {
+          "decile": 4,
+          "avg_change_gbp": 19.0,
+          "pct_change": 0.05,
+          "suppressed": false
+        },
+        {
+          "decile": 5,
+          "avg_change_gbp": 16.0,
+          "pct_change": 0.04,
+          "suppressed": false
+        },
+        {
+          "decile": 6,
+          "avg_change_gbp": 13.0,
+          "pct_change": 0.03,
+          "suppressed": false
+        },
+        {
+          "decile": 7,
+          "avg_change_gbp": 11.0,
+          "pct_change": 0.02,
+          "suppressed": false
+        },
+        {
+          "decile": 8,
+          "avg_change_gbp": 9.0,
+          "pct_change": 0.01,
+          "suppressed": false
+        },
+        {
+          "decile": 9,
+          "avg_change_gbp": 7.0,
+          "pct_change": 0.01,
+          "suppressed": false
+        },
+        {
+          "decile": 10,
+          "avg_change_gbp": 4.0,
+          "pct_change": 0.01,
+          "suppressed": false
+        }
+      ],
+      "winners_losers": [
+        {
+          "decile": 1,
+          "gain_more_5": 2.5,
+          "gain_less_5": 5.9,
+          "no_change": 91.6,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0,
+          "suppressed": false
+        },
+        {
+          "decile": 2,
+          "gain_more_5": 2.9,
+          "gain_less_5": 6.8,
+          "no_change": 90.3,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0,
+          "suppressed": false
+        },
+        {
+          "decile": 3,
+          "gain_more_5": 2.7,
+          "gain_less_5": 6.4,
+          "no_change": 90.9,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0,
+          "suppressed": false
+        },
+        {
+          "decile": 4,
+          "gain_more_5": 2.4,
+          "gain_less_5": 5.5,
+          "no_change": 92.1,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0,
+          "suppressed": false
+        },
+        {
+          "decile": 5,
+          "gain_more_5": 2.0,
+          "gain_less_5": 4.7,
+          "no_change": 93.3,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0,
+          "suppressed": false
+        },
+        {
+          "decile": 6,
+          "gain_more_5": 1.6,
+          "gain_less_5": 3.8,
+          "no_change": 94.6,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0,
+          "suppressed": false
+        },
+        {
+          "decile": 7,
+          "gain_more_5": 1.5,
+          "gain_less_5": 3.4,
+          "no_change": 95.1,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0,
+          "suppressed": false
+        },
+        {
+          "decile": 8,
+          "gain_more_5": 1.1,
+          "gain_less_5": 2.5,
+          "no_change": 96.4,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0,
+          "suppressed": false
+        },
+        {
+          "decile": 9,
+          "gain_more_5": 0.9,
+          "gain_less_5": 2.1,
+          "no_change": 97.0,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0,
+          "suppressed": false
+        },
+        {
+          "decile": 10,
+          "gain_more_5": 0.5,
+          "gain_less_5": 1.3,
+          "no_change": 98.2,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0,
+          "suppressed": false
+        }
+      ],
+      "people_affected": {
+        "gain_k": 1700.0,
+        "lose_k": 0.0,
+        "suppressed": false
+      },
+      "winners_losers_all": null,
+      "by_region": null,
+      "by_age": null,
+      "poverty": null,
+      "knock_ons": null
+    },
+    {
+      "id": "uc_health_gateway",
+      "name": "PIP as the gateway to the UC health element",
+      "description": "A PIP daily living award, rather than a Work Capability Assessment, unlocks the Universal Credit health element.",
+      "recommendation": "PIP as the single gateway to health-related support",
+      "in_report": "not-yet-published",
+      "route": "dashboard-structural",
+      "route_reason": "Modelled by treating working-age people as having limited capability for work-related activity when they hold a PIP daily living award. Disability premiums in other benefits do not follow.",
+      "placeholder": true,
+      "computable": true,
+      "publishable": false,
+      "withdrawn_reason": null,
+      "data_needs": [],
+      "issues": [
+        6,
+        7
+      ],
+      "parameters": [],
+      "status": "held-placeholder",
+      "receipt": "77584d80e63453ccd1fdb415168b991e2fcd497b3c4f43a0e6298ae19193405a",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "people_affected": null,
+      "winners_losers_all": null,
+      "by_region": null,
+      "by_age": null,
+      "poverty": null,
+      "knock_ons": null
+    },
+    {
+      "id": "carers_allowance_link",
+      "name": "Carer's Allowance follows the PIP award",
+      "description": "Carer's Allowance and the UC carer element follow the cared-for person's daily living award.",
+      "recommendation": "Knock-on to passported support",
+      "in_report": "not-yet-published",
+      "route": "ledger",
+      "route_reason": "A knock-on, not a measure on its own: any measure that moves award levels applies the link (carers in the same household lose Carer's Allowance when no one there qualifies any more). Carers of someone outside the household are a fiscal line from the official figure.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "withdrawn_reason": null,
+      "data_needs": [
+        "cared_for_outside_household"
+      ],
+      "issues": [
+        2
+      ],
+      "parameters": [],
+      "status": "ledger",
+      "receipt": "c52028cb464e6effc27fb8bc33ebfe1c7774b7214efbdc964ce14bc1cb479460",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "people_affected": null,
+      "winners_losers_all": null,
+      "by_region": null,
+      "by_age": null,
+      "poverty": null,
+      "knock_ons": null
+    },
+    {
+      "id": "existing_claimants_phasing",
+      "name": "Apply changes at award review",
+      "description": "New rules apply to new claims at once and to existing claimants at their next award review.",
+      "recommendation": "How recommendations apply to people already claiming",
+      "in_report": "not-yet-published",
+      "route": "ledger",
+      "route_reason": "A rule for how other measures apply, not a measure on its own: a measure that moves award levels can be phased in at award review, with the yearly shares taken from official figures. Disability premiums in other benefits do not follow the new awards.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "withdrawn_reason": null,
+      "data_needs": [],
+      "issues": [
+        7
+      ],
+      "parameters": [],
+      "status": "ledger",
+      "receipt": "0ecabb914b344c9583167a366c4a8c2db7c9c6894b7888a8946275662cbbe8e9",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "people_affected": null,
+      "winners_losers_all": null,
+      "by_region": null,
+      "by_age": null,
+      "poverty": null,
+      "knock_ons": null
+    },
+    {
+      "id": "transition_age_18",
+      "name": "Move from child DLA to PIP at 18",
+      "description": "Young people stay on child DLA until 18 rather than 16.",
+      "recommendation": "Move from child DLA to PIP at 18",
+      "in_report": "not-yet-published",
+      "route": "needs-pe-uk-first",
+      "route_reason": "Held until a check is done: moving people aged 16 and 17 from PIP to the matching child DLA awards should leave their income unchanged, but a national run does not, and the cause is not yet found. About 111 survey records hold PIP at those ages.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "withdrawn_reason": null,
+      "data_needs": [],
+      "issues": [],
+      "parameters": [],
+      "status": "needs-pe-uk-first",
+      "receipt": "de46c264986589330705dddf80d85f43fc1c0bf46fb69b13fa424eb2ed61ca40",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "people_affected": null,
+      "winners_losers_all": null,
+      "by_region": null,
+      "by_age": null,
+      "poverty": null,
+      "knock_ons": null
+    }
+  ],
+  "package": null,
+  "spending_path": [
+    {
+      "year": 2026,
+      "fiscal_year": "2026-27",
+      "dwp_m": 32100.0,
+      "dwp_caseload_k": 4193.0,
+      "reformed_m": 32100.0
+    },
+    {
+      "year": 2027,
+      "fiscal_year": "2027-28",
+      "dwp_m": 34826.0,
+      "dwp_caseload_k": 4452.0,
+      "reformed_m": 35408.0
+    },
+    {
+      "year": 2028,
+      "fiscal_year": "2028-29",
+      "dwp_m": 37729.0,
+      "dwp_caseload_k": 4778.0,
+      "reformed_m": 38318.0
+    },
+    {
+      "year": 2029,
+      "fiscal_year": "2029-30",
+      "dwp_m": 41217.0,
+      "dwp_caseload_k": 5122.0,
+      "reformed_m": 41813.0
+    },
+    {
+      "year": 2030,
+      "fiscal_year": "2030-31",
+      "dwp_m": 44744.0,
+      "dwp_caseload_k": 5408.0,
+      "reformed_m": 45348.0
+    }
+  ],
+  "households": [
+    {
+      "id": "single_standard_dl_part_time",
+      "label": "Single adult, part-time work, standard daily living only",
+      "baseline": {
+        "pip": 4127.76,
+        "net_income": null
+      },
+      "reform": {
+        "cost_category_tiers": {
+          "pip": 4559.36,
+          "net_income": null
+        },
+        "standard_daily_living_rate": {
+          "pip": 4334.2,
+          "net_income": null
+        }
+      }
+    },
+    {
+      "id": "uc_enhanced_both_with_carer",
+      "label": "Adult on UC with both components enhanced, partner on Carer's Allowance",
+      "baseline": {
+        "pip": 10473.32,
+        "net_income": null
+      },
+      "reform": {
+        "cost_category_tiers": {
+          "pip": 10234.12,
+          "net_income": null
+        },
+        "standard_daily_living_rate": {
+          "pip": 10473.32,
+          "net_income": null
+        }
+      }
+    },
+    {
+      "id": "couple_standard_dl_enhanced_mobility",
+      "label": "Working couple, one with standard daily living and enhanced mobility",
+      "baseline": {
+        "pip": 8433.36,
+        "net_income": null
+      },
+      "reform": {
+        "cost_category_tiers": {
+          "pip": 8864.96,
+          "net_income": null
+        },
+        "standard_daily_living_rate": {
+          "pip": 8639.8,
+          "net_income": null
+        }
+      }
+    },
+    {
+      "id": "pensioner_claimed_before_spa",
+      "label": "Pensioner who claimed PIP before State Pension age",
+      "baseline": {
+        "pip": 7798.44,
+        "net_income": null
+      },
+      "reform": {
+        "cost_category_tiers": {
+          "pip": 7559.24,
+          "net_income": null
+        },
+        "standard_daily_living_rate": {
+          "pip": 7798.44,
+          "net_income": null
+        }
+      }
+    },
+    {
+      "id": "young_person_from_child_dla",
+      "label": "Young person aged 17 moving from child DLA, living with a parent",
+      "baseline": {
+        "pip": 5758.48,
+        "net_income": null
+      },
+      "reform": {
+        "cost_category_tiers": {
+          "pip": 6190.08,
+          "net_income": null
+        },
+        "standard_daily_living_rate": {
+          "pip": 5964.92,
+          "net_income": null
+        }
+      }
+    }
+  ],
+  "data_limits": [
+    {
+      "key": "pip_daily_living_points",
+      "missing_input": "pip_dl_points",
+      "reason": "The data record each claimant's PIP daily living award (none, standard or enhanced), not assessment points, and a stored award overrides points. Changing a points threshold moves no one.",
+      "issue": 3
+    },
+    {
+      "key": "pip_mobility_points",
+      "missing_input": "pip_m_points",
+      "reason": "The data record each claimant's PIP mobility award, not assessment points, and a stored award overrides points. Changing a points threshold moves no one.",
+      "issue": 3
+    }
+  ],
+  "model_limits": [
+    {
+      "key": "pip_no_country_test",
+      "reason": "The model counts Scottish Adult Disability Payment and Northern Ireland PIP as PIP. Figures cover England and Wales households only.",
+      "issue": 1
+    },
+    {
+      "key": "carers_allowance_ignores_pip",
+      "reason": "Carer's Allowance in the model does not depend on the cared-for person's award, so a change to PIP awards leaves carers' payments unchanged.",
+      "issue": 2
+    },
+    {
+      "key": "uc_health_proxy",
+      "reason": "The Universal Credit health element follows a recorded disability status, not PIP, so a change to PIP does not change it.",
+      "issue": 6
+    },
+    {
+      "key": "stored_disability_flags",
+      "reason": "Recorded disability status does not follow a PIP change, so disability premiums and elements in other benefits stay the same.",
+      "issue": 7
+    },
+    {
+      "key": "caseload_grows_with_population",
+      "reason": "The PIP caseload is calibrated to the OBR's PIP forecast for 2025-26, which is close to DWP's figures. In later years it grows with the population, not with DWP's caseload forecast, so it falls further below DWP's forecast in each later year.",
+      "issue": 4
+    }
+  ]
+}

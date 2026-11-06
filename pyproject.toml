@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "uk-pip-review-2026"
+version = "0.1.0"
+description = "PolicyEngine UK costing and distributional analysis for the independent review of Personal Independence Payment"
+readme = "README.md"
+license = "AGPL-3.0-only"
+requires-python = ">=3.13"
+dependencies = [
+  "pydantic>=2.7",
+  "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+# The engine and data pair, pinned to one certified bundle. Installed for real
+# runs only; the template's tests run without it (no data, no simulation).
+model = ["policyengine[uk]==6.11.1"]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[project.scripts]
+pip-review = "pip_review.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pip_review"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]

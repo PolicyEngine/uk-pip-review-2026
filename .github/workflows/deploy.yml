@@ -1,0 +1,16 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Not configured
+        run: |
+          # TODO: deploy target decided by the team; nothing deploys from this repo yet
+          echo "Nothing deploys from this repository yet."

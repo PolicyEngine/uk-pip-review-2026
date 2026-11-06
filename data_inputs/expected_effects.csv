@@ -1,0 +1,13 @@
+measure_id,expected_direction,expected_size_m_2029,basis,note
+fluctuating_conditions,cost,,static cash fiscal E&W,Not computable; ledger line with any official figure
+fewer_award_reviews,cost,,static cash fiscal E&W,Fiscal line only; roughly the reverse of the SS25 award review capacity line (+£200m a year)
+fast_track_serious_conditions,cost,,static cash fiscal E&W,Not computable (no condition data)
+hospital_rule,cost,,static cash fiscal E&W,Fiscal line only; expected tens of £m
+cost_category_tiers,either,,static cash fiscal E&W,Sign depends on the tiers; placeholder rates are illustrative
+points_thresholds,cost,,static cash fiscal E&W,Not computable until points are imputed
+single_activity_minimum,saving,4515,static cash fiscal E&W,DWP SS25 costing for the four-point rule: £4.5bn saving in 2029-30 including behaviour
+standard_daily_living_rate,cost,,static cash fiscal E&W,Placeholder; hand check: standard daily living recipients (E&W) x £3.85 a week x 52
+uc_health_gateway,either,,static cash fiscal E&W,Needs pe-uk first
+carers_allowance_link,saving,,static cash fiscal E&W,Needs pe-uk first; DWP SS25 put 150k carers affected
+existing_claimants_phasing,either,,static cash fiscal E&W,Needs pe-uk first
+transition_age_18,saving,,static cash fiscal E&W,Needs pe-uk first; small
