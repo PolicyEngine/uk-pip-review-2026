@@ -71,8 +71,8 @@ The coverage ledger is `drills/2026-11-12/ledger.csv` and the reconciliation is 
 ## Preflight, by Wednesday 11 November
 
 - [ ] The drill branch has the template's CI, pipeline and dashboard on it, and CI runs on it.
-- [ ] `generate --mode model` timed end to end on the national file for a non-mock measure, under the lock, with the machine time recorded here.
-- [ ] One local production build and `bun run smoke` timed, with the machine time recorded here.
+- [x] `generate --mode model` timed end to end on the national file with the four template measures (no mock content), under the lock, on 6 November at template commit `0aadc8c`: baseline 45 s, about 80 s per measure and 79 s for the package, about 9 minutes in all with the example households. With three coded measures, G2 needs about 7 minutes of machine time once the lock is free.
+- [x] One local production build timed: `bun run build` 10 s, and `bun run smoke` passed (noindex and banner in the served HTML).
 - [ ] Roles named in the drill issue.
 
 ## Route classes
