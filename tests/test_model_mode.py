@@ -110,3 +110,43 @@ def test_benefit_receipt_payment_reaches_pip_households_in_england_and_wales(
     ew = (country == "ENGLAND") | (country == "WALES")
     assert (change[~ew] == 0).all()
     assert change[ew & (pip > 0)] == pytest.approx(100, abs=1)
+
+
+def test_carers_allowance_link_follows_the_cared_for_award():
+    import numpy as np
+    from policyengine_uk import Simulation
+
+    from pip_review.measures import carers_allowance_link
+
+    year = "2027"
+    situation = {
+        "people": {
+            "cared": {
+                "age": {year: 50},
+                "pip_dl_category": {year: "STANDARD"},
+                "pip_m_category": {year: "NONE"},
+            },
+            "carer": {
+                "age": {year: 48},
+                "care_hours": {year: 40},
+                "carers_allowance_reported": {year: 4_000},
+            },
+        },
+        "benunits": {"b": {"members": ["cared", "carer"]}},
+        "households": {
+            "h": {"members": ["cared", "carer"], "region": {year: "NORTH_WEST"}}
+        },
+    }
+
+    def remove_award(sim):
+        sim.set_input("pip_dl_category", 2027, np.array(["NONE", "NONE"]))
+
+    def carer_ca(modifier):
+        sim = Simulation(situation=situation)
+        modifier(sim)
+        return float(sim.calculate("carers_allowance_pre_overlap", 2027)[1])
+
+    assert carer_ca(lambda sim: None) > 0
+    assert carer_ca(remove_award) > 0  # the model's own gap (#2)
+    assert carer_ca(carers_allowance_link.after(remove_award, years=[2027])) == 0
+    assert carer_ca(lambda sim: carers_allowance_link.modifier(sim, years=[2027])) > 0

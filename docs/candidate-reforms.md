@@ -13,7 +13,7 @@ Probable recommendations, from the terms of reference (October 2025), the interi
 | `single_activity_minimum` | Minimum score in one activity (not expected in the report) | Low | not-computable | per-activity scores | #3 |
 | `standard_daily_living_rate` | Change to component rates | Low | dashboard-param (placeholder) | none | #1, #4 |
 | `uc_health_gateway` | PIP as the gateway to the UC health element | Medium | dashboard-structural (placeholder) | none | #6, #7 |
-| `carers_allowance_link` | Carer's Allowance and other passported support | Medium | needs-pe-uk-first | caring outside the household | #2 |
+| `carers_allowance_link` | Carer's Allowance and other passported support | Medium | ledger; a knock-on applied with any measure that moves award levels (`measures/carers_allowance_link.py`) | caring outside the household | #2 |
 | `existing_claimants_phasing` | How the changes apply to people already claiming | High | needs-pe-uk-first | none | #7 |
 | `transition_age_18` | Move from child DLA to PIP at 18 | Low | dashboard-structural (placeholder; about 111 records) | none | |
 
