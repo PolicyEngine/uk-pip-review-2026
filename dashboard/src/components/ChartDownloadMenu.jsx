@@ -1,20 +1,21 @@
+import { downloadPng, downloadSvg, saveBlob } from "../utils/chartExport";
 import { toCsv } from "../utils/measures";
 
-// CSV download for the rows behind a chart. The AB2026 menu also offers PNG,
-// SVG and text; add them when the charts are final.
-export default function ChartDownloadMenu({ rows, filename }) {
-  const download = () => {
-    const blob = new Blob([toCsv(rows)], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${filename}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
-  };
+// Downloads for one chart: the rows behind it as CSV, and the drawn chart
+// as SVG or PNG.
+export default function ChartDownloadMenu({ rows, filename, title, chartRef }) {
+  const csv = () => saveBlob(new Blob([toCsv(rows)], { type: "text/csv" }), `${filename}.csv`);
   return (
-    <button type="button" className="toggle-button" onClick={download} disabled={!rows?.length}>
-      Download CSV
-    </button>
+    <div className="flex gap-2" role="group" aria-label="Download">
+      <button type="button" className="toggle-button" onClick={csv} disabled={!rows?.length}>
+        CSV
+      </button>
+      <button type="button" className="toggle-button" onClick={() => downloadSvg(chartRef?.current, title, filename)}>
+        SVG
+      </button>
+      <button type="button" className="toggle-button" onClick={() => downloadPng(chartRef?.current, title, filename)}>
+        PNG
+      </button>
+    </div>
   );
 }

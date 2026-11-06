@@ -1,8 +1,10 @@
+import { useRef } from "react";
 import ChartDownloadMenu from "./ChartDownloadMenu";
 
 // The basis is stated once, on the Methodology tab; a chart's subtitle is a
 // short unit line with a link to it.
 export default function ChartPanel({ title, subtitle, rows, filename, children, moreInfo, onMethod }) {
+  const chartRef = useRef(null);
   return (
     <section className="panel mb-6">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
@@ -22,9 +24,9 @@ export default function ChartPanel({ title, subtitle, rows, filename, children, 
             </p>
           )}
         </div>
-        {rows && <ChartDownloadMenu rows={rows} filename={filename} />}
+        {rows && <ChartDownloadMenu rows={rows} filename={filename} title={title} chartRef={chartRef} />}
       </div>
-      {children}
+      <div ref={chartRef}>{children}</div>
       {moreInfo && (
         <details className="mt-4 text-sm text-slate-600">
           <summary className="cursor-pointer">More on this chart</summary>
