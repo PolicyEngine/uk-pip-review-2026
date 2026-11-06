@@ -27,7 +27,7 @@ from pip_review.measure_templates import (
     rate_change,
     threshold_change,
 )
-from pip_review.measures import transition_age_18, uc_health_gateway
+from pip_review.measures import uc_health_gateway
 from pip_review.models import Likelihood, Reform, Route
 from pip_review.years import POLICY_YEARS
 
@@ -291,13 +291,16 @@ REFORMS: list[Reform] = [
         description="Young people stay on child DLA until 18 rather than 16.",
         recommendation="Move from child DLA to PIP at 18",
         likelihood=Likelihood.LOW,
-        route=Route.DASHBOARD_STRUCTURAL,
+        # Held: measures/transition_age_18.py is written, but a national run
+        # gives a net saving that a single-household check does not. Restore
+        # route=DASHBOARD_STRUCTURAL and the modifier once the knock-on is found.
+        route=Route.NEEDS_PE_UK_FIRST,
         route_reason=(
-            "Modelled by moving people aged 16 and 17 from PIP awards to the "
-            "matching child DLA awards. About 111 survey records hold PIP at "
-            "those ages, so the figure rests on a small sample."
+            "Held until a check is done: moving people aged 16 and 17 from PIP "
+            "to the matching child DLA awards should leave their income "
+            "unchanged, but a national run does not, and the cause is not yet "
+            "found. About 111 survey records hold PIP at those ages."
         ),
-        simulation_modifier=transition_age_18.modifier,
     ),
 ]
 

@@ -52,7 +52,6 @@ def test_computable_measures():
         "cost_category_tiers",
         "standard_daily_living_rate",
         "uc_health_gateway",
-        "transition_age_18",
     }
     for reform in computable.values():
         if reform.route is Route.DASHBOARD_PARAM:
