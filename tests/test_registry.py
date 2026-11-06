@@ -2,7 +2,13 @@ import pytest
 
 from pip_review import data_limits
 from pip_review.models import Likelihood, Reform, Route
-from pip_review.reforms import CURRENT_RATES, REFORMS, REFORMS_BY_ID, get_reform
+from pip_review.reforms import (
+    CURRENT_LAW_RATES,
+    CURRENT_RATES,
+    REFORMS,
+    REFORMS_BY_ID,
+    get_reform,
+)
 from pip_review.years import POLICY_YEARS
 
 
@@ -40,14 +46,38 @@ def test_points_threshold_measures_are_not_computable():
             assert not reform.computable
 
 
-def test_computable_measures_change_only_rates():
-    computable = [r for r in REFORMS if r.computable]
-    assert {r.id for r in computable} == {
+def test_computable_measures():
+    computable = {r.id: r for r in REFORMS if r.computable}
+    assert set(computable) == {
         "cost_category_tiers",
         "standard_daily_living_rate",
+        "uc_health_gateway",
+        "transition_age_18",
     }
-    for reform in computable:
-        assert set(reform.parameter_changes) <= set(CURRENT_RATES)
+    for reform in computable.values():
+        if reform.route is Route.DASHBOARD_PARAM:
+            assert set(reform.parameter_changes) <= set(CURRENT_RATES)
+        else:
+            assert reform.simulation_modifier.__module__.startswith(
+                "pip_review.measures."
+            )
+
+
+def test_rate_measures_follow_current_law():
+    # Written against each year's current-law rate, so uprating never turns
+    # an illustrative rise into a cut.
+    standard = get_reform("standard_daily_living_rate").parameter_changes
+    path = "gov.dwp.pip.daily_living.standard"
+    for year in POLICY_YEARS:
+        law = CURRENT_LAW_RATES[year][path]
+        assert standard[path][str(year)] == pytest.approx(law * 1.05, abs=0.01)
+
+
+def test_public_text_has_no_prep_notes():
+    for reform in REFORMS:
+        text = " ".join([reform.description, reform.recommendation])
+        assert "Not expected" not in text and "Not in the emerging" not in text
+        assert "likelihood" not in reform.summary()
 
 
 def test_route_validation_rejects_param_route_without_change():

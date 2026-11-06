@@ -27,6 +27,7 @@ from pip_review.measure_templates import (
     rate_change,
     threshold_change,
 )
+from pip_review.measures import transition_age_18, uc_health_gateway
 from pip_review.models import Likelihood, Reform, Route
 from pip_review.years import POLICY_YEARS
 
@@ -42,8 +43,49 @@ CURRENT_RATES = {
 }
 
 
+# Current-law weekly rates for each policy year in policyengine-uk 2.151.0,
+# after CPI uprating (read from the installed parameters, rounded to 1p). A
+# measure written as a change to current law adds to these, so it does not
+# turn into a cut once uprating overtakes a cash figure. Check them at G0
+# (``tests/test_model_import.py`` compares them with the installed engine).
+CURRENT_LAW_RATES = {
+    2027: {
+        f"{DL}.standard": 79.38,
+        f"{DL}.enhanced": 118.61,
+        f"{MOB}.standard": 31.36,
+        f"{MOB}.enhanced": 82.80,
+    },
+    2028: {
+        f"{DL}.standard": 81.05,
+        f"{DL}.enhanced": 121.10,
+        f"{MOB}.standard": 32.02,
+        f"{MOB}.enhanced": 84.54,
+    },
+    2029: {
+        f"{DL}.standard": 82.67,
+        f"{DL}.enhanced": 123.52,
+        f"{MOB}.standard": 32.66,
+        f"{MOB}.enhanced": 86.23,
+    },
+    2030: {
+        f"{DL}.standard": 84.33,
+        f"{DL}.enhanced": 125.99,
+        f"{MOB}.standard": 33.31,
+        f"{MOB}.enhanced": 87.95,
+    },
+}
+
+
 def _every_year(value: float) -> dict[int, float]:
     return {year: value for year in POLICY_YEARS}
+
+
+def _current_law_plus(path: str, weekly: float = 0.0, factor: float = 1.0):
+    """Each policy year's current-law rate times ``factor`` plus ``weekly`` £."""
+    return {
+        year: round(CURRENT_LAW_RATES[year][path] * factor + weekly, 2)
+        for year in POLICY_YEARS
+    }
 
 
 with warnings.catch_warnings():
@@ -121,9 +163,10 @@ REFORMS: list[Reform] = [
         id="cost_category_tiers",
         name="Re-tier awards (illustrative)",
         description=(
-            "Illustrative stand-in for awards set by cost categories: raise the "
-            "standard daily living rate and lower the enhanced rate. The values "
-            "are placeholders, not a proposal."
+            "Illustrative stand-in for awards set by cost categories: the "
+            "standard daily living rate £8.30 a week above current law and the "
+            "enhanced rate £4.60 a week below it. The values are placeholders, "
+            "not a proposal."
         ),
         recommendation="Awards that reflect the extra costs of disability",
         likelihood=Likelihood.MEDIUM,
@@ -133,8 +176,8 @@ REFORMS: list[Reform] = [
             "non-cash support is not modelled."
         ),
         parameter_changes=merge(
-            rate_change(f"{DL}.standard", _every_year(85.00)),
-            rate_change(f"{DL}.enhanced", _every_year(110.00)),
+            rate_change(f"{DL}.standard", _current_law_plus(f"{DL}.standard", 8.30)),
+            rate_change(f"{DL}.enhanced", _current_law_plus(f"{DL}.enhanced", -4.60)),
         ),
         issues=[1],
     ),
@@ -161,9 +204,9 @@ REFORMS: list[Reform] = [
         name="Minimum score in one daily living activity",
         description=(
             "Daily living paid only to people who score at least 4 points in one "
-            "activity. Not expected in the report; kept for a government response."
+            "activity."
         ),
-        recommendation="Not expected in the report; a possible government option",
+        recommendation="A minimum score in one daily living activity",
         likelihood=Likelihood.LOW,
         route=Route.NOT_COMPUTABLE,
         route_reason="Needs a score for each activity, which the data do not hold.",
@@ -174,14 +217,16 @@ REFORMS: list[Reform] = [
         id="standard_daily_living_rate",
         name="Raise the standard daily living rate (illustrative)",
         description=(
-            "Illustrative: standard daily living at £80.55 a week (5% above "
-            "2026-27) from 2027-28."
+            "Illustrative: standard daily living 5% above its current-law rate "
+            "in each year from 2027-28."
         ),
         recommendation="Rates that contribute fairly to extra costs",
         likelihood=Likelihood.LOW,
         route=Route.DASHBOARD_PARAM,
         route_reason="A rate is a parameter; modelled directly.",
-        parameter_changes=rate_change(f"{DL}.standard", _every_year(80.55)),
+        parameter_changes=rate_change(
+            f"{DL}.standard", _current_law_plus(f"{DL}.standard", factor=1.05)
+        ),
         issues=[1, 4],
     ),
     Reform(
@@ -193,11 +238,13 @@ REFORMS: list[Reform] = [
         ),
         recommendation="PIP as the single gateway to health-related support",
         likelihood=Likelihood.MEDIUM,
-        route=Route.NEEDS_PE_UK_FIRST,
+        route=Route.DASHBOARD_STRUCTURAL,
         route_reason=(
-            "UC limited capability for work-related activity follows a stored "
-            "disability flag, not PIP; needs a reform parameter upstream."
+            "Modelled by treating working-age people as having limited "
+            "capability for work-related activity when they hold a PIP daily "
+            "living award. Disability premiums in other benefits do not follow."
         ),
+        simulation_modifier=uc_health_gateway.modifier,
         issues=[6, 7],
     ),
     Reform(
@@ -237,10 +284,15 @@ REFORMS: list[Reform] = [
         id="transition_age_18",
         name="Move from child DLA to PIP at 18",
         description="Young people stay on child DLA until 18 rather than 16.",
-        recommendation="Not in the emerging recommendations; earlier government option",
+        recommendation="Move from child DLA to PIP at 18",
         likelihood=Likelihood.LOW,
-        route=Route.NEEDS_PE_UK_FIRST,
-        route_reason="PIP has no age test in the model; needs a new formula.",
+        route=Route.DASHBOARD_STRUCTURAL,
+        route_reason=(
+            "Modelled by moving people aged 16 and 17 from PIP awards to the "
+            "matching child DLA awards. About 111 survey records hold PIP at "
+            "those ages, so the figure rests on a small sample."
+        ),
+        simulation_modifier=transition_age_18.modifier,
     ),
 ]
 
