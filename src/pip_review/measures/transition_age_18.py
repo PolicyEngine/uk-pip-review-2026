@@ -8,6 +8,11 @@ lower), and their PIP awards are set to none.
 Caveat: about 111 survey records in England and Wales hold PIP at 16 or 17,
 so any figure carries a sample-size note. Placeholder until the report's own
 rule is known.
+
+Open check before any use: on a single household the move leaves net income
+unchanged (DLA and PIP rates match), but a national timing run on 6 November
+showed a large net saving for this measure. Find which knock-on differs
+between PIP and child DLA at 16 and 17 before publishing it.
 """
 
 AGES = (16, 17)
@@ -30,7 +35,8 @@ def modifier(sim, years=None):
     from pip_review.years import POLICY_YEARS
 
     for year in years or POLICY_YEARS:
-        age = np.asarray(getattr(sim.calculate("age", year), "values", None))
+        age = sim.calculate("age", year)
+        age = np.asarray(getattr(age, "values", age))
         young = np.isin(age, AGES)
         if not young.any():
             continue
