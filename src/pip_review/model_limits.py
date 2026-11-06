@@ -93,8 +93,9 @@ LIMITS: tuple[ModelLimit, ...] = (
             "not follow DWP's forecast path (policyengine-uk #2889, item 6)."
         ),
         public_reason=(
-            "The PIP caseload is set to DWP's figures for 2025-26. In later "
-            "years it grows with the population, not with DWP's caseload "
+            "The PIP caseload is calibrated to the OBR's PIP forecast for "
+            "2025-26, which is close to DWP's figures. In later years it grows "
+            "with the population, not with DWP's caseload "
             "forecast, so it falls further below DWP's forecast in each later "
             "year."
         ),
