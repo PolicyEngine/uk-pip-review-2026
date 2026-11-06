@@ -1,10 +1,10 @@
 # Drill: Thursday 12 November 2026, 14:00–16:30
 
-A mock release of the PIP review final report, run as a timed drill before the real report lands. The drill tests the path from release to a dashboard on a protected preview: coverage, coding, reconciliation against official figures, a mid-drill correction, and publication checks.
+A mock release of the PIP review final report, run as a timed drill before the real report lands. The drill tests the path from release to a dashboard on a local production build: coverage, coding, reconciliation against official figures, a mid-drill correction, and publication checks.
 
 **This file holds no mock content.** The drill owner wrote the mock packet and the answer key and holds them outside this repository. Only their SHA-256 hashes are below. The integrator stays blind to the packet until each file is released.
 
-This file sits in `drills/2026-11-12/` so it does not touch `docs/DRILL.md` in the template PR (#9). For this drill, this file is the one to follow.
+This file is the one home for this drill's plan and packet hashes; `docs/DRILL.md` and `data_inputs/packet/HASHES.md` in the template PR (#9) point here.
 
 ## Timeline (London time)
 
@@ -15,9 +15,9 @@ This file sits in `drills/2026-11-12/` so it does not touch `docs/DRILL.md` in t
 | 14:30 | T+30 | none | **G2**: provisional numbers for every coded measure, plus one hand-checked household per coded measure | Integrator, reconciler |
 | 14:40 | T+40 | `documents.zip` (mock costing note, people affected, specimen households, blank scoring sheet) | **G3** to 15:10: re-base and reconcile; every gap over 10% has a written reason and a cause class | Reconciler |
 | 15:15 | T+75 | `inject.md` and `inject_rows.csv` (a correction notice) | **G5**: rerun, new scoring SHA, re-run every hand-computed household row, update ledger causes | Integrator, scorer |
-| 15:40 | T+100 | none | **G4**: full page on a protected preview, MOCK banner and noindex checked behind the login | Integrator |
+| 15:40 | T+100 | none | **G4**: full page on a local production build from the G5 rerun SHA, MOCK banner and noindex checked in the served HTML | Integrator |
 | 15:50 | T+110 | none | stop; log the stop commit SHA | Integrator |
-| 16:00 | T+120 | `answer_key.csv`, `make_key.py` and `key_meta.json` | scoring to 16:30; scorer checks the key's hash first | Drill owner, scorer |
+| 16:00 | T+120 | `answer_key.csv`, `make_key.py` and `key_meta.json` | scoring to 16:30; scorer checks the hashes of all three first | Drill owner, scorer |
 
 ### G0 freeze record
 
@@ -25,7 +25,8 @@ Write these in the drill issue before 13:30:
 - start SHA of the drill branch (cut from `main` after the template PR, or from the template branch head if #9 is not merged; say which);
 - `policyengine` and `policyengine-uk` versions (pinned: policyengine 6.11.1, policyengine-uk 2.151.0);
 - dataset name and SHA-256 of the national file;
-- "validated pair" or "unvalidated under this engine" on every figure.
+- "certified bundle pair; PIP-specific validation pending (#1, #4)" on every figure.
+- Do not adopt policyengine 6.14.0 or the policyengine.py #731 bump before this drill. If the pin changes, the drill owner regenerates the key and its hashes.
 
 ## Roles (one person each; only the integrator pushes)
 
@@ -35,6 +36,44 @@ Write these in the drill issue before 13:30:
 | Reconciler | the coverage ledger, the reconciliation CSV, defects as PR comments within 5 minutes | push code |
 | Scorer (the reconciler after T+40) | specimen households, one commit SHA per scoring run | edit reform code |
 | Drill owner | the sealed packet, release times, the answer key | take part in coding |
+
+### Load on the clock
+
+The scorer is also the reconciler after T+40, so household scoring starts only after G3 closes at 15:10, unless a third person can score. Start the G4 production build as soon as the G5 rerun SHA exists rather than at 15:40: the build waits for the heavy-run lock and 14 GB free. Log its machine time.
+
+## Commands
+
+Run from the drill branch (the template's machinery must be on it).
+
+```sh
+# setup, before G0
+uv sync --locked --extra dev --extra model
+(cd dashboard && bun install --frozen-lockfile)
+
+# G2 and G5: every drill measure id starts with mock6_; status mock forces the MOCK banner
+uv run pip-review generate --mode model --status mock             # takes the heavy-run lock
+uv run pip-review household <preset> --reform <id>
+
+# G3
+uv run pip-review reconcile --out drills/2026-11-12/reconciliation.csv --reasons drills/2026-11-12/gap_reasons.csv
+
+# public-data guard, with the drill files named explicitly
+uv run python scripts/check_public_data.py data/results.json dashboard/public/data/results.json drills/2026-11-12/ledger.csv drills/2026-11-12/reconciliation.csv
+
+# G4: local production build, under the lock
+until mkdir /tmp/pe-heavy.lock 2>/dev/null; do sleep 15; done; trap 'rmdir /tmp/pe-heavy.lock' EXIT
+cd dashboard && bun run data && bun run build && bun run smoke   # serves, checks noindex and the MOCK banner, stops the server
+git rev-parse HEAD                                                 # record the build SHA in the clock table
+```
+
+The coverage ledger is `drills/2026-11-12/ledger.csv` and the reconciliation is `drills/2026-11-12/reconciliation.csv`. Whether they sit on the public draft PR during the drill or in a private channel until scoring ends is still to be decided (see the drill issue); the guard runs on them either way.
+
+## Preflight, by Wednesday 11 November
+
+- [ ] The drill branch has the template's CI, pipeline and dashboard on it, and CI runs on it.
+- [ ] `generate --mode model` timed end to end on the national file for a non-mock measure, under the lock, with the machine time recorded here.
+- [ ] One local production build and `bun run smoke` timed, with the machine time recorded here.
+- [ ] Roles named in the drill issue.
 
 ## Route classes
 
@@ -69,7 +108,7 @@ Static, cash, fiscal year, England and Wales, £ million; positive is a cost to 
 | Specimen households to ±1p, after the inject | 20 |
 | National figures: basis and gap class for each coded measure and year | 30 |
 | Ledger: route, cause class and reason for each line, including trap rows | 25 |
-| Publication path: MOCK banner, noindex, public-data guard passes, preview behind the login | 10 |
+| Publication path: MOCK banner, noindex, public-data guard passes, on the local production build | 10 |
 | Process: gates on time, one SHA per scoring run, inject logged, stop commit logged | 15 |
 
 ## What to time and log
@@ -88,9 +127,9 @@ Use the documents clock (T+0 is 14:00). Keep a clock table in the drill PR with 
 ## MOCK and noindex rules
 
 - Every page built from the drill branch carries the MOCK banner and `noindex, nofollow`.
-- Check both on the protected preview behind the login, not on a local build.
+- Check both in the served HTML of a local production build (`bun run smoke`). On the real day, check them again on the protected Vercel preview behind the login, once that project exists.
 - Nothing from the packet goes into a public file, issue, PR or comment until scoring ends. The drill branch is a draft PR labelled `not for merge`, never stacked on another unmerged PR.
-- No deploy to a public URL. The preview stays protected.
+- No deploy to any URL. The drill page is a local build only; kill the server after the check.
 - The repository is public and its figures come from licensed microdata: `scripts/check_public_data.py` must pass on every public file.
 
 ## Packet hashes (SHA-256)
