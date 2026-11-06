@@ -32,6 +32,15 @@ jobs:
         run: uv run pytest -q
       - name: Public data guard
         run: uv run python scripts/check_public_data.py
+      - name: Placeholder results regenerate byte for byte
+        run: |
+          status=$(python3 -c 'import json; print(json.load(open("data/results.json"))["status"])')
+          if [ "$status" = "placeholder" ]; then
+            uv run pip-review generate --out /tmp/results.json --dashboard-copy /tmp/copy.json
+            cmp /tmp/results.json data/results.json
+          else
+            echo "Model results: provenance is checked against uv.lock by the guard"
+          fi
 
   dashboard:
     name: Dashboard (lint, test, build)
@@ -52,7 +61,9 @@ jobs:
         run: bun run test
       - name: Build
         run: bun run build
-      - name: Built page is noindex and carries the banner
+      - name: Built page is noindex and carries the status banner
         run: |
           grep -q 'name="robots" content="noindex' .next/server/app/index.html
-          grep -q 'placeholder-banner' .next/server/app/index.html
+          grep -q 'data-testid="status-banner"' .next/server/app/index.html
+      - name: Serve the build and check it
+        run: bash scripts/smoke-built-site.sh
