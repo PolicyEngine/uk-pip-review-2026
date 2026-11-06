@@ -60,9 +60,14 @@ uv run pip-review reconcile --out drills/2026-11-12/reconciliation.csv --reasons
 # public-data guard, with the drill files named explicitly
 uv run python scripts/check_public_data.py data/results.json dashboard/public/data/results.json drills/2026-11-12/ledger.csv drills/2026-11-12/reconciliation.csv
 
-# G4: local production build, under the lock
-until mkdir /tmp/pe-heavy.lock 2>/dev/null; do sleep 15; done; trap 'rmdir /tmp/pe-heavy.lock' EXIT
-cd dashboard && bun run data && bun run build && bun run smoke   # serves, checks noindex and the MOCK banner, stops the server
+# G4: local production build, in a subshell that holds the lock and waits for 14 GB free+inactive
+(
+  until mkdir /tmp/pe-heavy.lock 2>/dev/null; do sleep 15; done
+  trap 'rmdir /tmp/pe-heavy.lock' EXIT
+  free_gb() { vm_stat | awk '/Pages free/ {f=$3} /Pages inactive/ {i=$3} END {print int((f+i)*16384/1e9)}'; }
+  until [ "$(free_gb)" -ge 14 ]; do sleep 30; done
+  cd dashboard && bun run data && bun run build && bun run smoke   # serves, checks noindex and the MOCK banner, stops the server
+)
 git rev-parse HEAD                                                 # record the build SHA in the clock table
 ```
 
@@ -93,7 +98,7 @@ Lines that go in the ledger before G1, whatever the packet says:
 - Scotland and Northern Ireland are inside PIP in the model; every measure is masked to England and Wales (#1).
 - Points are not held; any points or descriptor measure is `not-computable` (#3).
 - Carer's Allowance does not follow the cared-for person's PIP; carer effects are a ledger line (#2).
-- The model caseload is above DWP's for England and Wales and does not grow after 2024-25 (#4).
+- The model caseload is below DWP's for England and Wales, by 5% to 26% over 2026-27 to 2030-31, because it grows only with population after 2024-25 (#4). Carry a modelled ÷ DWP caseload ratio per year in the ledger, and a "baseline below DWP by X%" note on any proportional measure.
 
 Expect trap rows: statement items that are already in the baseline. Routing one as a new measure is a defect.
 
