@@ -150,3 +150,32 @@ def test_carers_allowance_link_follows_the_cared_for_award():
     assert carer_ca(remove_award) > 0  # the model's own gap (#2)
     assert carer_ca(carers_allowance_link.after(remove_award, years=[2027])) == 0
     assert carer_ca(lambda sim: carers_allowance_link.modifier(sim, years=[2027])) > 0
+
+
+def test_phasing_moves_only_the_share(tmp_path):
+    import numpy as np
+    from policyengine.tax_benefit_models.uk.model import managed_microsimulation
+
+    from pip_review.measures.phasing import phase
+
+    def remove_all_awards(sim):
+        for year in (2027, 2028):
+            n = len(sim.calculate("age", year))
+            sim.set_input("pip_dl_category", year, np.array(["NONE"] * n))
+
+    path = write(tmp_path / "phase.h5", households=150)
+    sim = managed_microsimulation(dataset=str(path), allow_unmanaged=True)
+    before = {
+        y: np.asarray(sim.calculate("pip_dl_category", y).values) != "NONE"
+        for y in (2027, 2028)
+    }
+    phase(remove_all_awards, {2027: 0.25, 2028: 0.75})(sim)
+    after = {
+        y: np.asarray(sim.calculate("pip_dl_category", y).values) != "NONE"
+        for y in (2027, 2028)
+    }
+    moved = {y: (before[y] & ~after[y]).sum() / before[y].sum() for y in after}
+    assert 0.1 < moved[2027] < 0.4
+    assert 0.6 < moved[2028] < 0.9
+    # anyone moved in 2027 is still moved in 2028
+    assert not (before[2027] & ~after[2027] & after[2028]).any()

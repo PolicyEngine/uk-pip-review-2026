@@ -276,10 +276,12 @@ REFORMS: list[Reform] = [
         ),
         recommendation="How recommendations apply to people already claiming",
         likelihood=Likelihood.HIGH,
-        route=Route.NEEDS_PE_UK_FIRST,
+        route=Route.LEDGER,
         route_reason=(
-            "The phasing scenario overwrites PIP and bypasses the knock-ons; it "
-            "needs to phase award categories instead."
+            "A rule for how other measures apply, not a measure on its own: a "
+            "measure that moves award levels can be phased in at award review, "
+            "with the yearly shares taken from official figures. Disability "
+            "premiums in other benefits do not follow the new awards."
         ),
         issues=[7],
     ),
