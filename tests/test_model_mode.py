@@ -73,3 +73,40 @@ def test_certified_bundle_matches_install():
     bundle = uk_latest.release_bundle
     for key, value in pipeline.CERTIFIED_BUNDLE.items():
         assert bundle[key] == value
+
+
+def test_uc_rebalanced_years_match_engine():
+    from policyengine_uk.scenarios import uc_reform
+
+    from pip_review.measure_templates import UC_REBALANCED_YEARS
+
+    assert list(UC_REBALANCED_YEARS) == list(uc_reform.REBALANCING_YEARS)
+
+
+def test_benefit_receipt_payment_reaches_pip_households_in_england_and_wales(
+    tmp_path,
+):
+    from policyengine.tax_benefit_models.uk.model import managed_microsimulation
+
+    from pip_review.measure_templates import apply_benefit_receipt_payment
+
+    path = write(tmp_path / "small.h5", households=60)
+    base = managed_microsimulation(dataset=str(path), allow_unmanaged=True)
+    sim = managed_microsimulation(dataset=str(path), allow_unmanaged=True)
+    apply_benefit_receipt_payment(
+        sim,
+        amount=100,
+        eligible_benefits=["pip"],
+        geography="EW",
+        channel="cost_of_living_support_payment",
+        year=2027,
+    )
+    change = (
+        sim.calculate("household_net_income", 2027).values
+        - base.calculate("household_net_income", 2027).values
+    )
+    country = base.calculate("country", 2027).values
+    pip = base.calculate("pip", 2027, map_to="household").values
+    ew = (country == "ENGLAND") | (country == "WALES")
+    assert (change[~ew] == 0).all()
+    assert change[ew & (pip > 0)] == pytest.approx(100, abs=1)

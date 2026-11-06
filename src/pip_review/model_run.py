@@ -47,8 +47,18 @@ def build(dataset: str | None, scenario):
     is an unmanaged run (tests use a synthetic file) and its figures are never
     certified.
     """
+    import os
+
     from policyengine.tax_benefit_models.uk.model import managed_microsimulation
 
+    if dataset is None and not os.environ.get("HUGGING_FACE_TOKEN"):
+        # The certified file is private: use the saved Hugging Face login,
+        # if any (never printed).
+        from huggingface_hub import get_token
+
+        token = get_token()
+        if token:
+            os.environ["HUGGING_FACE_TOKEN"] = token
     return managed_microsimulation(
         dataset=dataset,
         allow_unmanaged=dataset is not None,

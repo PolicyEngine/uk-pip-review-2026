@@ -13,7 +13,12 @@ from pip_review.measure_templates import (
 
 
 def test_registered_templates():
-    assert REGISTERED_TEMPLATES == ("rate_change", "threshold_change")
+    assert REGISTERED_TEMPLATES == (
+        "rate_change",
+        "threshold_change",
+        "uc_health_element_change",
+        "apply_benefit_receipt_payment",
+    )
 
 
 def test_rate_change_keys_by_bare_year():
@@ -75,3 +80,29 @@ def test_model_limits_cover_pip_rates():
     assert model_limits.limits_for_paths(
         [model_limits.variable_path("carers_allowance")]
     )
+
+
+def test_uc_health_element_change_builds_only_rebalanced_years():
+    from pip_review.measure_templates import (
+        UC_LCWRA_AMOUNT,
+        UC_NEW_CLAIMANT_HEALTH,
+        rate_change,
+        uc_health_element_change,
+    )
+
+    assert uc_health_element_change(new_claimant={2027: 300}) == {
+        UC_NEW_CLAIMANT_HEALTH: {"2027": 300.0}
+    }
+    with pytest.raises(ValueError, match="would score nothing"):
+        uc_health_element_change(new_claimant={2040: 300})
+    with pytest.raises(ValueError, match="is not what UC"):
+        rate_change(UC_LCWRA_AMOUNT, {2027: 300})
+    with pytest.raises(ValueError):
+        uc_health_element_change()
+
+
+def test_registered_templates_are_the_four_kept():
+    from pip_review import measure_templates
+
+    for name in measure_templates.REGISTERED_TEMPLATES:
+        assert callable(getattr(measure_templates, name))
