@@ -302,7 +302,8 @@ REFORMS: list[Reform] = [
             "Held until a check is done: moving people aged 16 and 17 from PIP "
             "to the matching child DLA awards should leave their income "
             "unchanged, but a national run does not, and the cause is not yet "
-            "found. About 111 survey records hold PIP at those ages."
+            "found. About 133 survey records hold PIP at those ages in the "
+            "certified build (eeb6093e), 146 in the newer 6f918b81 build."
         ),
     ),
 ]
