@@ -26,3 +26,5 @@ Mock edits stay uncommitted in the working tree; each SHA below is bound to the 
 | Public-data guard (results.json both copies + 6 drill CSVs) | 15:28:30 | 15:28:31 | 1 s | - | 76f69f6ba8b2 | pass, 0 problems |
 | Screenshots of G4 build | 15:28:20 | 15:28:36 | 15 s | - | 76f69f6ba8b2 | served on 3108, killed; port free |
 | Stop (planned 15:50) | 15:28:49 | 15:28:49 | - | - | (this commit) | heavy steps finished 15:28:06 (last lock release) |
+| Ledger/reconciliation cause classes aligned after review (G5 "update ledger causes") | 15:29:30 | 15:31:25 | <1 s | 2 min | b7fee0570bc2 | reconcile 0 problems; guard pass on 8 files. Receipt times from file mtimes: statement 14:00:09, documents 14:40:01, inject files 15:15:03 |
+| Final stop (planned 15:50) | 15:32 | 15:32 | - | - | (this commit) | supersedes b7fee0570bc2 as the stop commit; no heavy step after 15:28:06 |
