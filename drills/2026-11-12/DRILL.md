@@ -22,11 +22,11 @@ This file is the one home for this drill's plan and packet hashes; `docs/DRILL.m
 ### G0 freeze record
 
 Write these in the drill issue before 13:30:
-- start SHA of the drill branch (cut from `main` after the template PR, or from the template branch head if #9 is not merged; say which);
-- `policyengine` and `policyengine-uk` versions (pinned: policyengine 6.11.1, policyengine-uk 2.151.0);
-- dataset name and SHA-256 of the national file;
+- start SHA of the drill branch. The default is a local run branch cut from the head of `bump-policyengine-6.17.2` (PR #14, which branches from the template branch #9); drills never merge, so the unmerged bump branch is allowed as the base. Say which commit it was cut from;
+- `policyengine`, `policyengine-uk` and `policyengine-core` versions (pinned: policyengine 6.17.2, policyengine-uk 2.174.1, policyengine-core 3.33.3);
+- dataset name and SHA-256 of the national file (certified by policyengine 6.17.2: `microcosm-uk-2024-25-national-20261107T020434Z-eeb6093e`, SHA-256 `0a9b77db1c0dee2693cb2d47bad68da34cb662916eee4829942bcd45de581f25`);
 - "certified bundle pair; PIP-specific validation pending (#1, #4)" on every figure.
-- Do not adopt policyengine 6.14.0 or the policyengine.py #731 bump before this drill. If the pin changes, the drill owner regenerates the key and its hashes.
+- The pin moved from policyengine 6.11.1 (policyengine-uk 2.151.0) to 6.17.2 on 12 November. PIP current-law rates for 2028-29 onwards and the 2027-28 minimum wage differ between the two (see PR #14), so the drill owner regenerates the key and its hashes on 6.17.2 before scoring.
 
 ## Roles (one person each; only the integrator pushes)
 
