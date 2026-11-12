@@ -26,7 +26,7 @@ Write these in the drill issue before 13:30:
 - `policyengine`, `policyengine-uk` and `policyengine-core` versions (pinned: policyengine 6.17.2, policyengine-uk 2.174.1, policyengine-core 3.33.3);
 - dataset name and SHA-256 of the national file (certified by policyengine 6.17.2: `microcosm-uk-2024-25-national-20261107T020434Z-eeb6093e`, SHA-256 `0a9b77db1c0dee2693cb2d47bad68da34cb662916eee4829942bcd45de581f25`);
 - "certified bundle pair; PIP-specific validation pending (#1, #4)" on every figure.
-- The pin moved from policyengine 6.11.1 (policyengine-uk 2.151.0) to 6.17.2 on 12 November. PIP current-law rates for 2028-29 onwards and the 2027-28 minimum wage differ between the two (see PR #14), so the drill owner regenerates the key and its hashes on 6.17.2 before scoring.
+- The pin moved from policyengine 6.11.1 (policyengine-uk 2.151.0) to 6.17.2 on 12 November. PIP current-law rates for 2028-29 onwards and the 2027-28 minimum wage differ between the two (see PR #14), The drill owner regenerated the key, `inject_rows.csv` and the T+40 tables on 6.17.2 at 13:00 on 12 November (single-household simulations; the national cell counts are unchanged) and updated the four hashes below; `statement.md`, `inject.md` and `make_key.py` are unchanged.
 
 ## Roles (one person each; only the integrator pushes)
 
@@ -144,12 +144,12 @@ The scorer checks each released file against this table before use.
 | File | Released at | SHA-256 |
 |---|---|---|
 | `statement.md` | T+0 (14:00) | `14a5aecc909b1017884d7b726c33e74baabf1a3fb4c8167c962116d086c6427c` |
-| `documents.zip` | T+40 (14:40) | `9b2f8088ca4518778501f53d68c7d2be745dacdc64caeb694ac17466dfb86484` |
+| `documents.zip` | T+40 (14:40) | `d2a6a6f0e5d2131f3498f35b2d15d02700e18eb4de7a068b3a73a3c0406bd686` |
 | `inject.md` | T+75 (15:15) | `4e1e249fab79499cf143fb39dd41f73386948e959d7fe111490d24443d7a72cb` |
-| `inject_rows.csv` | T+75 (15:15) | `969e787153192ec422bf5a57ff73bbe27681b6f968998ea7b5eed42504273c46` |
-| `answer_key.csv` | T+120 (16:00) | `6acee539ae5a456424e74f2704dd79c4a867861ee9cec223ed9a98af5b6cd216` |
+| `inject_rows.csv` | T+75 (15:15) | `8550cdb2e1610e648ac2dee280bf5c1388007ba20ac727ac6a00e6c0b59b49fe` |
+| `answer_key.csv` | T+120 (16:00) | `6d726e7d04947b7a1b58b08236b711f799c5e2c6a96f3ec3306821f1b13ea524` |
 | `make_key.py` | T+120 (16:00) | `370de5ba6d761ca9f321c3e525942db3d08ae7474474f585e8cfe9d2db516039` |
-| `key_meta.json` | T+120 (16:00) | `d042e453b638e54b3d6c19ac8ba7cd63f05168a4f342c1358471732c58f33821` |
+| `key_meta.json` | T+120 (16:00) | `b25dec449c4dc90392f8a2fe640eecaad12645c64a875935e31f247efa755277` |
 
 ## Retro
 
