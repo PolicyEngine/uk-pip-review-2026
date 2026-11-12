@@ -19,4 +19,10 @@ Mock edits stay uncommitted in the working tree; each SHA below is bound to the 
 | Scoring run 1 (pre-inject, specimen households) | 14:42:10 | 14:42:28 | 18 s | 2 min | 77881895d350 | 12 rows; worktree patch SHA-256 5d1d7bdd...fac3; module 2e03e99d...36b8 |
 | R11 loser-count check (G3 reason) | 14:43:49 | 14:44:31 | 42 s | 3 min | 77881895d350 | under lock, released 14:44:31; reconciliation re-run, 0 problems |
 | inject.md + inject_rows.csv received / hashes checked | 15:15:05 | 15:15:11 | - | - | 77881895d350 | inject.md 4e1e249f...72cb match; inject_rows.csv 8550cdb2...9fe match. Inject changes two coded measures' rate paths; all 12 specimen rows to be re-run |
-| G5 rerun (model, status mock) after inject fix | 15:17 | | | | (this commit) | |
+| G5 rerun (model, status mock) after inject fix | 15:15:39 | 15:27:48 | 728 s (baseline 58, measures 108-114 each, package 116, households) | 2 min fix | 76f69f6ba8b2 | results.json SHA-256 ab6b2c2c...04f2; worktree patch 62616c41...8564; reforms.py 35293a49...a3dd; lock released 15:27:48 |
+| Scoring run 2 (post-inject, all 12 specimen rows re-run) | 15:16:50 | 15:17:06 | 16 s | 2 min | 76f69f6ba8b2 | run in parallel with G5 generate (single-household, light); 12 rows; hand-checked to 1p |
+| Re-base inject rows + re-reconcile + ledger causes | 15:28:08 | 15:28:30 | <1 s | 1 min | 76f69f6ba8b2 | reconcile 0 problems |
+| G4 local production build + smoke from G5 SHA | 15:27:56 | 15:28:06 | 10 s | - | 76f69f6ba8b2 | lock 15:27:56-15:28:06; served HTML: robots noindex, status-banner data-status=mock, MOCK text: pass; smoke server stopped, port 3107 free |
+| Public-data guard (results.json both copies + 6 drill CSVs) | 15:28:30 | 15:28:31 | 1 s | - | 76f69f6ba8b2 | pass, 0 problems |
+| Screenshots of G4 build | 15:28:20 | 15:28:36 | 15 s | - | 76f69f6ba8b2 | served on 3108, killed; port free |
+| Stop (planned 15:50) | 15:28:49 | 15:28:49 | - | - | (this commit) | heavy steps finished 15:28:06 (last lock release) |
