@@ -3,11 +3,11 @@
   "status": "placeholder",
   "banner": "Pre-release template: placeholder figures, not PolicyEngine estimates",
   "engine": {
-    "policyengine": "6.11.1",
-    "policyengine_uk": "2.151.0",
+    "policyengine": "6.17.2",
+    "policyengine_uk": "2.174.1",
     "policyengine_core": "3.33.3",
-    "dataset": "microcosm-uk-2024-25-national-20261025T091414Z-a6299504",
-    "dataset_sha256": "b96a8cd625b645a409c063b1de5158532708a2f0d3c3897a794a8fb0bbd5064e",
+    "dataset": "microcosm-uk-2024-25-national-20261107T020434Z-eeb6093e",
+    "dataset_sha256": "0a9b77db1c0dee2693cb2d47bad68da34cb662916eee4829942bcd45de581f25",
     "certified_pair": true,
     "pip_validation": "pending (#1, #4)"
   },
@@ -170,7 +170,7 @@
         "gov.dwp.pip.daily_living.standard"
       ],
       "status": "held-placeholder",
-      "receipt": "fd0a7328917a99ba0dc8f6a81e24929b9690f725f0a0462312bf017ba24fd6ec",
+      "receipt": "8aa15c3c7292e5ff56e5bfbe760430b02682055668c49d3e407483f758c6e94a",
       "budgetary_impact": [
         {
           "year": 2027,
@@ -445,7 +445,7 @@
         "gov.dwp.pip.daily_living.standard"
       ],
       "status": "held-placeholder",
-      "receipt": "af4956896aca15c90c18230d16cb53b448188275e1e121863a839f39066b5c79",
+      "receipt": "f9c9051cde9524fd26548e0420735e43d4c061d7631ede2702818817b99ee742",
       "budgetary_impact": [
         {
           "year": 2027,
@@ -454,17 +454,17 @@
         },
         {
           "year": 2028,
-          "value_m": 358.0,
+          "value_m": 362.0,
           "fiscal_year": "2028-29"
         },
         {
           "year": 2029,
-          "value_m": 365.0,
+          "value_m": 370.0,
           "fiscal_year": "2029-30"
         },
         {
           "year": 2030,
-          "value_m": 373.0,
+          "value_m": 378.0,
           "fiscal_year": "2030-31"
         }
       ],
@@ -507,7 +507,7 @@
         },
         {
           "decile": 7,
-          "avg_change_gbp": 11.0,
+          "avg_change_gbp": 12.0,
           "pct_change": 0.02,
           "suppressed": false
         },
@@ -772,21 +772,21 @@
       "fiscal_year": "2028-29",
       "dwp_m": 37729.0,
       "dwp_caseload_k": 4778.0,
-      "reformed_m": 38318.0
+      "reformed_m": 38322.0
     },
     {
       "year": 2029,
       "fiscal_year": "2029-30",
       "dwp_m": 41217.0,
       "dwp_caseload_k": 5122.0,
-      "reformed_m": 41813.0
+      "reformed_m": 41818.0
     },
     {
       "year": 2030,
       "fiscal_year": "2030-31",
       "dwp_m": 44744.0,
       "dwp_caseload_k": 5408.0,
-      "reformed_m": 45348.0
+      "reformed_m": 45353.0
     }
   ],
   "households": [

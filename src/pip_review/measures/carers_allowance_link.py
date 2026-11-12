@@ -2,7 +2,8 @@
 
 A knock-on for measures that move award categories, not a measure on its
 own: chain it after a category modifier with ``after(modifier)``. In
-policyengine-uk 2.151.0 ``carers_allowance_pre_overlap`` tests reported
+policyengine-uk 2.174.1 ``carers_allowance_pre_overlap`` (through
+``carers_allowance_pre_couple_limit``, as 2.151.0 did directly) tests reported
 receipt, age, hours, earnings and country, never the cared-for person's
 award. This wraps it: a carer's allowance is set to zero when their
 household had a qualifying person (``is_severely_disabled_for_carers_allowance``)

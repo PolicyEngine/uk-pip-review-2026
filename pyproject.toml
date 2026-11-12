@@ -17,7 +17,7 @@ dependencies = [
 [project.optional-dependencies]
 # The engine and data pair, pinned to one certified bundle. Installed for real
 # runs only; the template's tests run without it (no data, no simulation).
-model = ["policyengine[uk]==6.11.1"]
+model = ["policyengine[uk]==6.17.2"]
 dev = ["pytest>=8.0", "ruff>=0.6"]
 
 [project.scripts]

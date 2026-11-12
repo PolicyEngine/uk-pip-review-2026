@@ -34,7 +34,7 @@ UC_NEW_CLAIMANT_HEALTH = (
     "gov.dwp.universal_credit.rebalancing.new_claimant_health_element"
 )
 UC_REBALANCING_ACTIVE = "gov.dwp.universal_credit.rebalancing.active"
-# The years policyengine-uk 2.151.0's UC rebalancing runs
+# The years policyengine-uk 2.174.1's UC rebalancing runs
 # (policyengine_uk.scenarios.uc_reform.REBALANCING_YEARS). Literal so the
 # builders load without the engine; tests/test_model_mode.py checks it
 # against the installed engine.
