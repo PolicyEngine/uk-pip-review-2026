@@ -11,4 +11,9 @@ Mock edits stay uncommitted in the working tree; each SHA below is bound to the 
 | statement.md received / hash checked | 14:00:13 | 14:00:13 | - | - | 761c6219891f | SHA-256 14a5aecc...427c: match |
 | G1 coverage ledger (due 14:10) | 14:00 | 14:01 | - | 1 min | 761c6219891f | every line routed + cause class; guard pass; ledger held locally |
 | Coding: registry replaced, one structural module | 14:01 | 14:07 | - | 6 min | - | household checks of each coded measure during coding |
-| G2 generate (model, status mock) | 14:08 | | | | (this commit) | |
+| G2 generate (model, status mock) | 14:07:36 | 14:19:09 | 588 s (baseline 52, 4 measures ~106 each, package 110, households) | 4 min hand checks | e345b3a993ac | provenance clean_tree false by design (mock edits uncommitted); worktree patch SHA-256 19710942...be73, module 2e03e99d...36b8, reforms.py 68ff1291...02e4; results.json SHA-256 e3f7285c...21fb; lock released 14:19:09 |
+| G2 hand checks: one household per coded measure + national arithmetic | 14:19 | 14:21 | - | 2 min | e345b3a993ac | 4/4 measures match to 1p (households) and to rounding (national); guard on results.json pass |
+| Trial G4 build + smoke (G2 data) and screenshot test | 14:19:4x | 14:20:12 | ~15 s | - | e345b3a993ac | smoke pass (noindex, status mock); servers killed; ports 3107/3108 free; lock released 14:19:55 |
+| documents.zip received / hash checked | 14:40:05 | 14:40:08 | - | - | e345b3a993ac | SHA-256 d2a6a6f0...6bd686: match |
+| G3 re-base + reconcile (to 15:10) | 14:40 | 14:41 | <1 s | 1 min | e345b3a993ac | reconcile 0 problems; every gap over 10% has a reason + cause class |
+| Scoring run 1 (pre-inject, specimen households) | 14:42 | | | | (this commit) | |
