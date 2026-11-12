@@ -263,7 +263,8 @@ REFORMS: list[Reform] = [
         route_reason=(
             "A knock-on, not a measure on its own: any measure that moves award "
             "levels applies the link (carers in the same household lose "
-            "Carer's Allowance when no one there qualifies any more). Carers "
+            "Carer's Allowance and the UC carer element when no one there "
+            "qualifies any more). Carers "
             "of someone outside the household are a fiscal line from the "
             "official figure."
         ),
