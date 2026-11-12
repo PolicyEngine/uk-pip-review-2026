@@ -5,8 +5,10 @@ child DLA awards mapped from them (daily living enhanced to DLA care highest,
 standard to middle; mobility enhanced to DLA mobility higher, standard to
 lower), and their PIP awards are set to none.
 
-Caveat: about 111 survey records in England and Wales hold PIP at 16 or 17,
-so any figure carries a sample-size note. Placeholder until the report's own
+Caveat: about 133 survey records hold PIP at 16 or 17 in the certified build
+microcosm-uk-2024-25-national-20261107T020434Z-eeb6093e (146 in the newer
+uk-frs-calibration-attempt-20261112T133744Z-6f918b81), so any figure carries a
+sample-size note. Placeholder until the report's own
 rule is known.
 
 Open check before any use: on a single household the move leaves net income

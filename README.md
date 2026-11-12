@@ -26,11 +26,11 @@ The review reports to the Secretary of State and is expected to set out recommen
 
 | Item | Version |
 |---|---|
-| policyengine | 6.11.1 (`policyengine[uk]`) |
-| policyengine-uk | 2.151.0 |
-| Dataset | Microcosm UK 2024-25 national build `20261025T091414Z-a6299504`, SHA-256 `b96a8cd625b645a409c063b1de5158532708a2f0d3c3897a794a8fb0bbd5064e` |
+| policyengine | 6.17.2 (`policyengine[uk]`) |
+| policyengine-uk | 2.174.1 |
+| Dataset | Microcosm UK 2024-25 national build `20261107T020434Z-eeb6093e`, SHA-256 `0a9b77db1c0dee2693cb2d47bad68da34cb662916eee4829942bcd45de581f25` |
 
-This is the bundle's certified pair; PIP-specific validation is pending (#1, #4). policyengine 6.11.1 to 6.15.0 all pin the same UK pair, so the 6.11.1 pin stays until the drill on 12 November (its answer key was built on it); the version is frozen again at G0. Microdata are licensed and are not stored in this repository; only aggregate outputs that pass a disclosure check are published.
+This is the bundle's certified pair; PIP-specific validation is pending (#1, #4). policyengine 6.17.2 pins policyengine-uk 2.174.1 and policyengine-core 3.33.3; the version is frozen again at G0. Microdata are licensed and are not stored in this repository; only aggregate outputs that pass a disclosure check are published.
 
 ## Licence
 
@@ -47,7 +47,7 @@ uv run python scripts/check_public_data.py
 cd dashboard && bun install && bun run dev   # local page on http://localhost:3000
 ```
 
-`uv sync --extra model` adds `policyengine[uk]==6.11.1` for model runs (`uv run pip-review generate --mode model`, which takes the heavy-run lock) and preset households (`uv run pip-review household <preset>`). `docs/RUNBOOK.md` has every command for the day.
+`uv sync --extra model` adds `policyengine[uk]==6.17.2` for model runs (`uv run pip-review generate --mode model`, which takes the heavy-run lock) and preset households (`uv run pip-review household <preset>`). `docs/RUNBOOK.md` has every command for the day.
 
 ## Layout
 

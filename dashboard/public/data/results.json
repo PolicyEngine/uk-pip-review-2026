@@ -3,11 +3,11 @@
   "status": "placeholder",
   "banner": "Pre-release template: placeholder figures, not PolicyEngine estimates",
   "engine": {
-    "policyengine": "6.11.1",
-    "policyengine_uk": "2.151.0",
+    "policyengine": "6.17.2",
+    "policyengine_uk": "2.174.1",
     "policyengine_core": "3.33.3",
-    "dataset": "microcosm-uk-2024-25-national-20261025T091414Z-a6299504",
-    "dataset_sha256": "b96a8cd625b645a409c063b1de5158532708a2f0d3c3897a794a8fb0bbd5064e",
+    "dataset": "microcosm-uk-2024-25-national-20261107T020434Z-eeb6093e",
+    "dataset_sha256": "0a9b77db1c0dee2693cb2d47bad68da34cb662916eee4829942bcd45de581f25",
     "certified_pair": true,
     "pip_validation": "pending (#1, #4)"
   },
@@ -170,7 +170,7 @@
         "gov.dwp.pip.daily_living.standard"
       ],
       "status": "held-placeholder",
-      "receipt": "fd0a7328917a99ba0dc8f6a81e24929b9690f725f0a0462312bf017ba24fd6ec",
+      "receipt": "8aa15c3c7292e5ff56e5bfbe760430b02682055668c49d3e407483f758c6e94a",
       "budgetary_impact": [
         {
           "year": 2027,
@@ -445,7 +445,7 @@
         "gov.dwp.pip.daily_living.standard"
       ],
       "status": "held-placeholder",
-      "receipt": "af4956896aca15c90c18230d16cb53b448188275e1e121863a839f39066b5c79",
+      "receipt": "f9c9051cde9524fd26548e0420735e43d4c061d7631ede2702818817b99ee742",
       "budgetary_impact": [
         {
           "year": 2027,
@@ -454,17 +454,17 @@
         },
         {
           "year": 2028,
-          "value_m": 358.0,
+          "value_m": 362.0,
           "fiscal_year": "2028-29"
         },
         {
           "year": 2029,
-          "value_m": 365.0,
+          "value_m": 370.0,
           "fiscal_year": "2029-30"
         },
         {
           "year": 2030,
-          "value_m": 373.0,
+          "value_m": 378.0,
           "fiscal_year": "2030-31"
         }
       ],
@@ -507,7 +507,7 @@
         },
         {
           "decile": 7,
-          "avg_change_gbp": 11.0,
+          "avg_change_gbp": 12.0,
           "pct_change": 0.02,
           "suppressed": false
         },
@@ -652,7 +652,7 @@
       ],
       "parameters": [],
       "status": "held-placeholder",
-      "receipt": "77584d80e63453ccd1fdb415168b991e2fcd497b3c4f43a0e6298ae19193405a",
+      "receipt": "12bf8681eaeb1af8a42e860247a63e8686c19f6592b6b7e5cc0ff3ca2de6cb58",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -670,7 +670,7 @@
       "recommendation": "Knock-on to passported support",
       "in_report": "not-yet-published",
       "route": "ledger",
-      "route_reason": "A knock-on, not a measure on its own: any measure that moves award levels applies the link (carers in the same household lose Carer's Allowance when no one there qualifies any more). Carers of someone outside the household are a fiscal line from the official figure.",
+      "route_reason": "A knock-on, not a measure on its own: any measure that moves award levels applies the link (carers in the same household lose Carer's Allowance and the UC carer element when no one there qualifies any more). Carers of someone outside the household are a fiscal line from the official figure.",
       "placeholder": true,
       "computable": false,
       "publishable": false,
@@ -683,7 +683,7 @@
       ],
       "parameters": [],
       "status": "ledger",
-      "receipt": "c52028cb464e6effc27fb8bc33ebfe1c7774b7214efbdc964ce14bc1cb479460",
+      "receipt": "b97f9ea1c69ce1967da7708a9d4c7af0e2a2610efd69433dec819cf22a5e0503",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -730,7 +730,7 @@
       "recommendation": "Move from child DLA to PIP at 18",
       "in_report": "not-yet-published",
       "route": "needs-pe-uk-first",
-      "route_reason": "Held until a check is done: moving people aged 16 and 17 from PIP to the matching child DLA awards should leave their income unchanged, but a national run does not, and the cause is not yet found. About 111 survey records hold PIP at those ages.",
+      "route_reason": "Held until a check is done: moving people aged 16 and 17 from PIP to the matching child DLA awards should leave their income unchanged, but a national run does not, and the cause is not yet found. About 133 survey records hold PIP at those ages in the certified build (eeb6093e), 146 in the newer 6f918b81 build.",
       "placeholder": true,
       "computable": false,
       "publishable": false,
@@ -739,7 +739,7 @@
       "issues": [],
       "parameters": [],
       "status": "needs-pe-uk-first",
-      "receipt": "de46c264986589330705dddf80d85f43fc1c0bf46fb69b13fa424eb2ed61ca40",
+      "receipt": "1f22cb2ca3f80d92dad1cf6cb29cb855a87f6fe589e491cb7c16f4b027af7245",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -772,21 +772,21 @@
       "fiscal_year": "2028-29",
       "dwp_m": 37729.0,
       "dwp_caseload_k": 4778.0,
-      "reformed_m": 38318.0
+      "reformed_m": 38322.0
     },
     {
       "year": 2029,
       "fiscal_year": "2029-30",
       "dwp_m": 41217.0,
       "dwp_caseload_k": 5122.0,
-      "reformed_m": 41813.0
+      "reformed_m": 41818.0
     },
     {
       "year": 2030,
       "fiscal_year": "2030-31",
       "dwp_m": 44744.0,
       "dwp_caseload_k": 5408.0,
-      "reformed_m": 45348.0
+      "reformed_m": 45353.0
     }
   ],
   "households": [

@@ -44,13 +44,13 @@ BASIS = {
     "behaviour": "No behavioural response",
 }
 
-# The certified pair in the installed policyengine bundle. policyengine 6.11.1
-# to 6.15.0 all pin this same UK pair. Model mode reads the installed bundle
+# The certified pair in the installed policyengine bundle (policyengine 6.17.2,
+# from its bundle manifest). Model mode reads the installed bundle
 # and refuses to run if it differs from this record.
 CERTIFIED_BUNDLE = {
-    "model_version": "2.151.0",
-    "certified_data_build_id": "microcosm-uk-2024-25-national-20261025T091414Z-a6299504",
-    "certified_data_artifact_sha256": "b96a8cd625b645a409c063b1de5158532708a2f0d3c3897a794a8fb0bbd5064e",
+    "model_version": "2.174.1",
+    "certified_data_build_id": "microcosm-uk-2024-25-national-20261107T020434Z-eeb6093e",
+    "certified_data_artifact_sha256": "0a9b77db1c0dee2693cb2d47bad68da34cb662916eee4829942bcd45de581f25",
 }
 PIP_VALIDATION = "pending (#1, #4)"
 

@@ -72,8 +72,11 @@ MISSING_INPUTS: dict[str, str] = {
         "No award duration, review date or new-claim flag; the model is static."
     ),
     "cared_for_outside_household": (
-        "No record of caring for someone outside the household, so Carer's "
-        "Allowance cannot follow the cared-for person's award (issue #2)."
+        "No record of caring for someone outside the household, so for a "
+        "carer in another household neither Carer's Allowance nor the UC "
+        "carer element can follow the cared-for person's award. Reaching them "
+        "needs a share-based adjustment or the cared-for link in "
+        "policyengine-uk #2889, item 5 (issue #2)."
     ),
     "pip_country_test": (
         "Scottish Adult Disability Payment and Northern Ireland PIP are stored "

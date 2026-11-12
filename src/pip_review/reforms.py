@@ -34,7 +34,7 @@ from pip_review.years import POLICY_YEARS
 DL = "gov.dwp.pip.daily_living"
 MOB = "gov.dwp.pip.mobility"
 
-# 2026-27 weekly rates in policyengine-uk 2.151.0 (from 2026-04-01).
+# 2026-27 weekly rates in policyengine-uk 2.174.1 (from 2026-04-01).
 CURRENT_RATES = {
     f"{DL}.standard": 76.70,
     f"{DL}.enhanced": 114.60,
@@ -43,7 +43,7 @@ CURRENT_RATES = {
 }
 
 
-# Current-law weekly rates for each policy year in policyengine-uk 2.151.0,
+# Current-law weekly rates for each policy year in policyengine-uk 2.174.1,
 # after CPI uprating (read from the installed parameters, rounded to 1p). A
 # measure written as a change to current law adds to these, so it does not
 # turn into a cut once uprating overtakes a cash figure. Check them at G0
@@ -56,22 +56,22 @@ CURRENT_LAW_RATES = {
         f"{MOB}.enhanced": 82.80,
     },
     2028: {
-        f"{DL}.standard": 81.05,
-        f"{DL}.enhanced": 121.10,
-        f"{MOB}.standard": 32.02,
-        f"{MOB}.enhanced": 84.54,
+        f"{DL}.standard": 82.08,
+        f"{DL}.enhanced": 122.64,
+        f"{MOB}.standard": 32.43,
+        f"{MOB}.enhanced": 85.62,
     },
     2029: {
-        f"{DL}.standard": 82.67,
-        f"{DL}.enhanced": 123.52,
-        f"{MOB}.standard": 32.66,
-        f"{MOB}.enhanced": 86.23,
+        f"{DL}.standard": 83.73,
+        f"{DL}.enhanced": 125.10,
+        f"{MOB}.standard": 33.08,
+        f"{MOB}.enhanced": 87.33,
     },
     2030: {
-        f"{DL}.standard": 84.33,
-        f"{DL}.enhanced": 125.99,
-        f"{MOB}.standard": 33.31,
-        f"{MOB}.enhanced": 87.95,
+        f"{DL}.standard": 85.57,
+        f"{DL}.enhanced": 127.85,
+        f"{MOB}.standard": 33.80,
+        f"{MOB}.enhanced": 89.25,
     },
 }
 
@@ -263,7 +263,8 @@ REFORMS: list[Reform] = [
         route_reason=(
             "A knock-on, not a measure on its own: any measure that moves award "
             "levels applies the link (carers in the same household lose "
-            "Carer's Allowance when no one there qualifies any more). Carers "
+            "Carer's Allowance and the UC carer element when no one there "
+            "qualifies any more). Carers "
             "of someone outside the household are a fiscal line from the "
             "official figure."
         ),
@@ -302,7 +303,8 @@ REFORMS: list[Reform] = [
             "Held until a check is done: moving people aged 16 and 17 from PIP "
             "to the matching child DLA awards should leave their income "
             "unchanged, but a national run does not, and the cause is not yet "
-            "found. About 111 survey records hold PIP at those ages."
+            "found. About 133 survey records hold PIP at those ages in the "
+            "certified build (eeb6093e), 146 in the newer 6f918b81 build."
         ),
     ),
 ]
