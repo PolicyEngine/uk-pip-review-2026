@@ -16,4 +16,7 @@ Mock edits stay uncommitted in the working tree; each SHA below is bound to the 
 | Trial G4 build + smoke (G2 data) and screenshot test | 14:19:4x | 14:20:12 | ~15 s | - | e345b3a993ac | smoke pass (noindex, status mock); servers killed; ports 3107/3108 free; lock released 14:19:55 |
 | documents.zip received / hash checked | 14:40:05 | 14:40:08 | - | - | e345b3a993ac | SHA-256 d2a6a6f0...6bd686: match |
 | G3 re-base + reconcile (to 15:10) | 14:40 | 14:41 | <1 s | 1 min | e345b3a993ac | reconcile 0 problems; every gap over 10% has a reason + cause class |
-| Scoring run 1 (pre-inject, specimen households) | 14:42 | | | | (this commit) | |
+| Scoring run 1 (pre-inject, specimen households) | 14:42:10 | 14:42:28 | 18 s | 2 min | 77881895d350 | 12 rows; worktree patch SHA-256 5d1d7bdd...fac3; module 2e03e99d...36b8 |
+| R11 loser-count check (G3 reason) | 14:43:49 | 14:44:31 | 42 s | 3 min | 77881895d350 | under lock, released 14:44:31; reconciliation re-run, 0 problems |
+| inject.md + inject_rows.csv received / hashes checked | 15:15:05 | 15:15:11 | - | - | 77881895d350 | inject.md 4e1e249f...72cb match; inject_rows.csv 8550cdb2...9fe match. Inject changes two coded measures' rate paths; all 12 specimen rows to be re-run |
+| G5 rerun (model, status mock) after inject fix | 15:17 | | | | (this commit) | |
