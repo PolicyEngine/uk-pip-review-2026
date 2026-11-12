@@ -26,7 +26,7 @@ Write these in the drill issue before 13:30:
 - `policyengine`, `policyengine-uk` and `policyengine-core` versions (pinned: policyengine 6.17.2, policyengine-uk 2.174.1, policyengine-core 3.33.3);
 - dataset name and SHA-256 of the national file (certified by policyengine 6.17.2: `microcosm-uk-2024-25-national-20261107T020434Z-eeb6093e`, SHA-256 `0a9b77db1c0dee2693cb2d47bad68da34cb662916eee4829942bcd45de581f25`);
 - "certified bundle pair; PIP-specific validation pending (#1, #4)" on every figure.
-- The pin moved from policyengine 6.11.1 (policyengine-uk 2.151.0) to 6.17.2 on 12 November. PIP current-law rates for 2028-29 onwards and the 2027-28 minimum wage differ between the two (see PR #14), The drill owner regenerated the key, `inject_rows.csv` and the T+40 tables on 6.17.2 at 13:00 on 12 November (single-household simulations; the national cell counts are unchanged) and updated the four hashes below; `statement.md`, `inject.md` and `make_key.py` are unchanged.
+- The pin moved from policyengine 6.11.1 (policyengine-uk 2.151.0) to 6.17.2 on 12 November. PIP current-law rates for 2028-29 onwards and the 2027-28 minimum wage differ between the two (see PR #14). The drill owner regenerated the key, `inject_rows.csv` and the T+40 tables on 6.17.2 at 13:00 on 12 November (single-household simulations; the national cell counts are unchanged) and updated the four hashes below; `statement.md`, `inject.md` and `make_key.py` are unchanged.
 
 ## Roles (one person each; only the integrator pushes)
 
