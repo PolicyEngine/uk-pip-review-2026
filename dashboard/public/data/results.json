@@ -38,6 +38,7 @@
       "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [
         "pip_activity_points"
       ],
@@ -46,7 +47,7 @@
       ],
       "parameters": [],
       "status": "not-computable",
-      "receipt": "4048466f1ad20642bb548417309fae544c0bf1851257cc8657946495463ee857",
+      "receipt": "8f17d59877bea603953ee506413042b57dfd5863624009697f75c20fb849c61f",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -69,13 +70,14 @@
       "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [
         "award_review_state"
       ],
       "issues": [],
       "parameters": [],
       "status": "ledger",
-      "receipt": "dd1b35a85d168e7785774ff4f3871cce5e68a818e496aa64963c1c710d0260b1",
+      "receipt": "e18fe86c6033be2abc9d122b71e42e8ce8e2eb1a8188d8b061bae7a52b14b5f2",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -98,6 +100,7 @@
       "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [
         "health_condition"
       ],
@@ -106,7 +109,7 @@
       ],
       "parameters": [],
       "status": "not-computable",
-      "receipt": "65e81ab9a00d46e547663724ef7f166c13a2c5d7c83d0d9a8779d91790624a25",
+      "receipt": "7858181d429b5210bbc22ca21441b311a4d0cccb47dfa93bdddae3791a7a6f35",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -129,6 +132,7 @@
       "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [
         "hospital_stay"
       ],
@@ -137,7 +141,7 @@
       ],
       "parameters": [],
       "status": "ledger",
-      "receipt": "a8bc866384bdd580525ac86134a2a9498552d83db41ed2fe7b5b7b5a78860cad",
+      "receipt": "3bcc414638d27ae102fb81804e87ace8f6e00cc9acfc8c976267db8a076618df",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -160,6 +164,7 @@
       "computable": true,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [
         1
@@ -169,7 +174,7 @@
         "gov.dwp.pip.daily_living.standard"
       ],
       "status": "held-placeholder",
-      "receipt": "8aa15c3c7292e5ff56e5bfbe760430b02682055668c49d3e407483f758c6e94a",
+      "receipt": "9f2bcc42d8c508d610a566ce985535d47444a7c42e9368458162c2add7aad8c1",
       "budgetary_impact": [
         {
           "year": 2027,
@@ -369,6 +374,7 @@
       "computable": true,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [
         3
@@ -378,7 +384,7 @@
         "gov.dwp.pip.mobility.points_thresholds.standard"
       ],
       "status": "held-placeholder",
-      "receipt": "292f3f590dfefc27e4af1239d94cbe40e81bcdd83a47e69a41c3a4b4311c3249",
+      "receipt": "524b8dc76ff4c17f7b5cf4b1c283273febf40026a036efca830c7707d303d979",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -401,6 +407,7 @@
       "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [
         "pip_activity_points"
       ],
@@ -409,7 +416,7 @@
       ],
       "parameters": [],
       "status": "not-computable",
-      "receipt": "b226b005b44f3cb1fe5a9d8751e69d4771236a8ea60d5195177c766ea5b48d08",
+      "receipt": "16389635c7bc2006c4c782903994a6a64c3a692d24c705406ffbcf58fb126567",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -432,6 +439,7 @@
       "computable": true,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [
         1,
@@ -441,7 +449,7 @@
         "gov.dwp.pip.daily_living.standard"
       ],
       "status": "held-placeholder",
-      "receipt": "f9c9051cde9524fd26548e0420735e43d4c061d7631ede2702818817b99ee742",
+      "receipt": "106b2a4161872e24d52df2564e4be6e452e6350856756d2f06eae25a65cd7b89",
       "budgetary_impact": [
         {
           "year": 2027,
@@ -641,6 +649,7 @@
       "computable": true,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [
         6,
@@ -648,7 +657,7 @@
       ],
       "parameters": [],
       "status": "held-placeholder",
-      "receipt": "66b2a88ec166aa99c225b32cabbcb4de8f563956bba5e751dfc334e6018149e8",
+      "receipt": "e587dff91f5262c146931fdb895270d3702054eb8a516b312ec03637d8a4f557",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -671,6 +680,7 @@
       "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [
         "cared_for_outside_household"
       ],
@@ -679,7 +689,7 @@
       ],
       "parameters": [],
       "status": "ledger",
-      "receipt": "b97f9ea1c69ce1967da7708a9d4c7af0e2a2610efd69433dec819cf22a5e0503",
+      "receipt": "1be3dead0c7c2dac00d746f9e0b537e240a593d14f0c0b958c77676e5279a8ac",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -702,13 +712,14 @@
       "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [
         7
       ],
       "parameters": [],
       "status": "ledger",
-      "receipt": "0ecabb914b344c9583167a366c4a8c2db7c9c6894b7888a8946275662cbbe8e9",
+      "receipt": "6e1793240f61301e3a027d4b081c1a7d4453c730d1be658d8486aff05b26852c",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -731,11 +742,12 @@
       "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [],
       "parameters": [],
       "status": "needs-pe-uk-first",
-      "receipt": "d18ec986ad0bfac5bf0052531266cff83e8251d47fa2373aef83a6bb34799c22",
+      "receipt": "87ccdcf95b83d84e7de8f7ae1c2e3a077050f9c571e43df796e7c289a4c3332f",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,

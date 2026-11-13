@@ -66,6 +66,13 @@ class Reform(BaseModel):
             "published as a figure."
         ),
     )
+    zero_reason: str | None = Field(
+        None,
+        description=(
+            "Why a coded measure's £0 national figure is right. Without it, a "
+            "measure that scores £0 in every year fails the publication check."
+        ),
+    )
     data_needs: list[str] = Field(default_factory=list)
     issues: list[int] = Field(
         default_factory=list, description="Issues in this repository that block it"
@@ -152,6 +159,7 @@ class Reform(BaseModel):
             "computable": self.computable,
             "publishable": self.publishable,
             "withdrawn_reason": self.withdrawn_reason,
+            "zero_reason": self.zero_reason,
             "data_needs": list(self.data_needs),
             "issues": list(self.issues),
             "parameters": sorted(self.parameter_changes or {}),

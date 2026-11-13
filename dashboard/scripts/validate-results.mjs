@@ -3,6 +3,8 @@
 // - status is placeholder, mock, provisional or final, with a banner for
 //   every status except final, and MOCK in a mock banner;
 // - a measure without figures is null, never zero;
+// - a coded measure shown at £0 in every year needs a zero_reason;
+// - a provisional or final page needs the pinned pair (engine.certified_pair);
 // - on a provisional or final page, every public data file has a sign-off
 //   row in data_inputs/public_data_review.csv with its current SHA-256.
 import { createHash } from "node:crypto";
@@ -22,11 +24,20 @@ if (data.status === "mock" && !data.banner?.includes("MOCK")) errors.push("a moc
 if (data.measures?.some((m) => m.placeholder) && !PLACEHOLDER_STATUSES.includes(data.status)) {
   errors.push("placeholder measures need status placeholder or mock");
 }
+if (["provisional", "final"].includes(data.status) && data.engine?.certified_pair !== true) {
+  errors.push("a provisional or final page needs the pinned build and engine (engine.certified_pair)");
+}
 for (const m of data.measures ?? []) {
   const figures = m.computable && m.status !== "withdrawn";
   if (!figures && m.budgetary_impact !== null) errors.push(`${m.id}: no figures expected, but carries one`);
   if (figures && !PLACEHOLDER_STATUSES.includes(data.status) && !Array.isArray(m.budgetary_impact)) {
     errors.push(`${m.id}: modelled but has no figures`);
+  }
+  const values = (Array.isArray(m.budgetary_impact) ? m.budgetary_impact : [])
+    .map((row) => row?.value_m)
+    .filter((v) => v !== null && v !== undefined);
+  if (figures && values.length && values.every((v) => Math.abs(v) < 0.5) && !m.zero_reason) {
+    errors.push(`${m.id}: a coded measure scores £0 in every year; route it not-computable with the reason, or give zero_reason`);
   }
 }
 
