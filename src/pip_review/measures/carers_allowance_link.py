@@ -27,8 +27,9 @@ other rules that read it) follows the cared-for person's award too.
 On policyengine-uk 2.177.7 the caring-hours route to Carer's Allowance and
 to ``is_carer_for_benefits`` also needs ``cares_for_severely_disabled_person``
 (default true), and a reported award counts whatever it says. Build 6f918b81
-stores that flag, true for carers, and it does not follow the cared-for
-person's award, so it would keep both payments. The link therefore overrides
+stores that flag (its values have not been read; carers are expected to
+hold true), and it does not follow the cared-for person's award, so a true
+value would keep both payments. The link therefore overrides
 the two outputs above, not the flag: for the people it reaches, a stored true
 flag no longer pays either.
 
