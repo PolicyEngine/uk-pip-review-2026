@@ -219,3 +219,25 @@ def test_parameters_that_act_through_points_are_data_limited():
     assert not any(
         p.endswith(("daily_living.standard", "daily_living.enhanced")) for p in flagged
     )
+
+
+def test_points_layout_scores_the_gateway_and_thresholds(tmp_path_factory):
+    """A file shaped like build 9e18f010 (2024 only; points, no category; the
+    UC limited-capability flag stored): the gateway runs over the stored
+    flag and a lower points threshold moves awards in the scored years."""
+    os.environ["PIP_REVIEW_NO_LOCK"] = "1"
+    path = write(
+        tmp_path_factory.mktemp("points") / "points.h5", households=300, layout="points"
+    )
+    results = pipeline.build_model_results(
+        dataset=str(path),
+        status="mock",
+        measure_ids=["uc_health_gateway", "points_thresholds"],
+        households=False,
+    )
+    assert publication.validate_public(results) == []
+    by_id = {m["id"]: m for m in results["measures"]}
+    thresholds = by_id["points_thresholds"]["budgetary_impact"]
+    assert all(row["value_m"] > 0 for row in thresholds)  # more awards: a cost
+    gateway = by_id["uc_health_gateway"]["budgetary_impact"]
+    assert any(row["value_m"] != 0 for row in gateway)

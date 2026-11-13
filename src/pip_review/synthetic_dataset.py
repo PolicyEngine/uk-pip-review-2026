@@ -30,12 +30,31 @@ REGIONS = (
     "NORTHERN_IRELAND",
 )
 CATEGORIES = ("NONE", "STANDARD", "ENHANCED")
+# Layouts: "categories" stores PIP award categories, as build eeb6093e does;
+# "points" is shaped like build 9e18f010: a 2024 file storing assessment
+# points (no category) and the UC limited-capability flag.
+LAYOUTS = ("categories", "points")
+POINTS_YEAR = 2024
 
 
-def build(households: int = DEFAULT_HOUSEHOLDS, seed: int = DEFAULT_SEED):
+def _points(rng, has_pip: bool) -> int:
+    """Invented points: 8 or more for a recipient, under 8 otherwise (some
+    at 6 or 7, so a lower threshold moves people)."""
+    if has_pip:
+        return int(rng.integers(8, 20))
+    return int(rng.integers(0, 8)) if rng.random() < 0.3 else -1
+
+
+def build(
+    households: int = DEFAULT_HOUSEHOLDS,
+    seed: int = DEFAULT_SEED,
+    layout: str = "categories",
+):
     import pandas as pd
     from policyengine_uk.data import UKSingleYearDataset
 
+    if layout not in LAYOUTS:
+        raise ValueError(f"layout must be one of {LAYOUTS}")
     rng = np.random.default_rng(seed)
     people, benunits, rows = [], [], []
     person_id = 0
@@ -58,22 +77,28 @@ def build(households: int = DEFAULT_HOUSEHOLDS, seed: int = DEFAULT_SEED):
                 else 0.0
             )
             has_pip = adult and rng.random() < 0.35
-            people.append(
-                {
-                    "person_id": person_id,
-                    "person_benunit_id": household,
-                    "person_household_id": household,
-                    "age": age,
-                    "employment_income": earnings,
-                    "state_pension": 11_973.0 if adult and pensioner else 0.0,
-                    "pip_dl_category": (
-                        CATEGORIES[int(rng.integers(1, 3))] if has_pip else "NONE"
-                    ),
-                    "pip_m_category": (
-                        CATEGORIES[int(rng.integers(0, 3))] if has_pip else "NONE"
-                    ),
-                }
-            )
+            person = {
+                "person_id": person_id,
+                "person_benunit_id": household,
+                "person_household_id": household,
+                "age": age,
+                "employment_income": earnings,
+                "state_pension": 11_973.0 if adult and pensioner else 0.0,
+            }
+            if layout == "categories":
+                person["pip_dl_category"] = (
+                    CATEGORIES[int(rng.integers(1, 3))] if has_pip else "NONE"
+                )
+                person["pip_m_category"] = (
+                    CATEGORIES[int(rng.integers(0, 3))] if has_pip else "NONE"
+                )
+            else:
+                person["pip_dl_points"] = _points(rng, has_pip)
+                person["pip_m_points"] = _points(rng, has_pip and rng.random() < 0.7)
+                person["uc_limited_capability_for_WRA"] = bool(
+                    adult and not pensioner and rng.random() < 0.15
+                )
+            people.append(person)
         benunits.append({"benunit_id": household})
         rows.append(
             {
@@ -89,12 +114,17 @@ def build(households: int = DEFAULT_HOUSEHOLDS, seed: int = DEFAULT_SEED):
         person=pd.DataFrame(people),
         benunit=pd.DataFrame(benunits),
         household=pd.DataFrame(rows),
-        fiscal_year=FISCAL_YEAR,
+        fiscal_year=FISCAL_YEAR if layout == "categories" else POINTS_YEAR,
     )
 
 
-def write(path: Path, households: int = DEFAULT_HOUSEHOLDS, seed: int = DEFAULT_SEED):
+def write(
+    path: Path,
+    households: int = DEFAULT_HOUSEHOLDS,
+    seed: int = DEFAULT_SEED,
+    layout: str = "categories",
+):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    build(households, seed).save(str(path))
+    build(households, seed, layout).save(str(path))
     return path
