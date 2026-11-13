@@ -26,11 +26,12 @@ The review reports to the Secretary of State and is expected to set out recommen
 
 | Item | Version |
 |---|---|
-| policyengine | 6.17.2 (`policyengine[uk]`) |
-| policyengine-uk | 2.174.1 |
-| Dataset | Microcosm UK 2024-25 national build `20261107T020434Z-eeb6093e`, SHA-256 `0a9b77db1c0dee2693cb2d47bad68da34cb662916eee4829942bcd45de581f25` |
+| policyengine-uk | 2.177.7 (the version the build below was made and certified on) |
+| policyengine-core | 3.34.10 (likewise) |
+| policyengine.py | not used: no release covers this pair |
+| Dataset | Microcosm UK 2024-25 national build `uk-frs-calibration-attempt-20261110T204756Z-9e18f010`, SHA-256 `adb6204d0af5e08a42cccec81250ce116518687f964e31c654a17d658b3416e8` |
 
-This is the bundle's certified pair; PIP-specific validation is pending (#1, #4). policyengine 6.17.2 pins policyengine-uk 2.174.1 and policyengine-core 3.33.3; the version is frozen again at G0. Microdata are licensed and are not stored in this repository; only aggregate outputs that pass a disclosure check are published.
+Every figure is labelled "build uk-frs-calibration-attempt-20261110T204756Z-9e18f010, policyengine-uk 2.177.7, not in a policyengine.py release"; PIP-specific validation is pending (#1, #4). The rule is the newest published build with the engine it was built on, never a build with another engine version; build `…-6f918b81` (also 2.177.7) will supersede this one once published, a change to the one constant `DATA_BUILD` in `src/pip_review/data_build.py`. The pair is frozen again at G0. Microdata are licensed and are not stored in this repository; only aggregate outputs that pass a disclosure check are published.
 
 ## Licence
 
@@ -47,7 +48,7 @@ uv run python scripts/check_public_data.py
 cd dashboard && bun install && bun run dev   # local page on http://localhost:3000
 ```
 
-`uv sync --extra model` adds `policyengine[uk]==6.17.2` for model runs (`uv run pip-review generate --mode model`, which takes the heavy-run lock) and preset households (`uv run pip-review household <preset>`). `docs/RUNBOOK.md` has every command for the day.
+`uv sync --extra model` adds policyengine-uk 2.177.7 and policyengine-core 3.34.10 for model runs (`uv run pip-review generate --mode model`, which takes the heavy-run lock) and preset households (`uv run pip-review household <preset>`). `docs/RUNBOOK.md` has every command for the day.
 
 ## Layout
 

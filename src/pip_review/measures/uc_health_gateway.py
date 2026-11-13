@@ -5,12 +5,18 @@ limited capability for work-related activity exactly when they hold a
 qualifying PIP daily living award, in place of the Work Capability
 Assessment flag. Other people keep the model's own determination.
 
-``uc_limited_capability_for_WRA`` is a formula variable and is not stored in
-the national file, so it can be wrapped here. The award that qualifies is a
-literal default; change it in this module only. Placeholder until the
-report's own rule is known.
+``uc_limited_capability_for_WRA`` is a formula variable. Microcosm build
+9e18f010 stores it as an input (eeb6093e did not), so the wrapper takes the
+stored values out of the simulation and uses them as the model's own
+determination for the people it does not override (``keep_stored``); on a
+file without it, the formula gives that value as before. The award that
+qualifies is a literal default; change it in this module only. Placeholder
+until the report's own rule is known.
 
-The UC rebalancing step in policyengine-uk 2.174.1
+On 9e18f010 ``pip_dl_category`` is not stored either: it is derived from the
+stored assessment points, which the wrapper reads in the same way.
+
+The UC rebalancing step in policyengine-uk 2.174.1 and 2.177.7
 (``policyengine_uk/scenarios/uc_reform.py``, ``add_universal_credit_reform``)
 runs while the simulation is built, before this modifier. For every year in
 ``REBALANCING_YEARS`` (2026 to the end of the projection) it calculates
@@ -45,7 +51,7 @@ def modifier(sim, qualifying_awards=QUALIFYING_AWARDS):
         working_age = (person("age", period) >= 16) & ~person("is_SP_age", period)
         return np.where(working_age, qualifies, previous)
 
-    replace_formula(sim, VARIABLE, formula)
+    replace_formula(sim, VARIABLE, formula, keep_stored=True)
     rerun_uc_rebalancing(sim)
 
 

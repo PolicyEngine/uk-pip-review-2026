@@ -28,8 +28,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     generate.add_argument(
         "--dataset",
-        help="Model mode: a dataset file instead of the bundle's certified "
-        "national file (tests only; figures are never certified)",
+        help="Model mode: a dataset file instead of the pinned national build "
+        "(tests only; figures are never the pinned pair)",
     )
     generate.add_argument(
         "--measures", help="Model mode: comma-separated ids (default: all computable)"

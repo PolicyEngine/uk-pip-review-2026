@@ -13,6 +13,8 @@ with the reason, and never as £0 (``pip_review.publication``).
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 
+from pip_review.data_build import DATA_BUILD
+
 
 @dataclass(frozen=True)
 class DataLimit:
@@ -32,7 +34,7 @@ class DataLimit:
         return any(path == p or path.startswith(p + ".") for p in self.parameters)
 
 
-LIMITS: tuple[DataLimit, ...] = (
+ALL_LIMITS: tuple[DataLimit, ...] = (
     DataLimit(
         key="pip_daily_living_points",
         parameters=("gov.dwp.pip.daily_living.points_thresholds",),
@@ -56,6 +58,34 @@ LIMITS: tuple[DataLimit, ...] = (
         issue=3,
     ),
 )
+
+# The limits that hold on each Microcosm national build (its 8-character id).
+# eeb6093e stores PIP award categories and no assessment points, so a stored
+# award overrides points and a threshold change moves no one. 9e18f010
+# (data_build.DATA_BUILD) is a single-year 2024 file whose person table
+# stores pip_dl_points and pip_m_points and no PIP category column (from its
+# HDFStore metadata, 13 November 2026): policyengine-uk 2.177.7 derives each
+# category from the latest points against that year's thresholds, so a
+# threshold change moves awards (tests/test_measure_households.py). Only the
+# pinned build's entries are live (``LIMITS``).
+LIMITS_BY_BUILD: dict[str, tuple[str, ...]] = {
+    "eeb6093e": ("pip_daily_living_points", "pip_mobility_points"),
+    "9e18f010": (),
+}
+
+
+def limits_for_build(build: str) -> tuple[DataLimit, ...]:
+    """The data limits that hold on a build (its 8-character id)."""
+    if build not in LIMITS_BY_BUILD:
+        raise KeyError(
+            f"No data limits recorded for build {build}: check each entry of "
+            "ALL_LIMITS against it first."
+        )
+    keys = LIMITS_BY_BUILD[build]
+    return tuple(limit for limit in ALL_LIMITS if limit.key in keys)
+
+
+LIMITS: tuple[DataLimit, ...] = limits_for_build(DATA_BUILD.short_id)
 
 # Inputs a measure may need that no parameter path names. The registry lists
 # them under ``data_needs``; the page shows the reason.

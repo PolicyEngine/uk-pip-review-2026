@@ -21,6 +21,7 @@ needs-pe-uk-first, with the reason shown on the page.
 
 import warnings
 
+from pip_review.data_limits import is_only_data_limited
 from pip_review.measure_templates import (
     DataLimitedWarning,
     merge,
@@ -34,7 +35,7 @@ from pip_review.years import POLICY_YEARS
 DL = "gov.dwp.pip.daily_living"
 MOB = "gov.dwp.pip.mobility"
 
-# 2026-27 weekly rates in policyengine-uk 2.174.1 (from 2026-04-01).
+# 2026-27 weekly rates in policyengine-uk 2.174.1, unchanged on 2.177.7 (from 2026-04-01).
 CURRENT_RATES = {
     f"{DL}.standard": 76.70,
     f"{DL}.enhanced": 114.60,
@@ -43,7 +44,7 @@ CURRENT_RATES = {
 }
 
 
-# Current-law weekly rates for each policy year in policyengine-uk 2.174.1,
+# Current-law weekly rates for each policy year in policyengine-uk 2.174.1 (unchanged on 2.177.7),
 # after CPI uprating (read from the installed parameters, rounded to 1p). A
 # measure written as a change to current law adds to these, so it does not
 # turn into a cut once uprating overtakes a cash figure. Check them at G0
@@ -89,13 +90,17 @@ def _current_law_plus(path: str, weekly: float = 0.0, factor: float = 1.0):
 
 
 with warnings.catch_warnings():
-    # The threshold placeholder is data limited by design; the warning is
-    # expected and the route below records it.
+    # On a build without assessment points the threshold placeholder is data
+    # limited; the warning is expected and the route below records it.
     warnings.simplefilter("ignore", DataLimitedWarning)
     _THRESHOLDS = merge(
         threshold_change(f"{DL}.points_thresholds.standard", _every_year(6)),
         threshold_change(f"{MOB}.points_thresholds.standard", _every_year(6)),
     )
+# Build-aware (data_limits.LIMITS_BY_BUILD): computable on a build that
+# stores assessment points (9e18f010), not computable on one that stores
+# only awards (eeb6093e).
+_THRESHOLDS_LIMITED = is_only_data_limited(list(_THRESHOLDS))
 
 
 REFORMS: list[Reform] = [
@@ -110,10 +115,11 @@ REFORMS: list[Reform] = [
         likelihood=Likelihood.HIGH,
         route=Route.NOT_COMPUTABLE,
         route_reason=(
-            "Acts through assessment points and the share of days a descriptor "
-            "applies; the data hold neither."
+            "Acts through the score in each activity and the share of days a "
+            "descriptor applies; the data hold neither."
         ),
-        data_needs=["pip_dl_points", "pip_m_points", "pip_activity_points"],
+        data_needs=(["pip_dl_points", "pip_m_points"] if _THRESHOLDS_LIMITED else [])
+        + ["pip_activity_points"],
         issues=[3],
     ),
     Reform(
@@ -193,13 +199,18 @@ REFORMS: list[Reform] = [
         ),
         recommendation="Recalibrate activities, descriptors and points",
         likelihood=Likelihood.MEDIUM,
-        route=Route.NOT_COMPUTABLE,
+        route=Route.NOT_COMPUTABLE if _THRESHOLDS_LIMITED else Route.DASHBOARD_PARAM,
         route_reason=(
             "The parameter exists but moves no one: the data hold awards, not "
             "points, and a stored award overrides points."
+            if _THRESHOLDS_LIMITED
+            else "The data hold each claimant's assessment points and the "
+            "model derives awards from them, so a threshold is a parameter; "
+            "modelled directly. Carer's Allowance does not follow the new "
+            "awards in this measure."
         ),
         parameter_changes=_THRESHOLDS,
-        data_needs=["pip_dl_points", "pip_m_points"],
+        data_needs=["pip_dl_points", "pip_m_points"] if _THRESHOLDS_LIMITED else [],
         issues=[3],
     ),
     Reform(
@@ -304,7 +315,8 @@ REFORMS: list[Reform] = [
             "to the matching child DLA awards should leave their income "
             "unchanged, but a national run does not, and the cause is not yet "
             "found. About 133 survey records hold PIP at those ages in the "
-            "certified build (eeb6093e), 146 in the newer 6f918b81 build."
+            "build eeb6093e and 146 in build 6f918b81 (not yet counted on "
+            "9e18f010, the build in use)."
         ),
     ),
 ]

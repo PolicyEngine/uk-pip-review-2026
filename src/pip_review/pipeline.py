@@ -6,8 +6,8 @@ Two modes:
   for the tables only a model run fills, and the banner. No data are loaded
   and no simulation is built.
 - ``model``: runs current law, each computable measure and the package of
-  all of them through ``managed_microsimulation`` on the bundle's certified
-  national file (or a named file for tests), one simulation per process
+  all of them through ``policyengine_uk.Microsimulation`` on the pinned
+  Microcosm build (``data_build.DATA_BUILD``; or a named file for tests), one simulation per process
   (``pip_review.model_run``), inside the heavy-run lock. ``pip_review.aggregate``
   builds the England and Wales tables and applies the disclosure floor.
 
@@ -30,6 +30,7 @@ from typing import Any
 import numpy as np
 
 from pip_review import data_limits, model_limits, publication
+from pip_review.data_build import DATA_BUILD, LABEL
 from pip_review.household import PRESETS, pip_award
 from pip_review.reforms import CURRENT_LAW_RATES, REFORMS
 from pip_review.years import BASE_YEAR, POLICY_YEARS, fiscal_label
@@ -44,13 +45,14 @@ BASIS = {
     "behaviour": "No behavioural response",
 }
 
-# The certified pair in the installed policyengine bundle (policyengine 6.17.2,
-# from its bundle manifest). Model mode reads the installed bundle
-# and refuses to run if it differs from this record.
+# The pinned pair (data_build.DATA_BUILD): the Microcosm build and the
+# policyengine-uk version it was built and certified on. No policyengine.py
+# release covers it. Model mode records what each run loaded and refuses to
+# run if it differs from this record.
 CERTIFIED_BUNDLE = {
-    "model_version": "2.174.1",
-    "certified_data_build_id": "microcosm-uk-2024-25-national-20261107T020434Z-eeb6093e",
-    "certified_data_artifact_sha256": "0a9b77db1c0dee2693cb2d47bad68da34cb662916eee4829942bcd45de581f25",
+    "model_version": DATA_BUILD.engine,
+    "dataset_build_id": DATA_BUILD.id,
+    "runtime_dataset_sha256": DATA_BUILD.sha256,
 }
 PIP_VALIDATION = "pending (#1, #4)"
 
@@ -74,30 +76,39 @@ PLACEHOLDER_DECILE_SHAPE = (1.4, 1.6, 1.5, 1.3, 1.1, 0.9, 0.8, 0.6, 0.5, 0.3)
 WEEKS = 52
 
 
-def locked_versions() -> dict[str, str]:
-    """policyengine, policyengine-uk and policyengine-core versions in uv.lock."""
+def locked_versions() -> dict[str, str | None]:
+    """policyengine, policyengine-uk and policyengine-core versions in uv.lock
+    (policyengine is None: no policyengine.py release covers the pair)."""
     text = LOCK_FILE.read_text()
     out = {}
     for package in ("policyengine", "policyengine-uk", "policyengine-core"):
         match = re.search(rf'name = "{re.escape(package)}"\nversion = "([^"]+)"', text)
-        out[package.replace("-", "_")] = match.group(1) if match else "unknown"
+        out[package.replace("-", "_")] = match.group(1) if match else None
     return out
+
+
+def _installed(package: str) -> str | None:
+    try:
+        return metadata.version(package)
+    except metadata.PackageNotFoundError:
+        return None
 
 
 def engine_record(installed: bool = False) -> dict[str, Any]:
     """The engine block. Placeholder mode reads uv.lock; model mode the install."""
     if installed:
         versions = {
-            key: metadata.version(key.replace("_", "-"))
+            key: _installed(key.replace("_", "-"))
             for key in ("policyengine", "policyengine_uk", "policyengine_core")
         }
     else:
         versions = locked_versions()
     return {
         **versions,
-        "dataset": CERTIFIED_BUNDLE["certified_data_build_id"],
-        "dataset_sha256": CERTIFIED_BUNDLE["certified_data_artifact_sha256"],
+        "dataset": DATA_BUILD.id,
+        "dataset_sha256": DATA_BUILD.sha256,
         "certified_pair": True,
+        "label": LABEL,
         "pip_validation": PIP_VALIDATION,
     }
 
@@ -395,8 +406,8 @@ def _check_bundle(bundle: dict[str, str], dataset: str | None) -> None:
     for key, expected in CERTIFIED_BUNDLE.items():
         if bundle.get(key) != expected:
             raise RuntimeError(
-                f"Installed bundle {key} is {bundle.get(key)!r}, not the "
-                f"recorded {expected!r}. Update CERTIFIED_BUNDLE at G0 and "
+                f"The run loaded {key} {bundle.get(key)!r}, not the pinned "
+                f"{expected!r}. Update data_build.DATA_BUILD at G0 and "
                 "regenerate, or install the pinned engine."
             )
 
@@ -442,7 +453,7 @@ def build_model_results(
 ) -> dict[str, Any]:
     """Model figures for every computable, non-withdrawn measure.
 
-    ``dataset=None`` runs the bundle's certified national file inside the
+    ``dataset=None`` runs the pinned national build inside the
     heavy-run lock. A placeholder measure may run only under status
     'placeholder' or 'mock' (``validate_public`` refuses it otherwise).
     """
@@ -503,6 +514,7 @@ def build_model_results(
                 "dataset": "unmanaged test file",
                 "dataset_sha256": bundle.get("runtime_dataset_sha256"),
                 "certified_pair": False,
+                "label": None,
             }
         )
     results = _assemble(

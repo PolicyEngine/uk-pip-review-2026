@@ -36,14 +36,26 @@ def test_parameter_years_cover_policy_years(reform):
         assert sorted(values) == [str(y) for y in POLICY_YEARS], path
 
 
-def test_points_threshold_measures_are_not_computable():
-    # The brief's one concrete PIP rule: a points measure is never costed.
+def test_points_threshold_measures_follow_the_build():
+    # The brief's rule: a points measure is never costed on data without
+    # points. The pinned build (9e18f010) stores points and no award
+    # category, so there the measures are computable (data_limits).
+    from pip_review.data_build import DATA_BUILD
+
+    points_stored = not data_limits.LIMITS_BY_BUILD[DATA_BUILD.short_id]
     for reform in REFORMS:
         paths = list(reform.parameter_changes or {})
         if any("points_thresholds" in p for p in paths):
-            assert data_limits.is_only_data_limited(paths)
-            assert reform.route is Route.NOT_COMPUTABLE
-            assert not reform.computable
+            assert data_limits.is_only_data_limited(paths) is not points_stored
+            assert reform.computable is points_stored
+            expected = Route.DASHBOARD_PARAM if points_stored else Route.NOT_COMPUTABLE
+            assert reform.route is expected
+
+
+def test_points_limits_hold_on_the_build_without_points():
+    keys = {limit.key for limit in data_limits.limits_for_build("eeb6093e")}
+    assert keys == {"pip_daily_living_points", "pip_mobility_points"}
+    assert data_limits.limits_for_build("9e18f010") == ()
 
 
 def test_computable_measures():
@@ -52,9 +64,12 @@ def test_computable_measures():
         "cost_category_tiers",
         "standard_daily_living_rate",
         "uc_health_gateway",
+        "points_thresholds",  # computable on 9e18f010, which stores points
     }
     for reform in computable.values():
-        if reform.route is Route.DASHBOARD_PARAM:
+        if reform.id == "points_thresholds":
+            assert all("points_thresholds" in p for p in reform.parameter_changes)
+        elif reform.route is Route.DASHBOARD_PARAM:
             assert set(reform.parameter_changes) <= set(CURRENT_RATES)
         else:
             assert reform.simulation_modifier.__module__.startswith(

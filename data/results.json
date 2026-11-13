@@ -3,12 +3,13 @@
   "status": "placeholder",
   "banner": "Pre-release template: placeholder figures, not PolicyEngine estimates",
   "engine": {
-    "policyengine": "6.17.2",
-    "policyengine_uk": "2.174.1",
-    "policyengine_core": "3.33.3",
-    "dataset": "microcosm-uk-2024-25-national-20261107T020434Z-eeb6093e",
-    "dataset_sha256": "0a9b77db1c0dee2693cb2d47bad68da34cb662916eee4829942bcd45de581f25",
+    "policyengine": null,
+    "policyengine_uk": "2.177.7",
+    "policyengine_core": "3.34.10",
+    "dataset": "uk-frs-calibration-attempt-20261110T204756Z-9e18f010",
+    "dataset_sha256": "adb6204d0af5e08a42cccec81250ce116518687f964e31c654a17d658b3416e8",
     "certified_pair": true,
+    "label": "build uk-frs-calibration-attempt-20261110T204756Z-9e18f010, policyengine-uk 2.177.7, not in a policyengine.py release",
     "pip_validation": "pending (#1, #4)"
   },
   "basis": {
@@ -32,14 +33,12 @@
       "recommendation": "Change how fluctuating conditions are assessed",
       "in_report": "not-yet-published",
       "route": "not-computable",
-      "route_reason": "Acts through assessment points and the share of days a descriptor applies; the data hold neither.",
+      "route_reason": "Acts through the score in each activity and the share of days a descriptor applies; the data hold neither.",
       "placeholder": true,
       "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
       "data_needs": [
-        "pip_dl_points",
-        "pip_m_points",
         "pip_activity_points"
       ],
       "issues": [
@@ -47,7 +46,7 @@
       ],
       "parameters": [],
       "status": "not-computable",
-      "receipt": "f90d1726432adf00eb9ca36d81130003bc959aba87d1ddb6b82031e5089ef89b",
+      "receipt": "4048466f1ad20642bb548417309fae544c0bf1851257cc8657946495463ee857",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -364,16 +363,13 @@
       "description": "Illustrative: the standard rate of each component from 6 points rather than 8.",
       "recommendation": "Recalibrate activities, descriptors and points",
       "in_report": "not-yet-published",
-      "route": "not-computable",
-      "route_reason": "The parameter exists but moves no one: the data hold awards, not points, and a stored award overrides points.",
+      "route": "dashboard-param",
+      "route_reason": "The data hold each claimant's assessment points and the model derives awards from them, so a threshold is a parameter; modelled directly. Carer's Allowance does not follow the new awards in this measure.",
       "placeholder": true,
-      "computable": false,
+      "computable": true,
       "publishable": false,
       "withdrawn_reason": null,
-      "data_needs": [
-        "pip_dl_points",
-        "pip_m_points"
-      ],
+      "data_needs": [],
       "issues": [
         3
       ],
@@ -381,8 +377,8 @@
         "gov.dwp.pip.daily_living.points_thresholds.standard",
         "gov.dwp.pip.mobility.points_thresholds.standard"
       ],
-      "status": "not-computable",
-      "receipt": "5a735ae9cfa0f2b04fce6bbd36836da0f18e2514b4a33efea1dc9d02a9b04779",
+      "status": "held-placeholder",
+      "receipt": "292f3f590dfefc27e4af1239d94cbe40e81bcdd83a47e69a41c3a4b4311c3249",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -652,7 +648,7 @@
       ],
       "parameters": [],
       "status": "held-placeholder",
-      "receipt": "12bf8681eaeb1af8a42e860247a63e8686c19f6592b6b7e5cc0ff3ca2de6cb58",
+      "receipt": "66b2a88ec166aa99c225b32cabbcb4de8f563956bba5e751dfc334e6018149e8",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -730,7 +726,7 @@
       "recommendation": "Move from child DLA to PIP at 18",
       "in_report": "not-yet-published",
       "route": "needs-pe-uk-first",
-      "route_reason": "Held until a check is done: moving people aged 16 and 17 from PIP to the matching child DLA awards should leave their income unchanged, but a national run does not, and the cause is not yet found. About 133 survey records hold PIP at those ages in the certified build (eeb6093e), 146 in the newer 6f918b81 build.",
+      "route_reason": "Held until a check is done: moving people aged 16 and 17 from PIP to the matching child DLA awards should leave their income unchanged, but a national run does not, and the cause is not yet found. About 133 survey records hold PIP at those ages in the build eeb6093e and 146 in build 6f918b81 (not yet counted on 9e18f010, the build in use).",
       "placeholder": true,
       "computable": false,
       "publishable": false,
@@ -739,7 +735,7 @@
       "issues": [],
       "parameters": [],
       "status": "needs-pe-uk-first",
-      "receipt": "1f22cb2ca3f80d92dad1cf6cb29cb855a87f6fe589e491cb7c16f4b027af7245",
+      "receipt": "d18ec986ad0bfac5bf0052531266cff83e8251d47fa2373aef83a6bb34799c22",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -881,20 +877,7 @@
       }
     }
   ],
-  "data_limits": [
-    {
-      "key": "pip_daily_living_points",
-      "missing_input": "pip_dl_points",
-      "reason": "The data record each claimant's PIP daily living award (none, standard or enhanced), not assessment points, and a stored award overrides points. Changing a points threshold moves no one.",
-      "issue": 3
-    },
-    {
-      "key": "pip_mobility_points",
-      "missing_input": "pip_m_points",
-      "reason": "The data record each claimant's PIP mobility award, not assessment points, and a stored award overrides points. Changing a points threshold moves no one.",
-      "issue": 3
-    }
-  ],
+  "data_limits": [],
   "model_limits": [
     {
       "key": "pip_no_country_test",

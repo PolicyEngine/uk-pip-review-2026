@@ -43,7 +43,9 @@ def test_rate_change_refuses_bad_path():
         rate_change("pip.mobility", {2027: 1})
 
 
-def test_threshold_change_warns_when_data_limited():
+def test_threshold_change_warns_when_data_limited(monkeypatch):
+    # On a build without points (eeb6093e) a threshold change warns.
+    monkeypatch.setattr(data_limits, "LIMITS", data_limits.limits_for_build("eeb6093e"))
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
         threshold_change(
@@ -64,7 +66,13 @@ def test_merge_refuses_duplicates():
         merge(a, a)
 
 
-def test_points_limits_live():
+def test_points_limits_live(monkeypatch):
+    # The pinned build (9e18f010) stores points: no points limit is live.
+    assert data_limits.LIMITS == ()
+    assert not data_limits.limits_for_paths(
+        ["gov.dwp.pip.mobility.points_thresholds.enhanced"]
+    )
+    monkeypatch.setattr(data_limits, "LIMITS", data_limits.limits_for_build("eeb6093e"))
     keys = {limit.key for limit in data_limits.LIMITS}
     assert {"pip_daily_living_points", "pip_mobility_points"} <= keys
     assert data_limits.limits_for_paths(

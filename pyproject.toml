@@ -15,9 +15,13 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# The engine and data pair, pinned to one certified bundle. Installed for real
-# runs only; the template's tests run without it (no data, no simulation).
-model = ["policyengine[uk]==6.17.2"]
+# The engine for real runs: the policyengine-uk and policyengine-core
+# versions Microcosm build uk-frs-calibration-attempt-20261110T204756Z-9e18f010
+# was built and certified on (src/pip_review/data_build.py). No
+# policyengine.py release pins this pair, so simulations load policyengine_uk
+# directly. Installed for real runs only; the template's tests run without it
+# (no data, no simulation).
+model = ["policyengine-uk==2.177.7", "policyengine-core==3.34.10", "huggingface-hub>=0.25"]
 dev = ["pytest>=8.0", "ruff>=0.6"]
 
 [project.scripts]

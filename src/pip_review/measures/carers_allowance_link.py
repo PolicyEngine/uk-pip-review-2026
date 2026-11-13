@@ -2,7 +2,7 @@
 
 A knock-on for measures that move award categories, not a measure on its
 own: chain it after a category modifier with ``after(modifier)``. In
-policyengine-uk 2.174.1 ``carers_allowance_pre_overlap`` (through
+policyengine-uk 2.174.1 and 2.177.7 ``carers_allowance_pre_overlap`` (through
 ``carers_allowance_pre_couple_limit``, as 2.151.0 did directly) tests reported
 receipt, age, hours, earnings and country, never the cared-for person's
 award. This wraps it: a carer's allowance is set to zero when their
@@ -44,10 +44,17 @@ OTHER_QUALIFYING = ("attendance_allowance", "afcs")
 
 
 def _stored(sim, name, year):
+    """The category in ``year`` under current law: the stored input, or, on
+    a build that stores assessment points and no category (9e18f010), the
+    category policyengine-uk derives from them. Read before any category
+    modifier runs, so it is the current-law category."""
     import numpy as np
 
     holder = sim.get_holder(name)
     array = holder.get_array(year)
+    if array is None and name in sim.tax_benefit_system.variables:
+        array = sim.calculate(name, year)
+        array = getattr(array, "values", array)
     if array is None:
         return None
     if hasattr(array, "decode_to_str"):

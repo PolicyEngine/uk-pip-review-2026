@@ -67,12 +67,14 @@ def test_current_law_rates_match_engine():
             assert leaf == pytest.approx(value, abs=0.006), (year, path)
 
 
-def test_certified_bundle_matches_install():
-    from policyengine.tax_benefit_models.uk.model import uk_latest
+def test_pinned_engine_matches_install():
+    from importlib import metadata
 
-    bundle = uk_latest.release_bundle
-    for key, value in pipeline.CERTIFIED_BUNDLE.items():
-        assert bundle[key] == value
+    from pip_review.data_build import DATA_BUILD
+
+    assert pipeline.CERTIFIED_BUNDLE["model_version"] == DATA_BUILD.engine
+    assert metadata.version("policyengine-uk") == DATA_BUILD.engine
+    assert metadata.version("policyengine-core") == DATA_BUILD.core
 
 
 def test_uc_rebalanced_years_match_engine():
@@ -86,13 +88,12 @@ def test_uc_rebalanced_years_match_engine():
 def test_benefit_receipt_payment_reaches_pip_households_in_england_and_wales(
     tmp_path,
 ):
-    from policyengine.tax_benefit_models.uk.model import managed_microsimulation
-
     from pip_review.measure_templates import apply_benefit_receipt_payment
+    from pip_review.model_run import build
 
     path = write(tmp_path / "small.h5", households=60)
-    base = managed_microsimulation(dataset=str(path), allow_unmanaged=True)
-    sim = managed_microsimulation(dataset=str(path), allow_unmanaged=True)
+    base = build(str(path), None)
+    sim = build(str(path), None)
     apply_benefit_receipt_payment(
         sim,
         amount=100,
@@ -154,9 +155,9 @@ def test_carers_allowance_link_follows_the_cared_for_award():
 
 def test_phasing_moves_only_the_share(tmp_path):
     import numpy as np
-    from policyengine.tax_benefit_models.uk.model import managed_microsimulation
 
     from pip_review.measures.phasing import phase
+    from pip_review.model_run import build
 
     def remove_all_awards(sim):
         for year in (2027, 2028):
@@ -164,7 +165,7 @@ def test_phasing_moves_only_the_share(tmp_path):
             sim.set_input("pip_dl_category", year, np.array(["NONE"] * n))
 
     path = write(tmp_path / "phase.h5", households=150)
-    sim = managed_microsimulation(dataset=str(path), allow_unmanaged=True)
+    sim = build(str(path), None)
     before = {
         y: np.asarray(sim.calculate("pip_dl_category", y).values) != "NONE"
         for y in (2027, 2028)
@@ -186,7 +187,8 @@ def test_parameters_that_act_through_points_are_data_limited():
 
     For each parameter path a registered measure changes, find the engine
     source files that read it; if any of them also reads assessment points,
-    which the data do not hold, the path must be covered by a DataLimit.
+    the path must be covered by a declared DataLimit (``ALL_LIMITS``),
+    which is live only on a build without points (``LIMITS_BY_BUILD``).
     """
     from pathlib import Path
 
@@ -211,7 +213,7 @@ def test_parameters_that_act_through_points_are_data_limited():
         readers = [f for f, text in sources.items() if re.search(node, text)]
         if any(any(p in sources[f] for p in points) for f in readers):
             flagged.add(path)
-            assert data_limits.limits_for_paths([path]), path
+            assert any(limit.covers(path) for limit in data_limits.ALL_LIMITS), path
     # The check is live: the points thresholds are found to act through points
     assert any("points_thresholds" in p for p in flagged)
     assert not any(

@@ -7,7 +7,7 @@ One file, written by `pip-review generate` to `data/results.json` and copied to 
 | `schema_version` | int | 2 |
 | `status` | `placeholder`, `mock`, `provisional` or `final` | Defined once in `publication.STATUSES` |
 | `banner` | string | Required for every status except `final`; a `mock` banner contains `MOCK`; empty on `final` |
-| `engine` | object | `policyengine`, `policyengine_uk`, `policyengine_core` (from `uv.lock`, or the install in model mode), `dataset`, `dataset_sha256`, `certified_pair`, `pip_validation` |
+| `engine` | object | `policyengine`, `policyengine_uk`, `policyengine_core` (from `uv.lock`, or the install in model mode), `dataset`, `dataset_sha256`, `certified_pair` (true for the pinned pair, `data_build.DATA_BUILD`), `label` ("build <id>, policyengine-uk <version>, not in a policyengine.py release"), `pip_validation` |
 | `provenance` | object | Model mode only: `commit`, `clean_tree`, `bundle`, `machine_seconds` |
 | `basis` | object | `cost`, `distribution`, `behaviour` text; shown once, on Methodology |
 | `base_year`, `years`, `distribution_year` | int, int[], int | Fiscal start years |

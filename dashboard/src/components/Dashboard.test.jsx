@@ -64,7 +64,9 @@ describe("Dashboard", () => {
     render(<Dashboard data={results} />);
     fireEvent.click(screen.getByRole("tab", { name: "Methodology" }));
     expect(window.location.search).toContain("tab=method");
-    expect(screen.getByTestId("replication-line")).toHaveTextContent("certified bundle pair");
+    expect(screen.getByTestId("replication-line")).toHaveTextContent(
+      "build uk-frs-calibration-attempt-20261110T204756Z-9e18f010, policyengine-uk 2.177.7, not in a policyengine.py release",
+    );
   });
 
   it("opens the tab named in the address", () => {

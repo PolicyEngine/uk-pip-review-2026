@@ -28,8 +28,10 @@ export default function MethodologyTab({ data }) {
         </ul>
       </section>
       <p className="text-sm text-slate-500" data-testid="replication-line">
-        policyengine {e.policyengine}, policyengine-uk {e.policyengine_uk}, dataset {e.dataset}
-        {e.certified_pair ? ` (certified bundle pair; PIP-specific checks ${e.pip_validation})` : " (not a certified pair)"}.
+        {e.certified_pair && e.label
+          ? `Engine and data: ${e.label} (PIP-specific checks ${e.pip_validation})`
+          : `policyengine-uk ${e.policyengine_uk}, dataset ${e.dataset} (not the pinned engine and data pair)`}
+        .
       </p>
     </div>
   );
