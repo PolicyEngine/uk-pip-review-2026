@@ -37,12 +37,28 @@ LAYOUTS = ("categories", "points")
 POINTS_YEAR = 2024
 
 
-def _points(rng, has_pip: bool) -> int:
-    """Invented points: 8 or more for a recipient, under 8 otherwise (some
-    at 6 or 7, so a lower threshold moves people)."""
-    if has_pip:
-        return int(rng.integers(8, 20))
-    return int(rng.integers(0, 8)) if rng.random() < 0.3 else -1
+NOT_ASSESSED = -1
+# The share of PIP recipients with both components, daily living only and
+# mobility only (invented).
+COMPONENT_MIX = (("both", 0.5), ("daily_living", 0.25), ("mobility", 0.25))
+
+
+def _points(rng, has_pip: bool) -> tuple[int, int]:
+    """Invented (daily living, mobility) points, drawn as build 6f918b81 draws
+    them: only for someone with a PIP award, everyone else -1 (not
+    assessed). A component received scores 8 or more; a recipient of one
+    component has the other drawn below 8: daily living evenly over 4 to 7,
+    mobility at 0 or 4."""
+    if not has_pip:
+        return NOT_ASSESSED, NOT_ASSESSED
+    kinds, shares = zip(*COMPONENT_MIX)
+    kind = kinds[int(rng.choice(len(kinds), p=shares))]
+    awarded = int(rng.integers(8, 20))
+    if kind == "both":
+        return awarded, int(rng.integers(8, 20))
+    if kind == "daily_living":
+        return awarded, int(rng.choice((0, 4)))
+    return int(rng.integers(4, 8)), awarded
 
 
 def build(
@@ -93,8 +109,9 @@ def build(
                     CATEGORIES[int(rng.integers(0, 3))] if has_pip else "NONE"
                 )
             else:
-                person["pip_dl_points"] = _points(rng, has_pip)
-                person["pip_m_points"] = _points(rng, has_pip and rng.random() < 0.7)
+                dl_points, m_points = _points(rng, has_pip)
+                person["pip_dl_points"] = dl_points
+                person["pip_m_points"] = m_points
                 person["uc_limited_capability_for_WRA"] = bool(
                     adult and not pensioner and rng.random() < 0.15
                 )

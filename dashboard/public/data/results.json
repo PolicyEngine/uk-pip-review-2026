@@ -368,14 +368,16 @@
       "description": "Illustrative: the standard rate of each component from 6 points rather than 8.",
       "recommendation": "Recalibrate activities, descriptors and points",
       "in_report": "not-yet-published",
-      "route": "dashboard-param",
-      "route_reason": "The data hold each claimant's assessment points and the model derives awards from them, so a threshold is a parameter; modelled directly. Carer's Allowance does not follow the new awards in this measure.",
+      "route": "not-computable",
+      "route_reason": "A lower threshold is not costed: the data hold assessment points only for people who get PIP, so people turned down at 6 or 7 points are not in the data. Only existing recipients of the other component could move, and their points for this component were drawn by the data build. A higher threshold would be costed.",
       "placeholder": true,
-      "computable": true,
+      "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
       "zero_reason": null,
-      "data_needs": [],
+      "data_needs": [
+        "pip_points_of_people_turned_down"
+      ],
       "issues": [
         3
       ],
@@ -383,8 +385,8 @@
         "gov.dwp.pip.daily_living.points_thresholds.standard",
         "gov.dwp.pip.mobility.points_thresholds.standard"
       ],
-      "status": "held-placeholder",
-      "receipt": "524b8dc76ff4c17f7b5cf4b1c283273febf40026a036efca830c7707d303d979",
+      "status": "not-computable",
+      "receipt": "5152b8bc404724d8d49879102918a354dd544f46e403d3cb72f17a8a6bdc5f38",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -737,7 +739,7 @@
       "recommendation": "Move from child DLA to PIP at 18",
       "in_report": "not-yet-published",
       "route": "needs-pe-uk-first",
-      "route_reason": "Held until a check is done: moving people aged 16 and 17 from PIP to the matching child DLA awards should leave their income unchanged, but a national run does not, and the cause is not yet found. About 133 survey records hold PIP at those ages in the build eeb6093e and 146 in build 6f918b81, the build in use.",
+      "route_reason": "Held until a check is done: moving people aged 16 and 17 from PIP to the matching child DLA awards should leave their income unchanged, but a national run does not, and the cause is not yet found. In build 6f918b81, the build in use, 146 rows hold PIP at those ages, and they come from only 32 distinct survey households.",
       "placeholder": true,
       "computable": false,
       "publishable": false,
@@ -747,7 +749,7 @@
       "issues": [],
       "parameters": [],
       "status": "needs-pe-uk-first",
-      "receipt": "8ad054fb25478d6a51f145fdac63781979523a11a76f778ec630a0ea99b6f7d6",
+      "receipt": "e333ecd0fde4807223103fc2ca28605899e517b2ef5221b5b23fdef25b0b371c",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -889,7 +891,20 @@
       }
     }
   ],
-  "data_limits": [],
+  "data_limits": [
+    {
+      "key": "pip_daily_living_threshold_cut",
+      "missing_input": "pip_points_of_people_turned_down",
+      "reason": "The data hold assessment points only for people who get PIP. People turned down for daily living are not in the data, so a lower daily living threshold could only be costed for people who already get the mobility component, whose daily living points the data build spread evenly over 4 to 7. A threshold cut is not costed. A higher threshold is costed, on the assumption that the drawn points place recipients correctly within their award.",
+      "issue": 3
+    },
+    {
+      "key": "pip_mobility_threshold_cut",
+      "missing_input": "pip_points_of_people_turned_down",
+      "reason": "The data hold assessment points only for people who get PIP. People turned down for mobility are not in the data, and people who get only the daily living component hold mobility points of 0 or 4 drawn by the data build, so a mobility threshold of 6 moves no one. A threshold cut is not costed. A higher threshold is costed, on the assumption that the drawn points place recipients correctly within their award.",
+      "issue": 3
+    }
+  ],
   "model_limits": [
     {
       "key": "pip_no_country_test",

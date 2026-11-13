@@ -21,7 +21,7 @@ needs-pe-uk-first, with the reason shown on the page.
 
 import warnings
 
-from pip_review.data_limits import is_only_data_limited
+from pip_review.data_limits import is_only_data_limited, limits_for_paths
 from pip_review.measure_templates import (
     DataLimitedWarning,
     merge,
@@ -97,10 +97,15 @@ with warnings.catch_warnings():
         threshold_change(f"{DL}.points_thresholds.standard", _every_year(6)),
         threshold_change(f"{MOB}.points_thresholds.standard", _every_year(6)),
     )
-# Build-aware (data_limits.LIMITS_BY_BUILD): computable on a build that
-# stores assessment points (6f918b81), not computable on one that stores
-# only awards (eeb6093e).
-_THRESHOLDS_LIMITED = is_only_data_limited(list(_THRESHOLDS))
+# Build-aware (data_limits.LIMITS_BY_BUILD). On a build that stores only
+# awards (eeb6093e) no threshold change is computable. On 6f918b81, which
+# stores points drawn only for PIP recipients, a cut is not computable (people
+# turned down at 6-7 points are not in the data) and a raise is, under the
+# drawn-points assumption. This placeholder is a cut (8 to 6).
+_THRESHOLDS_LIMITED = is_only_data_limited(_THRESHOLDS)
+_POINTS_MISSING = any(
+    limit.direction == "any" for limit in limits_for_paths(_THRESHOLDS)
+)
 
 
 REFORMS: list[Reform] = [
@@ -118,7 +123,7 @@ REFORMS: list[Reform] = [
             "Acts through the score in each activity and the share of days a "
             "descriptor applies; the data hold neither."
         ),
-        data_needs=(["pip_dl_points", "pip_m_points"] if _THRESHOLDS_LIMITED else [])
+        data_needs=(["pip_dl_points", "pip_m_points"] if _POINTS_MISSING else [])
         + ["pip_activity_points"],
         issues=[3],
     ),
@@ -203,6 +208,12 @@ REFORMS: list[Reform] = [
         route_reason=(
             "The parameter exists but moves no one: the data hold awards, not "
             "points, and a stored award overrides points."
+            if _POINTS_MISSING
+            else "A lower threshold is not costed: the data hold assessment "
+            "points only for people who get PIP, so people turned down at 6 "
+            "or 7 points are not in the data. Only existing recipients of the "
+            "other component could move, and their points for this component "
+            "were drawn by the data build. A higher threshold would be costed."
             if _THRESHOLDS_LIMITED
             else "The data hold each claimant's assessment points and the "
             "model derives awards from them, so a threshold is a parameter; "
@@ -210,7 +221,13 @@ REFORMS: list[Reform] = [
             "awards in this measure."
         ),
         parameter_changes=_THRESHOLDS,
-        data_needs=["pip_dl_points", "pip_m_points"] if _THRESHOLDS_LIMITED else [],
+        data_needs=(
+            ["pip_dl_points", "pip_m_points"]
+            if _POINTS_MISSING
+            else ["pip_points_of_people_turned_down"]
+            if _THRESHOLDS_LIMITED
+            else []
+        ),
         issues=[3],
     ),
     Reform(
@@ -314,8 +331,8 @@ REFORMS: list[Reform] = [
             "Held until a check is done: moving people aged 16 and 17 from PIP "
             "to the matching child DLA awards should leave their income "
             "unchanged, but a national run does not, and the cause is not yet "
-            "found. About 133 survey records hold PIP at those ages in the "
-            "build eeb6093e and 146 in build 6f918b81, the build in use."
+            "found. In build 6f918b81, the build in use, 146 rows hold PIP at "
+            "those ages, and they come from only 32 distinct survey households."
         ),
     ),
 ]

@@ -37,26 +37,50 @@ def test_parameter_years_cover_policy_years(reform):
 
 
 def test_points_threshold_measures_follow_the_build():
-    # The brief's rule: a points measure is never costed on data without
-    # points. The pinned build (6f918b81) stores points and no award
-    # category, so there the measures are computable (data_limits).
-    from pip_review.data_build import DATA_BUILD
-
-    points_stored = not data_limits.LIMITS_BY_BUILD[DATA_BUILD.short_id]
+    # The brief's rule: a points measure is never costed on data that cannot
+    # support it. On the pinned build (6f918b81) points are held only for
+    # PIP recipients, so a threshold cut is not computable (data_limits).
     for reform in REFORMS:
-        paths = list(reform.parameter_changes or {})
-        if any("points_thresholds" in p for p in paths):
-            assert data_limits.is_only_data_limited(paths) is not points_stored
-            assert reform.computable is points_stored
-            expected = Route.DASHBOARD_PARAM if points_stored else Route.NOT_COMPUTABLE
+        changes = reform.parameter_changes or {}
+        if any("points_thresholds" in p for p in changes):
+            limited = data_limits.is_only_data_limited(changes)
+            assert reform.computable is not limited
+            expected = Route.NOT_COMPUTABLE if limited else Route.DASHBOARD_PARAM
             assert reform.route is expected
 
 
-def test_points_limits_hold_on_the_build_without_points():
+def test_no_computable_measure_moves_only_limited_parameters():
+    # Registry-wide, so a new cut measure cannot slip through as a parameter
+    # route: any measure whose every change hits a live limit is not
+    # computable.
+    for reform in REFORMS:
+        changes = reform.parameter_changes or {}
+        if changes and data_limits.is_only_data_limited(changes):
+            assert not reform.computable, reform.id
+
+
+def test_threshold_cut_is_not_computable_on_6f918b81():
+    from pip_review.data_build import DATA_BUILD
+
+    assert DATA_BUILD.short_id == "6f918b81"
+    reform = get_reform("points_thresholds")
+    assert all(min(v.values()) < 8 for v in reform.parameter_changes.values())
+    assert reform.route is Route.NOT_COMPUTABLE
+    assert reform.data_needs == ["pip_points_of_people_turned_down"]
+    assert "pip_points_of_people_turned_down" in data_limits.MISSING_INPUTS
+    assert "not in the data" in reform.route_reason
+
+
+def test_points_limits_by_build():
     keys = {limit.key for limit in data_limits.limits_for_build("eeb6093e")}
     assert keys == {"pip_daily_living_points", "pip_mobility_points"}
     assert data_limits.limits_for_build("9e18f010") == ()
-    assert data_limits.limits_for_build("6f918b81") == ()
+    cut = data_limits.limits_for_build("6f918b81")
+    assert {limit.key for limit in cut} == {
+        "pip_daily_living_threshold_cut",
+        "pip_mobility_threshold_cut",
+    }
+    assert all(limit.direction == "cut" for limit in cut)
 
 
 def test_computable_measures():
@@ -65,12 +89,9 @@ def test_computable_measures():
         "cost_category_tiers",
         "standard_daily_living_rate",
         "uc_health_gateway",
-        "points_thresholds",  # computable on 6f918b81, which stores points
     }
     for reform in computable.values():
-        if reform.id == "points_thresholds":
-            assert all("points_thresholds" in p for p in reform.parameter_changes)
-        elif reform.route is Route.DASHBOARD_PARAM:
+        if reform.route is Route.DASHBOARD_PARAM:
             assert set(reform.parameter_changes) <= set(CURRENT_RATES)
         else:
             assert reform.simulation_modifier.__module__.startswith(

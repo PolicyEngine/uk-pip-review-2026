@@ -54,6 +54,17 @@ def test_threshold_change_warns_when_data_limited(monkeypatch):
     assert any(issubclass(w.category, DataLimitedWarning) for w in caught)
 
 
+def test_threshold_cut_warns_and_raise_does_not_on_the_pinned_build():
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        threshold_change(DL_STANDARD, {2027: 6})
+    assert any(issubclass(w.category, DataLimitedWarning) for w in caught)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", DataLimitedWarning)
+        threshold_change(DL_STANDARD, {2027: 10})
+        threshold_change(MOB_STANDARD, {2027: 8, 2028: 9})
+
+
 def test_rate_change_does_not_warn_for_rates():
     with warnings.catch_warnings():
         warnings.simplefilter("error", DataLimitedWarning)
@@ -66,12 +77,26 @@ def test_merge_refuses_duplicates():
         merge(a, a)
 
 
+DL_STANDARD = "gov.dwp.pip.daily_living.points_thresholds.standard"
+MOB_STANDARD = "gov.dwp.pip.mobility.points_thresholds.standard"
+
+
 def test_points_limits_live(monkeypatch):
-    # The pinned build (6f918b81) stores points: no points limit is live.
-    assert data_limits.LIMITS == ()
-    assert not data_limits.limits_for_paths(
-        ["gov.dwp.pip.mobility.points_thresholds.enhanced"]
-    )
+    # The pinned build (6f918b81) holds points only for PIP recipients: the
+    # cut limits are live, and they hold for a cut, not for a raise.
+    keys = {limit.key for limit in data_limits.LIMITS}
+    assert keys == {"pip_daily_living_threshold_cut", "pip_mobility_threshold_cut"}
+    cut = {DL_STANDARD: {"2027": 6.0}}
+    raise_ = {DL_STANDARD: {"2027": 10.0}}
+    assert data_limits.limits_for_paths(cut)
+    assert data_limits.is_only_data_limited(cut)
+    assert not data_limits.limits_for_paths(raise_)
+    assert not data_limits.is_only_data_limited(raise_)
+    # a cut in any one year is a cut
+    assert data_limits.is_only_data_limited({MOB_STANDARD: {"2027": 8, "2028": 7}})
+    # bare paths cannot tell a cut from a raise: the limit holds
+    assert data_limits.limits_for_paths([DL_STANDARD])
+    assert not data_limits.limits_for_paths(["gov.dwp.pip.mobility.enhanced"])
     monkeypatch.setattr(data_limits, "LIMITS", data_limits.limits_for_build("eeb6093e"))
     keys = {limit.key for limit in data_limits.LIMITS}
     assert {"pip_daily_living_points", "pip_mobility_points"} <= keys

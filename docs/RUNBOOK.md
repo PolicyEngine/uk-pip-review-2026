@@ -29,6 +29,8 @@ uv run python scripts/check_public_data.py ledger.csv reconciliation.csv   # any
 cd dashboard && bun run data && bun run build && bun run smoke    # build under the lock
 ```
 
+Memory: The national file holds about 78k household rows from about 16k survey households, and its memory use cannot be cut much by trimming the file; the practical fix is one year per run (María, data owner, 13 November 2026). Model mode has no per-year option yet.
+
 `generate --mode model` runs current law, each computable measure and the package, one simulation per process, inside the lock, and refuses an installed bundle other than the one recorded in `pipeline.CERTIFIED_BUNDLE`. It records machine time per run in `provenance.machine_seconds`.
 
 ## Gates

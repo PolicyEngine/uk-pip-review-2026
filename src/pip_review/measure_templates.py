@@ -73,10 +73,10 @@ def _annual_values(values: Mapping) -> dict[str, float]:
     return dict(sorted(out.items()))
 
 
-def _warn_if_data_limited(path: str) -> None:
+def _warn_if_data_limited(path: str, values: Mapping) -> None:
     from pip_review.data_limits import limits_for_paths
 
-    for limit in limits_for_paths([path]):
+    for limit in limits_for_paths({path: values}):
         warnings.warn(f"{path}: {limit.reason}", DataLimitedWarning, stacklevel=3)
 
 
@@ -106,7 +106,7 @@ def rate_change(path: str, values: Mapping) -> dict[str, dict[str, float]]:
     _validate_path(path)
     built = {path: _annual_values(values)}
     _refuse_uc_health_traps(path, built[path])
-    _warn_if_data_limited(path)
+    _warn_if_data_limited(path, built[path])
     return built
 
 

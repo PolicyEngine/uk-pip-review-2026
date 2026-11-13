@@ -222,10 +222,11 @@ def test_parameters_that_act_through_points_are_data_limited():
     )
 
 
-def test_points_layout_scores_the_gateway_and_thresholds(tmp_path_factory):
+def test_points_layout_scores_the_gateway_not_the_threshold_cut(tmp_path_factory):
     """A file shaped like build 6f918b81 (2024 only; points, no category; the
     UC limited-capability flag stored): the gateway runs over the stored
-    flag and a lower points threshold moves awards in the scored years."""
+    flag, and the threshold cut is published as not computable, never as a
+    figure."""
     os.environ["PIP_REVIEW_NO_LOCK"] = "1"
     path = write(
         tmp_path_factory.mktemp("points") / "points.h5", households=300, layout="points"
@@ -233,14 +234,22 @@ def test_points_layout_scores_the_gateway_and_thresholds(tmp_path_factory):
     results = pipeline.build_model_results(
         dataset=str(path),
         status="mock",
-        measure_ids=["uc_health_gateway", "points_thresholds"],
+        measure_ids=["uc_health_gateway"],
         households=False,
         allow_unpinned=True,
     )
     assert publication.validate_public(results) == []
     by_id = {m["id"]: m for m in results["measures"]}
-    thresholds = by_id["points_thresholds"]["budgetary_impact"]
-    assert all(row["value_m"] > 0 for row in thresholds)  # more awards: a cost
+    assert by_id["points_thresholds"]["status"] == "not-computable"
+    assert not by_id["points_thresholds"]["budgetary_impact"]
+    with pytest.raises(ValueError, match="points_thresholds"):
+        pipeline.build_model_results(
+            dataset=str(path),
+            status="mock",
+            measure_ids=["points_thresholds"],
+            households=False,
+            allow_unpinned=True,
+        )
     gateway = by_id["uc_health_gateway"]["budgetary_impact"]
     assert any(row["value_m"] != 0 for row in gateway)
 
@@ -258,3 +267,105 @@ def test_an_unpinned_run_cannot_be_published(results):
         public = {**results, "status": status, "banner": "Provisional"}
         errors = publication.validate_public(public)
         assert any(e.startswith("$.engine.certified_pair") for e in errors)
+
+
+# Build 6f918b81's PIP points (María, data owner, 13 November 2026): drawn only
+# for people with an award, -1 otherwise; the other component of a
+# one-component recipient below 8 (daily living 4-7, mobility 0 or 4).
+DL_STANDARD = "gov.dwp.pip.daily_living.points_thresholds.standard"
+MOB_STANDARD = "gov.dwp.pip.mobility.points_thresholds.standard"
+
+
+def test_current_law_thresholds_match_the_engine():
+    from policyengine_uk import CountryTaxBenefitSystem
+
+    from pip_review.data_limits import CURRENT_LAW_THRESHOLDS
+
+    parameters = CountryTaxBenefitSystem().parameters
+    for path, value in CURRENT_LAW_THRESHOLDS.items():
+        node = parameters.get_child(path)
+        assert {entry.value for entry in node.values_list} == {value}, path
+
+
+def test_synthetic_points_match_the_build():
+    import numpy as np
+
+    from pip_review.synthetic_dataset import build
+
+    person = build(households=400, layout="points").person
+    dl = person["pip_dl_points"].to_numpy()
+    mob = person["pip_m_points"].to_numpy()
+    assessed = (dl >= 0) | (mob >= 0)
+    # not assessed: both -1, never 0-7
+    assert ((dl == -1) == (mob == -1)).all()
+    assert set(np.unique(dl[~assessed])) == {-1}
+    # every assessed person gets at least one component
+    assert ((dl[assessed] >= 8) | (mob[assessed] >= 8)).all()
+    dl_only = (dl >= 8) & (mob < 8) & assessed
+    mob_only = (mob >= 8) & (dl < 8) & assessed
+    assert set(np.unique(mob[dl_only])) <= {0, 4}
+    assert set(np.unique(dl[mob_only])) == {4, 5, 6, 7}
+    assert (dl[mob_only] >= 6).sum() >= 10  # the test below is not vacuous
+
+
+@pytest.fixture(scope="module")
+def points_file(tmp_path_factory):
+    return write(
+        tmp_path_factory.mktemp("cut") / "points.h5", households=400, layout="points"
+    )
+
+
+def _awards(path, changes=None):
+    import numpy as np
+    from policyengine_uk.utils.scenario import Scenario
+
+    from pip_review.model_run import build
+
+    scenario = Scenario(parameter_changes=changes) if changes else None
+    sim = build(str(path), scenario, allow_unpinned=True)
+    return {
+        name: np.asarray(sim.calculate(name, 2027).values) != "NONE"
+        for name in ("pip_dl_category", "pip_m_category")
+    }
+
+
+def test_threshold_cut_moves_no_non_recipient(points_file):
+    """A daily living cut to 6 moves only mobility-only recipients drawn at
+    6-7; no one holding -1 moves; a mobility cut to 6 moves no one. This is
+    why a cut is not computable: the people it should reach (turned down at
+    6-7) are not in the data."""
+    import numpy as np
+
+    from pip_review.synthetic_dataset import build
+
+    person = build(households=400, layout="points").person
+    dl = person["pip_dl_points"].to_numpy()
+    mob = person["pip_m_points"].to_numpy()
+    base = _awards(points_file)
+    dl_cut = _awards(points_file, {DL_STANDARD: {"2027": 6}})
+    mob_cut = _awards(points_file, {MOB_STANDARD: {"2027": 6}})
+    moved = dl_cut["pip_dl_category"] & ~base["pip_dl_category"]
+    assert moved.any()
+    assert not moved[dl == -1].any()
+    assert (mob[moved] >= 8).all() and set(np.unique(dl[moved])) <= {6, 7}
+    assert (moved == ((dl >= 6) & (dl < 8) & (mob >= 8))).all()
+    assert (mob_cut["pip_m_category"] == base["pip_m_category"]).all()
+    # the limit applied on the pinned build keeps the cut off the page
+    from pip_review import data_limits
+
+    assert data_limits.is_only_data_limited({DL_STANDARD: {"2027": 6}})
+    assert data_limits.is_only_data_limited({MOB_STANDARD: {"2027": 6}})
+
+
+def test_threshold_raise_stays_computable(points_file):
+    """A raise moves recipients whose drawn points fall below the new
+    threshold; it is computable under the drawn-points assumption."""
+    from pip_review import data_limits
+
+    raise_ = {DL_STANDARD: {"2027": 10}}
+    assert not data_limits.is_only_data_limited(raise_)
+    base = _awards(points_file)
+    raised = _awards(points_file, raise_)
+    lost = base["pip_dl_category"] & ~raised["pip_dl_category"]
+    assert lost.any()
+    assert not (raised["pip_dl_category"] & ~base["pip_dl_category"]).any()
