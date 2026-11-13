@@ -25,6 +25,7 @@ def results(tmp_path_factory):
         status="mock",
         measure_ids=["standard_daily_living_rate", "uc_health_gateway"],
         households=False,
+        allow_unpinned=True,
     )
 
 
@@ -92,8 +93,8 @@ def test_benefit_receipt_payment_reaches_pip_households_in_england_and_wales(
     from pip_review.model_run import build
 
     path = write(tmp_path / "small.h5", households=60)
-    base = build(str(path), None)
-    sim = build(str(path), None)
+    base = build(str(path), None, allow_unpinned=True)
+    sim = build(str(path), None, allow_unpinned=True)
     apply_benefit_receipt_payment(
         sim,
         amount=100,
@@ -165,7 +166,7 @@ def test_phasing_moves_only_the_share(tmp_path):
             sim.set_input("pip_dl_category", year, np.array(["NONE"] * n))
 
     path = write(tmp_path / "phase.h5", households=150)
-    sim = build(str(path), None)
+    sim = build(str(path), None, allow_unpinned=True)
     before = {
         y: np.asarray(sim.calculate("pip_dl_category", y).values) != "NONE"
         for y in (2027, 2028)
@@ -234,6 +235,7 @@ def test_points_layout_scores_the_gateway_and_thresholds(tmp_path_factory):
         status="mock",
         measure_ids=["uc_health_gateway", "points_thresholds"],
         households=False,
+        allow_unpinned=True,
     )
     assert publication.validate_public(results) == []
     by_id = {m["id"]: m for m in results["measures"]}
@@ -241,3 +243,18 @@ def test_points_layout_scores_the_gateway_and_thresholds(tmp_path_factory):
     assert all(row["value_m"] > 0 for row in thresholds)  # more awards: a cost
     gateway = by_id["uc_health_gateway"]["budgetary_impact"]
     assert any(row["value_m"] != 0 for row in gateway)
+
+
+def test_a_named_file_that_is_not_the_pinned_build_is_refused(tmp_path):
+    from pip_review import model_run
+
+    path = write(tmp_path / "synthetic.h5", households=20)
+    with pytest.raises(RuntimeError, match="not that of build"):
+        model_run.build(str(path), None)
+
+
+def test_an_unpinned_run_cannot_be_published(results):
+    for status in ("provisional", "final"):
+        public = {**results, "status": status, "banner": "Provisional"}
+        errors = publication.validate_public(public)
+        assert any(e.startswith("$.engine.certified_pair") for e in errors)

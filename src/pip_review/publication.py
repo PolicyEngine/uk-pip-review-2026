@@ -207,6 +207,13 @@ def validate_public(results: dict[str, Any]) -> list[str]:
         if key == "n_households":
             errors.append(f"{where}: record counts are not published")
     _check_status(results, errors)
+    if results.get("status") in ("provisional", "final") and (
+        (results.get("engine") or {}).get("certified_pair") is not True
+    ):
+        errors.append(
+            "$.engine.certified_pair: a provisional or final page needs the "
+            "pinned build and engine (data_build.DATA_BUILD)"
+        )
     measures = results.get("measures", [])
     if results.get("status") not in PLACEHOLDER_STATUSES:
         for measure in measures:

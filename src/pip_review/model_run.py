@@ -85,14 +85,16 @@ def _runtime_dataset(path: Path):
     return str(path)
 
 
-def build(dataset: str | None, scenario):
+def build(dataset: str | None, scenario, allow_unpinned: bool = False):
     """A simulation on the pinned build, with the engine it was built on.
 
     policyengine_uk is loaded directly: no policyengine.py release covers the
     pair (``data_build.DATA_BUILD``). It refuses an installed policyengine-uk
-    other than the build's. ``dataset=None`` downloads the pinned build and
-    refuses a file whose SHA-256 differs. Any other path is an unpinned run
-    (tests use a synthetic file) and its figures are never the pinned pair.
+    other than the build's. ``dataset=None`` downloads the pinned build. Any
+    file, downloaded or named, must have the build's SHA-256; only
+    ``allow_unpinned`` (tests on a synthetic file) lets another file run, and
+    its figures are then marked ``certified_pair: false``, which the
+    publication check refuses for a provisional or final page.
     """
     from importlib import metadata
 
@@ -109,9 +111,11 @@ def build(dataset: str | None, scenario):
         )
     path = Path(dataset) if dataset is not None else fetch_dataset()
     sha = file_sha256(path)
-    if dataset is None and sha != DATA_BUILD.sha256:
+    if sha != DATA_BUILD.sha256 and not (dataset is not None and allow_unpinned):
         raise RuntimeError(
-            f"{path.name} has SHA-256 {sha}, not that of build {DATA_BUILD.id}."
+            f"{path.name} has SHA-256 {sha}, not that of build {DATA_BUILD.id} "
+            f"({DATA_BUILD.sha256}). Name the pinned file, or pass "
+            "--allow-unpinned for a test file whose figures are never published."
         )
     sim = Microsimulation(dataset=_runtime_dataset(path), scenario=scenario)
     pinned = sha == DATA_BUILD.sha256
@@ -166,6 +170,11 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="pip_review.model_run")
     parser.add_argument("--reform", default="", help="Comma-separated measure ids")
     parser.add_argument("--dataset", default=None)
+    parser.add_argument(
+        "--allow-unpinned",
+        action="store_true",
+        help="Run a --dataset file that is not the pinned build (tests only)",
+    )
     parser.add_argument("--years", required=True, help="Comma-separated years")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
@@ -175,7 +184,7 @@ def main(argv: list[str] | None = None) -> int:
     reform_ids = [r for r in args.reform.split(",") if r]
     years = [int(y) for y in args.years.split(",")]
     start = time.monotonic()
-    sim = build(args.dataset, scenario_for(reform_ids))
+    sim = build(args.dataset, scenario_for(reform_ids), args.allow_unpinned)
     arrays = read_arrays(sim, years)
     arrays["bundle_json"] = np.array(json.dumps(bundle_record(sim)))
     arrays["seconds"] = np.array(time.monotonic() - start)

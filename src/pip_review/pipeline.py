@@ -373,7 +373,12 @@ def git_state() -> dict[str, Any]:
     }
 
 
-def _spawn(reform_ids: list[str], dataset: str | None, out: Path) -> dict:
+def _spawn(
+    reform_ids: list[str],
+    dataset: str | None,
+    out: Path,
+    allow_unpinned: bool = False,
+) -> dict:
     from pip_review.heavy import MIN_FREE_GB, free_gb
 
     if os.environ.get("PIP_REVIEW_NO_LOCK") != "1":
@@ -395,6 +400,8 @@ def _spawn(reform_ids: list[str], dataset: str | None, out: Path) -> dict:
         command += ["--reform", ",".join(reform_ids)]
     if dataset:
         command += ["--dataset", dataset]
+    if allow_unpinned:
+        command += ["--allow-unpinned"]
     subprocess.run(command, check=True)
     with np.load(out, allow_pickle=False) as data:
         return {key: data[key] for key in data.files}
@@ -450,8 +457,12 @@ def build_model_results(
     banner: str | None = None,
     measure_ids: list[str] | None = None,
     households: bool = True,
+    allow_unpinned: bool = False,
 ) -> dict[str, Any]:
     """Model figures for every computable, non-withdrawn measure.
+
+    A named ``dataset`` must be the pinned build (by SHA-256) unless
+    ``allow_unpinned`` (tests on a synthetic file).
 
     ``dataset=None`` runs the pinned national build inside the
     heavy-run lock. A placeholder measure may run only under status
@@ -472,13 +483,13 @@ def build_model_results(
     seconds: dict[str, float] = {}
     with heavy_lock(), tempfile.TemporaryDirectory(prefix="pip-review-") as tmp:
         tmp = Path(tmp)
-        base = _spawn([], dataset, tmp / "baseline.npz")
+        base = _spawn([], dataset, tmp / "baseline.npz", allow_unpinned)
         bundle = json.loads(str(base.pop("bundle_json")))
         seconds["baseline"] = float(base.pop("seconds"))
         _check_bundle(bundle, dataset)
         tables_by_id = {}
         for reform in chosen:
-            run = _spawn([reform.id], dataset, tmp / f"{reform.id}.npz")
+            run = _spawn([reform.id], dataset, tmp / f"{reform.id}.npz", allow_unpinned)
             run.pop("bundle_json")
             seconds[reform.id] = float(run.pop("seconds"))
             tables_by_id[reform.id] = aggregate.tables(base, run, POLICY_YEARS)
@@ -486,7 +497,7 @@ def build_model_results(
         package = None
         if len(chosen) > 1:
             ids = [r.id for r in chosen]
-            run = _spawn(ids, dataset, tmp / "package.npz")
+            run = _spawn(ids, dataset, tmp / "package.npz", allow_unpinned)
             run.pop("bundle_json")
             seconds["package"] = float(run.pop("seconds"))
             package = {"measure_ids": ids, **aggregate.tables(base, run, POLICY_YEARS)}
@@ -508,7 +519,7 @@ def build_model_results(
             entry.update(figures)
         measures.append(entry)
     engine = engine_record(installed=True)
-    if dataset is not None:
+    if bundle.get("runtime_dataset_sha256") != DATA_BUILD.sha256:
         engine.update(
             {
                 "dataset": "unmanaged test file",
