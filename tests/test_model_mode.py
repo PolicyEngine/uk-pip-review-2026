@@ -223,7 +223,7 @@ def test_parameters_that_act_through_points_are_data_limited():
 
 
 def test_points_layout_scores_the_gateway_and_thresholds(tmp_path_factory):
-    """A file shaped like build 9e18f010 (2024 only; points, no category; the
+    """A file shaped like build 6f918b81 (2024 only; points, no category; the
     UC limited-capability flag stored): the gateway runs over the stored
     flag and a lower points threshold moves awards in the scored years."""
     os.environ["PIP_REVIEW_NO_LOCK"] = "1"

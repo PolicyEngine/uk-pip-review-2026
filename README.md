@@ -29,9 +29,9 @@ The review reports to the Secretary of State and is expected to set out recommen
 | policyengine-uk | 2.177.7 (the version the build below was made and certified on) |
 | policyengine-core | 3.34.10 (likewise) |
 | policyengine.py | not used: no release covers this pair |
-| Dataset | Microcosm UK 2024-25 national build `uk-frs-calibration-attempt-20261110T204756Z-9e18f010`, SHA-256 `adb6204d0af5e08a42cccec81250ce116518687f964e31c654a17d658b3416e8` |
+| Dataset | Microcosm UK 2024-25 national build `uk-frs-calibration-attempt-20261112T133744Z-6f918b81`, SHA-256 `e268e3af7932784ad4471f008097a5acc6c3c5bc15c4c54fbb5a489b2a0ac9ae` |
 
-Every figure is labelled "build uk-frs-calibration-attempt-20261110T204756Z-9e18f010, policyengine-uk 2.177.7, not in a policyengine.py release"; PIP-specific validation is pending (#1, #4). The rule is the newest published build with the engine it was built on, never a build with another engine version; build `…-6f918b81` (also 2.177.7) will supersede this one once published, a change to the one constant `DATA_BUILD` in `src/pip_review/data_build.py`. The pair is frozen again at G0. Microdata are licensed and are not stored in this repository; only aggregate outputs that pass a disclosure check are published.
+Every figure is labelled "build uk-frs-calibration-attempt-20261112T133744Z-6f918b81, policyengine-uk 2.177.7, not in a policyengine.py release"; PIP-specific validation is pending (#1, #4). The rule is the newest published build with the engine it was built on, never a build with another engine version; build `…-6f918b81` superseded `…-9e18f010` (also 2.177.7) on 13 November 2026; a build switch is a change to the one constant `DATA_BUILD` in `src/pip_review/data_build.py`. The pair is frozen again at G0. Microdata are licensed and are not stored in this repository; only aggregate outputs that pass a disclosure check are published.
 
 ## Licence
 

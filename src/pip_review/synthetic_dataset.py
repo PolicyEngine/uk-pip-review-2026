@@ -31,7 +31,7 @@ REGIONS = (
 )
 CATEGORIES = ("NONE", "STANDARD", "ENHANCED")
 # Layouts: "categories" stores PIP award categories, as build eeb6093e does;
-# "points" is shaped like build 9e18f010: a 2024 file storing assessment
+# "points" is shaped like build 6f918b81: a 2024 file storing assessment
 # points (no category) and the UC limited-capability flag.
 LAYOUTS = ("categories", "points")
 POINTS_YEAR = 2024

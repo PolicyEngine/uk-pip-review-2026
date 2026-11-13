@@ -16,7 +16,7 @@ dependencies = [
 
 [project.optional-dependencies]
 # The engine for real runs: the policyengine-uk and policyengine-core
-# versions Microcosm build uk-frs-calibration-attempt-20261110T204756Z-9e18f010
+# versions Microcosm build uk-frs-calibration-attempt-20261112T133744Z-6f918b81
 # was built and certified on (src/pip_review/data_build.py). No
 # policyengine.py release pins this pair, so simulations load policyengine_uk
 # directly. Installed for real runs only; the template's tests run without it

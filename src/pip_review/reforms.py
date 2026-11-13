@@ -98,7 +98,7 @@ with warnings.catch_warnings():
         threshold_change(f"{MOB}.points_thresholds.standard", _every_year(6)),
     )
 # Build-aware (data_limits.LIMITS_BY_BUILD): computable on a build that
-# stores assessment points (9e18f010), not computable on one that stores
+# stores assessment points (6f918b81), not computable on one that stores
 # only awards (eeb6093e).
 _THRESHOLDS_LIMITED = is_only_data_limited(list(_THRESHOLDS))
 
@@ -275,9 +275,9 @@ REFORMS: list[Reform] = [
             "A knock-on, not a measure on its own: any measure that moves award "
             "levels applies the link (carers in the same household lose "
             "Carer's Allowance and the UC carer element when no one there "
-            "qualifies any more). Carers "
-            "of someone outside the household are a fiscal line from the "
-            "official figure."
+            "qualifies any more). The data say whether a carer cares for "
+            "someone with a qualifying award, not who, so carers of someone "
+            "outside the household are a fiscal line from the official figure."
         ),
         data_needs=["cared_for_outside_household"],
         issues=[2],
@@ -315,8 +315,7 @@ REFORMS: list[Reform] = [
             "to the matching child DLA awards should leave their income "
             "unchanged, but a national run does not, and the cause is not yet "
             "found. About 133 survey records hold PIP at those ages in the "
-            "build eeb6093e and 146 in build 6f918b81 (not yet counted on "
-            "9e18f010, the build in use)."
+            "build eeb6093e and 146 in build 6f918b81, the build in use."
         ),
     ),
 ]

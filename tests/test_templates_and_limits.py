@@ -67,7 +67,7 @@ def test_merge_refuses_duplicates():
 
 
 def test_points_limits_live(monkeypatch):
-    # The pinned build (9e18f010) stores points: no points limit is live.
+    # The pinned build (6f918b81) stores points: no points limit is live.
     assert data_limits.LIMITS == ()
     assert not data_limits.limits_for_paths(
         ["gov.dwp.pip.mobility.points_thresholds.enhanced"]

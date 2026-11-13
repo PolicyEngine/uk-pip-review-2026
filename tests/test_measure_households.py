@@ -30,8 +30,10 @@ def _adult_on_uc(pip_dl, lcwra_flag, year=YEAR, stored_lcwra=None, age=40):
         "pip_m_category": {period: "NONE"},
     }
     if stored_lcwra is not None:
-        # As build 9e18f010 stores it: the flag is an input.
+        # As build 6f918b81 stores them: both limited-capability flags are
+        # inputs.
         adult["uc_limited_capability_for_WRA"] = {period: stored_lcwra}
+        adult["uc_limited_capability_for_work"] = {period: stored_lcwra}
     return {
         "people": {"adult": adult},
         "benunits": {
@@ -87,7 +89,7 @@ def test_gateway_grants_element_to_qualifying_pip_without_assessment():
 
 
 def test_gateway_removes_element_when_the_stored_flag_is_set_without_pip():
-    # Build 9e18f010 stores uc_limited_capability_for_WRA: the gateway still
+    # Build 6f918b81 stores uc_limited_capability_for_WRA: the gateway still
     # runs and overrides the stored flag for working-age people.
     baseline, _ = _element("NONE", False, stored_lcwra=True)
     reformed, _ = _element("NONE", False, GATEWAY, stored_lcwra=True)
@@ -114,7 +116,7 @@ def test_gateway_keeps_the_stored_flag_outside_working_age():
 
 
 def test_stored_pip_points_carry_forward_and_follow_the_thresholds():
-    # Build 9e18f010 stores 2024 PIP points and no category: the category in a
+    # Build 6f918b81 stores 2024 PIP points and no category: the category in a
     # scored year is derived from those points against that year's
     # thresholds, so a threshold change moves the award (data_limits).
     situation = {
@@ -168,7 +170,7 @@ def test_carer_link_keeps_uc_carer_element_when_award_kept():
 
 
 def test_carer_link_follows_awards_derived_from_stored_points():
-    # As on build 9e18f010: the cared-for person's award comes from stored
+    # As on build 6f918b81: the cared-for person's award comes from stored
     # 2024 points, with no stored category, and the link still follows it.
     situation = to_situation(PRESETS_BY_ID["uc_enhanced_both_with_carer"], YEAR)
     points = {"ENHANCED": 12, "STANDARD": 9}
@@ -186,3 +188,105 @@ def test_carer_link_follows_awards_derived_from_stored_points():
     reformed = Simulation(situation=situation, scenario=link)
     assert reformed.calculate("carers_allowance", YEAR).sum() == 0
     assert reformed.calculate("uc_carer_element", YEAR).sum() == 0
+
+
+POINTS = {"ENHANCED": 12, "STANDARD": 9}
+
+
+def _carer_on_points(route="hours"):
+    """The preset carer household shaped like build 6f918b81: 2024 PIP points
+    and no category, and ``cares_for_severely_disabled_person`` stored true
+    for everyone. ``route`` is how the carer qualifies: caring hours, or a
+    reported award they would claim with no hours recorded."""
+    situation = to_situation(PRESETS_BY_ID["uc_enhanced_both_with_carer"], YEAR)
+    period = str(YEAR)
+    for person in situation["people"].values():
+        category = person.pop("pip_dl_category")[period]
+        if category in POINTS:
+            person["pip_dl_points"] = {"2024": POINTS[category]}
+        person["cares_for_severely_disabled_person"] = {period: True}
+    if route == "reported":
+        carer = situation["people"]["carer"]
+        carer.pop("care_hours")
+        carer["carers_allowance_reported"] = {period: 4_000}
+        carer["would_claim_carers_allowance"] = {period: True}
+    return situation
+
+
+def _link_after(category_modifier, parameter_changes=None):
+    return Scenario(
+        parameter_changes=parameter_changes,
+        simulation_modifier=carers_allowance_link.after(
+            category_modifier, years=[YEAR]
+        ),
+    )
+
+
+@pytest.mark.parametrize("route", ["hours", "reported"])
+def test_carer_link_overrides_a_stored_cared_for_flag(route):
+    # The stored flag stays true after the award goes, and a reported award
+    # counts whatever the flag says, so the link zeroes the outputs, not the
+    # flag: Carer's Allowance and the UC carer element both go.
+    situation = _carer_on_points(route)
+    baseline = Simulation(situation=situation)
+    reformed = Simulation(situation=situation, scenario=_link_after(_drop_daily_living))
+    assert baseline.calculate("carers_allowance", YEAR).sum() > 0
+    assert baseline.calculate("uc_carer_element", YEAR).sum() > 0
+    assert bool(reformed.calculate("cares_for_severely_disabled_person", YEAR)[1])
+    assert reformed.calculate("carers_allowance", YEAR).sum() == 0
+    assert reformed.calculate("uc_carer_element", YEAR).sum() == 0
+
+
+# Every threshold above the cared-for person's 12 points: the award goes.
+_ABOVE_ALL_POINTS = {
+    "gov.dwp.pip.daily_living.points_thresholds.standard": {str(YEAR): 13},
+    "gov.dwp.pip.daily_living.points_thresholds.enhanced": {str(YEAR): 14},
+}
+
+
+def test_carer_link_follows_a_points_threshold_change():
+    # On a points build an award moves through the thresholds, which are
+    # already reformed when the link takes its snapshot: the snapshot derives
+    # the current-law award from current-law thresholds.
+    situation = _carer_on_points()
+    without_link = Simulation(
+        situation=situation, scenario=Scenario(parameter_changes=_ABOVE_ALL_POINTS)
+    )
+    assert str(without_link.calculate("pip_dl_category", YEAR)[0]) == "NONE"
+    assert without_link.calculate("carers_allowance", YEAR).sum() > 0
+    reformed = Simulation(
+        situation=situation,
+        scenario=_link_after(lambda sim: None, _ABOVE_ALL_POINTS),
+    )
+    assert reformed.calculate("carers_allowance", YEAR).sum() == 0
+    assert reformed.calculate("uc_carer_element", YEAR).sum() == 0
+
+
+def test_carer_link_keeps_carers_when_a_threshold_change_leaves_the_award():
+    situation = _carer_on_points()
+    baseline = Simulation(situation=situation)
+    reformed = Simulation(
+        situation=situation,
+        scenario=_link_after(
+            lambda sim: None,
+            {"gov.dwp.pip.daily_living.points_thresholds.standard": {str(YEAR): 10}},
+        ),
+    )
+    for name in ("carers_allowance", "uc_carer_element"):
+        assert reformed.calculate(name, YEAR).sum() == pytest.approx(
+            baseline.calculate(name, YEAR).sum()
+        )
+
+
+def test_severe_disability_flag_follows_the_daily_living_award():
+    # Build 6f918b81 does not store is_severely_disabled_for_benefits: the
+    # formula derives it from the award, so it follows a category move.
+    situation = _carer_on_points()
+    baseline = Simulation(situation=situation)
+    moved = Simulation(
+        situation=situation,
+        scenario=Scenario(simulation_modifier=_drop_daily_living),
+    )
+    flag = "is_severely_disabled_for_benefits"
+    assert list(baseline.calculate(flag, YEAR)) == [True, False]
+    assert list(moved.calculate(flag, YEAR)) == [False, False]

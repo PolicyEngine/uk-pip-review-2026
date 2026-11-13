@@ -6,14 +6,14 @@ qualifying PIP daily living award, in place of the Work Capability
 Assessment flag. Other people keep the model's own determination.
 
 ``uc_limited_capability_for_WRA`` is a formula variable. Microcosm build
-9e18f010 stores it as an input (eeb6093e did not), so the wrapper takes the
+6f918b81 stores it as an input (eeb6093e did not), so the wrapper takes the
 stored values out of the simulation and uses them as the model's own
 determination for the people it does not override (``keep_stored``); on a
 file without it, the formula gives that value as before. The award that
 qualifies is a literal default; change it in this module only. Placeholder
 until the report's own rule is known.
 
-On 9e18f010 ``pip_dl_category`` is not stored either: it is derived from the
+On 6f918b81 ``pip_dl_category`` is not stored either: it is derived from the
 stored assessment points, which the wrapper reads in the same way.
 
 The UC rebalancing step in policyengine-uk 2.174.1 and 2.177.7

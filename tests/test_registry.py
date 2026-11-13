@@ -38,7 +38,7 @@ def test_parameter_years_cover_policy_years(reform):
 
 def test_points_threshold_measures_follow_the_build():
     # The brief's rule: a points measure is never costed on data without
-    # points. The pinned build (9e18f010) stores points and no award
+    # points. The pinned build (6f918b81) stores points and no award
     # category, so there the measures are computable (data_limits).
     from pip_review.data_build import DATA_BUILD
 
@@ -56,6 +56,7 @@ def test_points_limits_hold_on_the_build_without_points():
     keys = {limit.key for limit in data_limits.limits_for_build("eeb6093e")}
     assert keys == {"pip_daily_living_points", "pip_mobility_points"}
     assert data_limits.limits_for_build("9e18f010") == ()
+    assert data_limits.limits_for_build("6f918b81") == ()
 
 
 def test_computable_measures():
@@ -64,7 +65,7 @@ def test_computable_measures():
         "cost_category_tiers",
         "standard_daily_living_rate",
         "uc_health_gateway",
-        "points_thresholds",  # computable on 9e18f010, which stores points
+        "points_thresholds",  # computable on 6f918b81, which stores points
     }
     for reform in computable.values():
         if reform.id == "points_thresholds":

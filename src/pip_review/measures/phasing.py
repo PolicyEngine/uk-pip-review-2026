@@ -12,10 +12,12 @@ stays moved in later years when the share does not fall. This phases award
 categories, so every knock-on that reads them follows; the engine's own
 ``pip_reform`` scenario overwrites ``pip`` and bypasses them.
 
-Not done here: recomputing the stored disability flags
-(``is_severely_disabled_for_benefits`` and the enhanced flag) from the new
-categories. That needs the same change in the current-law run as well, and
-``is_disabled_for_benefits`` has no formula at all, so it stays fixed.
+Build 6f918b81 does not store ``is_severely_disabled_for_benefits``, so its
+formula follows the phased categories. Not done here: recomputing the stored
+flags (``is_enhanced_disabled_for_benefits`` and ``is_disabled_for_benefits``)
+from the new categories. That needs the same change in the current-law run as
+well, and ``is_disabled_for_benefits`` has no formula at all, so it stays
+fixed.
 """
 
 CATEGORIES = ("pip_dl_category", "pip_m_category")

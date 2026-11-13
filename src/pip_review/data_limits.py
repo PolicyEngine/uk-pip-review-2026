@@ -62,15 +62,20 @@ ALL_LIMITS: tuple[DataLimit, ...] = (
 # The limits that hold on each Microcosm national build (its 8-character id).
 # eeb6093e stores PIP award categories and no assessment points, so a stored
 # award overrides points and a threshold change moves no one. 9e18f010
-# (data_build.DATA_BUILD) is a single-year 2024 file whose person table
+# (the pin until 13 November 2026) is a single-year 2024 file whose person table
 # stores pip_dl_points and pip_m_points and no PIP category column (from its
 # HDFStore metadata, 13 November 2026): policyengine-uk 2.177.7 derives each
 # category from the latest points against that year's thresholds, so a
-# threshold change moves awards (tests/test_measure_households.py). Only the
-# pinned build's entries are live (``LIMITS``).
+# threshold change moves awards (tests/test_measure_households.py). 6f918b81
+# (data_build.DATA_BUILD from 13 November 2026) stores the same: points, no
+# category column (HDFStore metadata, 13 November 2026). It also stores
+# cares_for_severely_disabled_person per carer, but not whom each carer cares
+# for, so MISSING_INPUTS["cared_for_outside_household"] still holds there.
+# Only the pinned build's entries are live (``LIMITS``).
 LIMITS_BY_BUILD: dict[str, tuple[str, ...]] = {
     "eeb6093e": ("pip_daily_living_points", "pip_mobility_points"),
     "9e18f010": (),
+    "6f918b81": (),
 }
 
 
@@ -102,9 +107,11 @@ MISSING_INPUTS: dict[str, str] = {
         "No award duration, review date or new-claim flag; the model is static."
     ),
     "cared_for_outside_household": (
-        "No record of caring for someone outside the household, so for a "
-        "carer in another household neither Carer's Allowance nor the UC "
-        "carer element can follow the cared-for person's award. Reaching them "
+        "The data record whether each carer cares for someone with a "
+        "qualifying disability benefit, but not who that person is or where "
+        "they live. For a carer of someone in another household neither "
+        "Carer's Allowance nor the UC carer element can follow the cared-for "
+        "person's award. Reaching them "
         "needs a share-based adjustment or the cared-for link in "
         "policyengine-uk #2889, item 5 (issue #2)."
     ),
