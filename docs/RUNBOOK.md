@@ -14,10 +14,13 @@ From G0 until the stop commit, nothing that changes the calculation path merges 
 uv sync --locked --extra dev --extra model
 (cd dashboard && bun install --frozen-lockfile)
 
-# heavy-run lock: one data-loading job or production build at a time
-until mkdir /tmp/pe-heavy.lock 2>/dev/null; do sleep 15; done; trap 'rmdir /tmp/pe-heavy.lock' EXIT
+# heavy-run lock: one data-loading job or production build at a time. A FILE
+# holding "<pid> <label>", noclobber, removed only by its owner; then 22 GB free+inactive.
+until ( set -C; echo "$$ pip-review-manual" > /tmp/pe-heavy.lock ) 2>/dev/null; do sleep 15; done
+trap '[ "$(cut -d" " -f1 /tmp/pe-heavy.lock 2>/dev/null)" = "$$" ] && rm -f /tmp/pe-heavy.lock' EXIT
+until [ "$(vm_stat | awk '/page size of/ {p=$8} /Pages free/ {f=$3} /Pages inactive/ {i=$3} END {print int((f+i)*p/1e9)}')" -ge 22 ]; do sleep 30; done
 
-uv run pip-review generate --mode model --status provisional     # takes the lock itself
+uv run pip-review generate --mode model --status provisional     # takes the lock itself (not inside the lines above)
 uv run pip-review household <preset> --reform <id>                # one household, light
 uv run pip-review reconcile --out reconciliation.csv --reasons gap_reasons.csv
 uv run python scripts/check_public_data.py                        # data/ and dashboard/public/data/
