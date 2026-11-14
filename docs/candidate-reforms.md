@@ -9,13 +9,13 @@ Probable recommendations, from the terms of reference (October 2025), the interi
 | `fast_track_serious_conditions` | Fast track (both components enhanced) for well-evidenced serious conditions | High | not-computable | health condition | #5 |
 | `hospital_rule` | Review the 28-day hospital rule | High | ledger | hospital stays | #5 |
 | `cost_category_tiers` | Awards that reflect extra-cost categories (cash part as re-tiered rates) | Medium | dashboard-param (placeholder) | none for the cash part | #1 |
-| `points_thresholds` | Recalibrate activities, descriptors and points | Medium | not-computable | points | #3 |
+| `points_thresholds` | Recalibrate activities, descriptors and points | Medium | not-computable (a standard-threshold cut; a raise, or an enhanced cut kept at 8 or more, would be computable on the drawn points) | points of people turned down | #3 |
 | `single_activity_minimum` | Minimum score in one activity (not expected in the report) | Low | not-computable | per-activity scores | #3 |
 | `standard_daily_living_rate` | Change to component rates | Low | dashboard-param (placeholder) | none | #1, #4 |
 | `uc_health_gateway` | PIP as the gateway to the UC health element | Medium | dashboard-structural (placeholder) | none | #6, #7 |
 | `carers_allowance_link` | Carer's Allowance and other passported support | Medium | ledger; a knock-on applied with any measure that moves award levels (`measures/carers_allowance_link.py`) | caring outside the household | #2 |
 | `existing_claimants_phasing` | How the changes apply to people already claiming | High | ledger; a phasing rule for measures that move award levels (`measures/phasing.py`) | review shares | #7 |
-| `transition_age_18` | Move from child DLA to PIP at 18 | Low | needs-pe-uk-first (held: modifier written, national result not yet explained; about 133 records on eeb6093e, 146 on 6f918b81) | none | |
+| `transition_age_18` | Move from child DLA to PIP at 18 | Low | needs-pe-uk-first (held: modifier written, national result not yet explained; 146 rows from 32 distinct survey households on 6f918b81) | none | |
 
 Administrative items (forms, letters, advocacy, decision-making framework, face-to-face capacity, digital services, data collection) have no direct distributional effect and are recorded in the ledger only.
 

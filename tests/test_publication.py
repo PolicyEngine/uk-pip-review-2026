@@ -82,3 +82,38 @@ def test_committed_results_match_generator():
         assert json.loads(path.read_text()) == generated, (
             f"{path} is stale: run pip-review generate"
         )
+
+
+def _coded_at_zero(results):
+    measure = next(
+        m
+        for m in results["measures"]
+        if m["computable"] and m["status"] != "withdrawn" and m["budgetary_impact"]
+    )
+    for row in measure["budgetary_impact"]:
+        row["value_m"] = 0.0
+    return measure
+
+
+def test_coded_measure_at_zero_everywhere_is_refused():
+    results = build_placeholder_results()
+    measure = _coded_at_zero(results)
+    errors = publication.validate_public(results)
+    assert any(e.startswith(f"{measure['id']}.budgetary_impact") for e in errors)
+    # A model run still writes its file (the run is kept) and warns instead.
+    assert publication.validate_public(results, allow_zero=True) == []
+    assert len(publication.zero_figure_problems(results)) == 1
+
+
+def test_zero_with_a_reason_passes():
+    results = build_placeholder_results()
+    measure = _coded_at_zero(results)
+    measure["zero_reason"] = "Already in the baseline from the first year scored."
+    assert publication.validate_public(results) == []
+
+
+def test_one_non_zero_year_is_not_a_zero_figure():
+    results = build_placeholder_results()
+    measure = _coded_at_zero(results)
+    measure["budgetary_impact"][-1]["value_m"] = -3.0
+    assert publication.zero_figure_problems(results) == []

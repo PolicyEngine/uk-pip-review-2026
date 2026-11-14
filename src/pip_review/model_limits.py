@@ -72,14 +72,17 @@ LIMITS: tuple[ModelLimit, ...] = (
         key="stored_disability_flags",
         paths=(
             "variable:is_disabled_for_benefits",
-            "variable:is_severely_disabled_for_benefits",
+            "variable:is_enhanced_disabled_for_benefits",
         ),
         reason=(
-            "Disability flags are stored columns and do not follow a PIP "
-            "reform; disability premiums and elements stay unchanged."
+            "is_disabled_for_benefits and is_enhanced_disabled_for_benefits "
+            "are stored columns and do not follow a PIP reform; the premiums "
+            "and elements that read them stay unchanged. Build 6f918b81 does "
+            "not store is_severely_disabled_for_benefits, so its formula "
+            "follows the PIP daily living award."
         ),
         public_reason=(
-            "Recorded disability status does not follow a PIP change, so "
+            "Recorded disability status does not follow a PIP change, so most "
             "disability premiums and elements in other benefits stay the same."
         ),
         issue=7,

@@ -2,7 +2,7 @@
 
 A knock-on for measures that move award categories, not a measure on its
 own: chain it after a category modifier with ``after(modifier)``. In
-policyengine-uk 2.174.1 ``carers_allowance_pre_overlap`` (through
+policyengine-uk 2.174.1 and 2.177.7 ``carers_allowance_pre_overlap`` (through
 ``carers_allowance_pre_couple_limit``, as 2.151.0 did directly) tests reported
 receipt, age, hours, earnings and country, never the cared-for person's
 award. This wraps it: a carer's allowance is set to zero when their
@@ -24,6 +24,20 @@ element would stay. The link therefore also wraps ``is_carer_for_benefits``
 and sets it to false for the same people, so the UC carer element (and the
 other rules that read it) follows the cared-for person's award too.
 
+On policyengine-uk 2.177.7 the caring-hours route to Carer's Allowance and
+to ``is_carer_for_benefits`` also needs ``cares_for_severely_disabled_person``
+(default true), and a reported award counts whatever it says. Build 6f918b81
+stores that flag (its values have not been read; carers are expected to
+hold true), and it does not follow the cared-for person's award, so a true
+value would keep both payments. The link therefore overrides
+the two outputs above, not the flag: for the people it reaches, a stored true
+flag no longer pays either.
+
+On a build that stores assessment points and no category, a measure can move
+awards through a points threshold, a parameter that is already reformed when
+the snapshot is taken. The snapshot therefore derives the current-law award
+from the stored points against current-law thresholds.
+
 Known limit: only carers in the same household as the person whose award
 changes are reached. A carer of someone in another household keeps both the
 allowance and the UC carer element; reaching them needs a share-based
@@ -43,13 +57,54 @@ QUALIFYING = {
 OTHER_QUALIFYING = ("attendance_allowance", "afcs")
 
 
+# Category variables policyengine-uk derives from stored assessment points
+# when no category is stored, and the component each belongs to.
+POINTS_COMPONENT = {"pip_dl_category": "dl", "pip_m_category": "m"}
+
+
+def _current_law_from_points(sim, name, year):
+    """The category in ``year`` derived from the stored points against
+    current-law thresholds (``policyengine_uk``'s default parameters), not
+    the simulation's: a measure that moves a points threshold has already
+    changed the simulation's parameters when the snapshot is taken, and the
+    category derived from them would be the reformed one."""
+    import numpy as np
+    from policyengine_core.periods import period as as_period
+    from policyengine_uk import tax_benefit_system as current_law
+    from policyengine_uk.utils.pip import pip_category
+    from policyengine_uk.variables.gov.dwp.pip.pip import PIPCategory
+
+    component = POINTS_COMPONENT[name]
+    branch = "daily_living" if component == "dl" else "mobility"
+    when = as_period(str(year))
+    thresholds = getattr(
+        current_law.parameters(when).gov.dwp.pip, branch
+    ).points_thresholds
+    index = np.asarray(
+        pip_category(sim.populations["person"], when, thresholds, component)
+    )
+    return np.array([c.name for c in PIPCategory])[index]
+
+
 def _stored(sim, name, year):
+    """The category in ``year`` under current law: the stored input, or, on
+    a build that stores assessment points and no category (6f918b81), the
+    category policyengine-uk derives from them against current-law
+    thresholds. Read before any category modifier runs, so it is the
+    current-law category."""
     import numpy as np
 
-    holder = sim.get_holder(name)
-    array = holder.get_array(year)
-    if array is None:
+    from pip_review.formula_override import stored_input_periods
+
+    if name not in sim.tax_benefit_system.variables:
         return None
+    if str(year) in {str(p) for p in stored_input_periods(sim, name)}:
+        array = sim.get_holder(name).get_array(year)
+    elif name in POINTS_COMPONENT:
+        return _current_law_from_points(sim, name, year)
+    else:
+        array = sim.calculate(name, year)
+        array = getattr(array, "values", array)
     if hasattr(array, "decode_to_str"):
         return np.asarray(array.decode_to_str())
     return np.asarray(array)

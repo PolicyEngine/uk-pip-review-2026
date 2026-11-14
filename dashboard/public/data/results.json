@@ -3,12 +3,13 @@
   "status": "placeholder",
   "banner": "Pre-release template: placeholder figures, not PolicyEngine estimates",
   "engine": {
-    "policyengine": "6.17.2",
-    "policyengine_uk": "2.174.1",
-    "policyengine_core": "3.33.3",
-    "dataset": "microcosm-uk-2024-25-national-20261107T020434Z-eeb6093e",
-    "dataset_sha256": "0a9b77db1c0dee2693cb2d47bad68da34cb662916eee4829942bcd45de581f25",
+    "policyengine": null,
+    "policyengine_uk": "2.177.7",
+    "policyengine_core": "3.34.10",
+    "dataset": "uk-frs-calibration-attempt-20261112T133744Z-6f918b81",
+    "dataset_sha256": "e268e3af7932784ad4471f008097a5acc6c3c5bc15c4c54fbb5a489b2a0ac9ae",
     "certified_pair": true,
+    "label": "build uk-frs-calibration-attempt-20261112T133744Z-6f918b81, policyengine-uk 2.177.7, not in a policyengine.py release",
     "pip_validation": "pending (#1, #4)"
   },
   "basis": {
@@ -32,14 +33,13 @@
       "recommendation": "Change how fluctuating conditions are assessed",
       "in_report": "not-yet-published",
       "route": "not-computable",
-      "route_reason": "Acts through assessment points and the share of days a descriptor applies; the data hold neither.",
+      "route_reason": "Acts through the score in each activity and the share of days a descriptor applies; the data hold neither.",
       "placeholder": true,
       "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [
-        "pip_dl_points",
-        "pip_m_points",
         "pip_activity_points"
       ],
       "issues": [
@@ -47,7 +47,7 @@
       ],
       "parameters": [],
       "status": "not-computable",
-      "receipt": "f90d1726432adf00eb9ca36d81130003bc959aba87d1ddb6b82031e5089ef89b",
+      "receipt": "8f17d59877bea603953ee506413042b57dfd5863624009697f75c20fb849c61f",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -70,13 +70,14 @@
       "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [
         "award_review_state"
       ],
       "issues": [],
       "parameters": [],
       "status": "ledger",
-      "receipt": "dd1b35a85d168e7785774ff4f3871cce5e68a818e496aa64963c1c710d0260b1",
+      "receipt": "e18fe86c6033be2abc9d122b71e42e8ce8e2eb1a8188d8b061bae7a52b14b5f2",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -99,6 +100,7 @@
       "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [
         "health_condition"
       ],
@@ -107,7 +109,7 @@
       ],
       "parameters": [],
       "status": "not-computable",
-      "receipt": "65e81ab9a00d46e547663724ef7f166c13a2c5d7c83d0d9a8779d91790624a25",
+      "receipt": "7858181d429b5210bbc22ca21441b311a4d0cccb47dfa93bdddae3791a7a6f35",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -130,6 +132,7 @@
       "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [
         "hospital_stay"
       ],
@@ -138,7 +141,7 @@
       ],
       "parameters": [],
       "status": "ledger",
-      "receipt": "a8bc866384bdd580525ac86134a2a9498552d83db41ed2fe7b5b7b5a78860cad",
+      "receipt": "3bcc414638d27ae102fb81804e87ace8f6e00cc9acfc8c976267db8a076618df",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -161,6 +164,7 @@
       "computable": true,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [
         1
@@ -170,7 +174,7 @@
         "gov.dwp.pip.daily_living.standard"
       ],
       "status": "held-placeholder",
-      "receipt": "8aa15c3c7292e5ff56e5bfbe760430b02682055668c49d3e407483f758c6e94a",
+      "receipt": "9f2bcc42d8c508d610a566ce985535d47444a7c42e9368458162c2add7aad8c1",
       "budgetary_impact": [
         {
           "year": 2027,
@@ -365,14 +369,14 @@
       "recommendation": "Recalibrate activities, descriptors and points",
       "in_report": "not-yet-published",
       "route": "not-computable",
-      "route_reason": "The parameter exists but moves no one: the data hold awards, not points, and a stored award overrides points.",
+      "route_reason": "A lower threshold is not costed: the data hold assessment points only for people who get PIP, so people turned down at 6 or 7 points are not in the data. Only existing recipients of the other component could move, and their points for this component were drawn by the data build. A higher threshold would be costed.",
       "placeholder": true,
       "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [
-        "pip_dl_points",
-        "pip_m_points"
+        "pip_points_of_people_turned_down"
       ],
       "issues": [
         3
@@ -382,7 +386,7 @@
         "gov.dwp.pip.mobility.points_thresholds.standard"
       ],
       "status": "not-computable",
-      "receipt": "5a735ae9cfa0f2b04fce6bbd36836da0f18e2514b4a33efea1dc9d02a9b04779",
+      "receipt": "5152b8bc404724d8d49879102918a354dd544f46e403d3cb72f17a8a6bdc5f38",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -405,6 +409,7 @@
       "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [
         "pip_activity_points"
       ],
@@ -413,7 +418,7 @@
       ],
       "parameters": [],
       "status": "not-computable",
-      "receipt": "b226b005b44f3cb1fe5a9d8751e69d4771236a8ea60d5195177c766ea5b48d08",
+      "receipt": "16389635c7bc2006c4c782903994a6a64c3a692d24c705406ffbcf58fb126567",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -436,6 +441,7 @@
       "computable": true,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [
         1,
@@ -445,7 +451,7 @@
         "gov.dwp.pip.daily_living.standard"
       ],
       "status": "held-placeholder",
-      "receipt": "f9c9051cde9524fd26548e0420735e43d4c061d7631ede2702818817b99ee742",
+      "receipt": "106b2a4161872e24d52df2564e4be6e452e6350856756d2f06eae25a65cd7b89",
       "budgetary_impact": [
         {
           "year": 2027,
@@ -645,6 +651,7 @@
       "computable": true,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [
         6,
@@ -652,7 +659,7 @@
       ],
       "parameters": [],
       "status": "held-placeholder",
-      "receipt": "12bf8681eaeb1af8a42e860247a63e8686c19f6592b6b7e5cc0ff3ca2de6cb58",
+      "receipt": "bef4418a12cfa4bbbc067eefad24aa9d1b345f2862e3dc24da9bce0cf944ce4b",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -670,11 +677,12 @@
       "recommendation": "Knock-on to passported support",
       "in_report": "not-yet-published",
       "route": "ledger",
-      "route_reason": "A knock-on, not a measure on its own: any measure that moves award levels applies the link (carers in the same household lose Carer's Allowance and the UC carer element when no one there qualifies any more). Carers of someone outside the household are a fiscal line from the official figure.",
+      "route_reason": "A knock-on, not a measure on its own: any measure that moves award levels applies the link (carers in the same household lose Carer's Allowance and the UC carer element when no one there qualifies any more). The data say whether a carer cares for someone with a qualifying award, not who, so carers of someone outside the household are a fiscal line from the official figure.",
       "placeholder": true,
       "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [
         "cared_for_outside_household"
       ],
@@ -683,7 +691,7 @@
       ],
       "parameters": [],
       "status": "ledger",
-      "receipt": "b97f9ea1c69ce1967da7708a9d4c7af0e2a2610efd69433dec819cf22a5e0503",
+      "receipt": "5752cfab73da7bd6766928f7fd75957af43f90ade623acbd296e4dca826f33fa",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -706,13 +714,14 @@
       "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [
         7
       ],
       "parameters": [],
       "status": "ledger",
-      "receipt": "0ecabb914b344c9583167a366c4a8c2db7c9c6894b7888a8946275662cbbe8e9",
+      "receipt": "6e1793240f61301e3a027d4b081c1a7d4453c730d1be658d8486aff05b26852c",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -730,16 +739,17 @@
       "recommendation": "Move from child DLA to PIP at 18",
       "in_report": "not-yet-published",
       "route": "needs-pe-uk-first",
-      "route_reason": "Held until a check is done: moving people aged 16 and 17 from PIP to the matching child DLA awards should leave their income unchanged, but a national run does not, and the cause is not yet found. About 133 survey records hold PIP at those ages in the certified build (eeb6093e), 146 in the newer 6f918b81 build.",
+      "route_reason": "Held until a check is done: moving people aged 16 and 17 from PIP to the matching child DLA awards should leave their income unchanged, but a national run does not, and the cause is not yet found. In build 6f918b81, the build in use, 146 rows hold PIP at those ages, and they come from only 32 distinct survey households.",
       "placeholder": true,
       "computable": false,
       "publishable": false,
       "withdrawn_reason": null,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [],
       "parameters": [],
       "status": "needs-pe-uk-first",
-      "receipt": "1f22cb2ca3f80d92dad1cf6cb29cb855a87f6fe589e491cb7c16f4b027af7245",
+      "receipt": "e333ecd0fde4807223103fc2ca28605899e517b2ef5221b5b23fdef25b0b371c",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -883,15 +893,15 @@
   ],
   "data_limits": [
     {
-      "key": "pip_daily_living_points",
-      "missing_input": "pip_dl_points",
-      "reason": "The data record each claimant's PIP daily living award (none, standard or enhanced), not assessment points, and a stored award overrides points. Changing a points threshold moves no one.",
+      "key": "pip_daily_living_threshold_cut",
+      "missing_input": "pip_points_of_people_turned_down",
+      "reason": "The data hold assessment points only for people who get PIP. People turned down for daily living are not in the data, so a lower daily living standard threshold could only be costed for people who already get the mobility component, whose daily living points the data build drew below 8 (mostly 4 to 7). A cut to the standard threshold is not costed, alone or with other changes. A higher threshold, or an enhanced threshold lowered but kept at 8 or more, is costed on the assumption that the drawn points place recipients correctly within their award.",
       "issue": 3
     },
     {
-      "key": "pip_mobility_points",
-      "missing_input": "pip_m_points",
-      "reason": "The data record each claimant's PIP mobility award, not assessment points, and a stored award overrides points. Changing a points threshold moves no one.",
+      "key": "pip_mobility_threshold_cut",
+      "missing_input": "pip_points_of_people_turned_down",
+      "reason": "The data hold assessment points only for people who get PIP. People turned down for mobility are not in the data, and people who get only the daily living component hold mobility points of 0 or 4 drawn by the data build, so a mobility standard threshold of 5 to 7 moves no one (4 or lower moves only those drawn at 4). A cut to the standard threshold is not costed, alone or with other changes. A higher threshold, or an enhanced threshold lowered but kept at 8 or more, is costed on the assumption that the drawn points place recipients correctly within their award.",
       "issue": 3
     }
   ],
@@ -913,7 +923,7 @@
     },
     {
       "key": "stored_disability_flags",
-      "reason": "Recorded disability status does not follow a PIP change, so disability premiums and elements in other benefits stay the same.",
+      "reason": "Recorded disability status does not follow a PIP change, so most disability premiums and elements in other benefits stay the same.",
       "issue": 7
     },
     {

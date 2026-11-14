@@ -21,6 +21,7 @@ needs-pe-uk-first, with the reason shown on the page.
 
 import warnings
 
+from pip_review.data_limits import is_computable_on_data, limits_for_paths
 from pip_review.measure_templates import (
     DataLimitedWarning,
     merge,
@@ -34,7 +35,7 @@ from pip_review.years import POLICY_YEARS
 DL = "gov.dwp.pip.daily_living"
 MOB = "gov.dwp.pip.mobility"
 
-# 2026-27 weekly rates in policyengine-uk 2.174.1 (from 2026-04-01).
+# 2026-27 weekly rates in policyengine-uk 2.174.1, unchanged on 2.177.7 (from 2026-04-01).
 CURRENT_RATES = {
     f"{DL}.standard": 76.70,
     f"{DL}.enhanced": 114.60,
@@ -43,7 +44,7 @@ CURRENT_RATES = {
 }
 
 
-# Current-law weekly rates for each policy year in policyengine-uk 2.174.1,
+# Current-law weekly rates for each policy year in policyengine-uk 2.174.1 (unchanged on 2.177.7),
 # after CPI uprating (read from the installed parameters, rounded to 1p). A
 # measure written as a change to current law adds to these, so it does not
 # turn into a cut once uprating overtakes a cash figure. Check them at G0
@@ -89,13 +90,23 @@ def _current_law_plus(path: str, weekly: float = 0.0, factor: float = 1.0):
 
 
 with warnings.catch_warnings():
-    # The threshold placeholder is data limited by design; the warning is
-    # expected and the route below records it.
+    # On a build without assessment points the threshold placeholder is data
+    # limited; the warning is expected and the route below records it.
     warnings.simplefilter("ignore", DataLimitedWarning)
     _THRESHOLDS = merge(
         threshold_change(f"{DL}.points_thresholds.standard", _every_year(6)),
         threshold_change(f"{MOB}.points_thresholds.standard", _every_year(6)),
     )
+# Build-aware (data_limits.LIMITS_BY_BUILD). On a build that stores only
+# awards (eeb6093e) no threshold change is computable. On 6f918b81, which
+# stores points drawn only for PIP recipients, a standard-threshold cut is not
+# computable (people turned down at 6-7 points are not in the data), alone or
+# bundled; a raise, or an enhanced cut kept at 8 or more, is, under the
+# drawn-points assumption. This placeholder is a standard cut (8 to 6).
+_THRESHOLDS_LIMITED = not is_computable_on_data(_THRESHOLDS)
+_POINTS_MISSING = any(
+    limit.direction == "any" for limit in limits_for_paths(_THRESHOLDS)
+)
 
 
 REFORMS: list[Reform] = [
@@ -110,10 +121,11 @@ REFORMS: list[Reform] = [
         likelihood=Likelihood.HIGH,
         route=Route.NOT_COMPUTABLE,
         route_reason=(
-            "Acts through assessment points and the share of days a descriptor "
-            "applies; the data hold neither."
+            "Acts through the score in each activity and the share of days a "
+            "descriptor applies; the data hold neither."
         ),
-        data_needs=["pip_dl_points", "pip_m_points", "pip_activity_points"],
+        data_needs=(["pip_dl_points", "pip_m_points"] if _POINTS_MISSING else [])
+        + ["pip_activity_points"],
         issues=[3],
     ),
     Reform(
@@ -193,13 +205,30 @@ REFORMS: list[Reform] = [
         ),
         recommendation="Recalibrate activities, descriptors and points",
         likelihood=Likelihood.MEDIUM,
-        route=Route.NOT_COMPUTABLE,
+        route=Route.NOT_COMPUTABLE if _THRESHOLDS_LIMITED else Route.DASHBOARD_PARAM,
         route_reason=(
             "The parameter exists but moves no one: the data hold awards, not "
             "points, and a stored award overrides points."
+            if _POINTS_MISSING
+            else "A lower threshold is not costed: the data hold assessment "
+            "points only for people who get PIP, so people turned down at 6 "
+            "or 7 points are not in the data. Only existing recipients of the "
+            "other component could move, and their points for this component "
+            "were drawn by the data build. A higher threshold would be costed."
+            if _THRESHOLDS_LIMITED
+            else "The data hold each claimant's assessment points and the "
+            "model derives awards from them, so a threshold is a parameter; "
+            "modelled directly. Carer's Allowance does not follow the new "
+            "awards in this measure."
         ),
         parameter_changes=_THRESHOLDS,
-        data_needs=["pip_dl_points", "pip_m_points"],
+        data_needs=(
+            ["pip_dl_points", "pip_m_points"]
+            if _POINTS_MISSING
+            else ["pip_points_of_people_turned_down"]
+            if _THRESHOLDS_LIMITED
+            else []
+        ),
         issues=[3],
     ),
     Reform(
@@ -264,9 +293,9 @@ REFORMS: list[Reform] = [
             "A knock-on, not a measure on its own: any measure that moves award "
             "levels applies the link (carers in the same household lose "
             "Carer's Allowance and the UC carer element when no one there "
-            "qualifies any more). Carers "
-            "of someone outside the household are a fiscal line from the "
-            "official figure."
+            "qualifies any more). The data say whether a carer cares for "
+            "someone with a qualifying award, not who, so carers of someone "
+            "outside the household are a fiscal line from the official figure."
         ),
         data_needs=["cared_for_outside_household"],
         issues=[2],
@@ -303,8 +332,8 @@ REFORMS: list[Reform] = [
             "Held until a check is done: moving people aged 16 and 17 from PIP "
             "to the matching child DLA awards should leave their income "
             "unchanged, but a national run does not, and the cause is not yet "
-            "found. About 133 survey records hold PIP at those ages in the "
-            "certified build (eeb6093e), 146 in the newer 6f918b81 build."
+            "found. In build 6f918b81, the build in use, 146 rows hold PIP at "
+            "those ages, and they come from only 32 distinct survey households."
         ),
     ),
 ]

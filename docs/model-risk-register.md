@@ -4,7 +4,7 @@
 |---|---|---|---|
 | Scotland and Northern Ireland inside PIP | Costs about 11% too high, wrong households in results | Tables keep England and Wales households only (`aggregate`); country test upstream | #1 |
 | Carer's Allowance ignores PIP | Carers affected reported as zero | Ledger line with official figure; reform-time link | #2 |
-| No points in the data | Points and descriptor measures not computable | Impute points per category from DWP tables | #3 |
+| Points held only for PIP recipients (6f918b81); the other component drawn below 8 | Standard-threshold cuts not computable, even bundled with other changes; raises and enhanced cuts kept at 8 or more rest on the drawn points | Standard cuts refused by the model validator and the publication gate; raises and enhanced cuts costed with the assumption stated; impute points for people turned down from DWP tables | #3 |
 | Caseload flat after 2024-25 against DWP's growing forecast | Baseline and proportional costs too low in later years | DWP path plus modelled change on the spending chart; ledger ratio per year; year-specific targets | #4 |
 | No condition or hospital data | Fast track and hospital rule not computable | Impute condition group, or fiscal lines | #5 |
 | UC health element proxy | Interaction missing for other PIP measures | Gateway measure wraps the flag; reform parameter upstream; settle the proxy ruling | #6 |

@@ -14,6 +14,17 @@ from typing import Any
 from pydantic import BaseModel, Field, model_validator
 
 
+def data_limit_refusals(parameter_changes) -> list[str]:
+    """Keys of the live data limits that make these changes not computable.
+
+    A cut limit refuses a measure when it holds on any one path, even with a
+    rate change or a raise beside it (``data_limits.refusing_limits``).
+    """
+    from pip_review.data_limits import refusing_limits
+
+    return [limit.key for limit in refusing_limits(parameter_changes or {})]
+
+
 class Route(str, Enum):
     """How a measure is handled on the day (the drill ledger's route classes)."""
 
@@ -66,6 +77,13 @@ class Reform(BaseModel):
             "published as a figure."
         ),
     )
+    zero_reason: str | None = Field(
+        None,
+        description=(
+            "Why a coded measure's £0 national figure is right. Without it, a "
+            "measure that scores £0 in every year fails the publication check."
+        ),
+    )
     data_needs: list[str] = Field(default_factory=list)
     issues: list[int] = Field(
         default_factory=list, description="Issues in this repository that block it"
@@ -109,6 +127,14 @@ class Reform(BaseModel):
             raise ValueError(
                 f"{self.id}: a {self.route.value} measure carries no model change"
             )
+        if computable and self.parameter_changes:
+            refused = data_limit_refusals(self.parameter_changes)
+            if refused:
+                raise ValueError(
+                    f"{self.id}: not computable on the pinned build ("
+                    + ", ".join(refused)
+                    + "); route it not-computable with the reason"
+                )
         return self
 
     @property
@@ -152,6 +178,7 @@ class Reform(BaseModel):
             "computable": self.computable,
             "publishable": self.publishable,
             "withdrawn_reason": self.withdrawn_reason,
+            "zero_reason": self.zero_reason,
             "data_needs": list(self.data_needs),
             "issues": list(self.issues),
             "parameters": sorted(self.parameter_changes or {}),

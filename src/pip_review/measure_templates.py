@@ -34,7 +34,7 @@ UC_NEW_CLAIMANT_HEALTH = (
     "gov.dwp.universal_credit.rebalancing.new_claimant_health_element"
 )
 UC_REBALANCING_ACTIVE = "gov.dwp.universal_credit.rebalancing.active"
-# The years policyengine-uk 2.174.1's UC rebalancing runs
+# The years policyengine-uk 2.174.1's (and 2.177.7's) UC rebalancing runs
 # (policyengine_uk.scenarios.uc_reform.REBALANCING_YEARS). Literal so the
 # builders load without the engine; tests/test_model_mode.py checks it
 # against the installed engine.
@@ -73,10 +73,10 @@ def _annual_values(values: Mapping) -> dict[str, float]:
     return dict(sorted(out.items()))
 
 
-def _warn_if_data_limited(path: str) -> None:
+def _warn_if_data_limited(path: str, values: Mapping) -> None:
     from pip_review.data_limits import limits_for_paths
 
-    for limit in limits_for_paths([path]):
+    for limit in limits_for_paths({path: values}):
         warnings.warn(f"{path}: {limit.reason}", DataLimitedWarning, stacklevel=3)
 
 
@@ -106,7 +106,7 @@ def rate_change(path: str, values: Mapping) -> dict[str, dict[str, float]]:
     _validate_path(path)
     built = {path: _annual_values(values)}
     _refuse_uc_health_traps(path, built[path])
-    _warn_if_data_limited(path)
+    _warn_if_data_limited(path, built[path])
     return built
 
 

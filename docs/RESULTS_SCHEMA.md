@@ -7,7 +7,7 @@ One file, written by `pip-review generate` to `data/results.json` and copied to 
 | `schema_version` | int | 2 |
 | `status` | `placeholder`, `mock`, `provisional` or `final` | Defined once in `publication.STATUSES` |
 | `banner` | string | Required for every status except `final`; a `mock` banner contains `MOCK`; empty on `final` |
-| `engine` | object | `policyengine`, `policyengine_uk`, `policyengine_core` (from `uv.lock`, or the install in model mode), `dataset`, `dataset_sha256`, `certified_pair`, `pip_validation` |
+| `engine` | object | `policyengine`, `policyengine_uk`, `policyengine_core` (from `uv.lock`, or the install in model mode), `dataset`, `dataset_sha256`, `certified_pair` (true for the pinned pair, `data_build.DATA_BUILD`), `label` ("build <id>, policyengine-uk <version>, not in a policyengine.py release"), `pip_validation` |
 | `provenance` | object | Model mode only: `commit`, `clean_tree`, `bundle`, `machine_seconds` |
 | `basis` | object | `cost`, `distribution`, `behaviour` text; shown once, on Methodology |
 | `base_year`, `years`, `distribution_year` | int, int[], int | Fiscal start years |
@@ -32,6 +32,8 @@ Tables per measure (null when the measure has no figures; the model-only ones ar
 Rules (checked by `publication.validate_public`, `scripts/check_public_data.py` and `dashboard/scripts/validate-results.mjs`):
 
 - A measure that is not computable, or is withdrawn, has `null` figures, never zeros, and a reason.
+- A computable measure whose `budgetary_impact` rounds to £0m in every year needs a `zero_reason` saying why zero is right. Without one, the public-data guard and the page build refuse the file; `generate --mode model` still writes it, with a warning, so the run is kept. A measure that acts only through inputs the data lack is not computable: route it so, with the reason.
+- A provisional or final page needs `engine.certified_pair: true`: the pinned build's file (by SHA-256) on the engine it was built on.
 - Placeholder measures appear only under `placeholder` or `mock`; outside them a modelled measure must carry figures.
 - Every survey row says whether it is `suppressed`; cells below 10 survey households are blanked before writing.
 - The preset households cover exactly the measures with figures.

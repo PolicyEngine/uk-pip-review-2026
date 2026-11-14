@@ -28,8 +28,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     generate.add_argument(
         "--dataset",
-        help="Model mode: a dataset file instead of the bundle's certified "
-        "national file (tests only; figures are never certified)",
+        help="Model mode: a dataset file instead of the pinned national build "
+        "(it must be the pinned build, by SHA-256, unless --allow-unpinned)",
+    )
+    generate.add_argument(
+        "--allow-unpinned",
+        action="store_true",
+        help="Model mode: run a --dataset file that is not the pinned build "
+        "(tests only; marked certified_pair false, never published)",
     )
     generate.add_argument(
         "--measures", help="Model mode: comma-separated ids (default: all computable)"
@@ -83,6 +89,7 @@ def main(argv: list[str] | None = None) -> int:
                 banner=args.banner,
                 measure_ids=args.measures.split(",") if args.measures else None,
                 households=not args.no_households,
+                allow_unpinned=args.allow_unpinned,
             )
         pipeline.write_results(results, args.out, args.dashboard_copy)
         print(f"Wrote {args.out} and {args.dashboard_copy}")

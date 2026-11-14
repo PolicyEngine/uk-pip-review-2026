@@ -25,6 +25,7 @@ def results(tmp_path_factory):
         status="mock",
         measure_ids=["standard_daily_living_rate", "uc_health_gateway"],
         households=False,
+        allow_unpinned=True,
     )
 
 
@@ -67,12 +68,14 @@ def test_current_law_rates_match_engine():
             assert leaf == pytest.approx(value, abs=0.006), (year, path)
 
 
-def test_certified_bundle_matches_install():
-    from policyengine.tax_benefit_models.uk.model import uk_latest
+def test_pinned_engine_matches_install():
+    from importlib import metadata
 
-    bundle = uk_latest.release_bundle
-    for key, value in pipeline.CERTIFIED_BUNDLE.items():
-        assert bundle[key] == value
+    from pip_review.data_build import DATA_BUILD
+
+    assert pipeline.CERTIFIED_BUNDLE["model_version"] == DATA_BUILD.engine
+    assert metadata.version("policyengine-uk") == DATA_BUILD.engine
+    assert metadata.version("policyengine-core") == DATA_BUILD.core
 
 
 def test_uc_rebalanced_years_match_engine():
@@ -86,13 +89,12 @@ def test_uc_rebalanced_years_match_engine():
 def test_benefit_receipt_payment_reaches_pip_households_in_england_and_wales(
     tmp_path,
 ):
-    from policyengine.tax_benefit_models.uk.model import managed_microsimulation
-
     from pip_review.measure_templates import apply_benefit_receipt_payment
+    from pip_review.model_run import build
 
     path = write(tmp_path / "small.h5", households=60)
-    base = managed_microsimulation(dataset=str(path), allow_unmanaged=True)
-    sim = managed_microsimulation(dataset=str(path), allow_unmanaged=True)
+    base = build(str(path), None, allow_unpinned=True)
+    sim = build(str(path), None, allow_unpinned=True)
     apply_benefit_receipt_payment(
         sim,
         amount=100,
@@ -154,9 +156,9 @@ def test_carers_allowance_link_follows_the_cared_for_award():
 
 def test_phasing_moves_only_the_share(tmp_path):
     import numpy as np
-    from policyengine.tax_benefit_models.uk.model import managed_microsimulation
 
     from pip_review.measures.phasing import phase
+    from pip_review.model_run import build
 
     def remove_all_awards(sim):
         for year in (2027, 2028):
@@ -164,7 +166,7 @@ def test_phasing_moves_only_the_share(tmp_path):
             sim.set_input("pip_dl_category", year, np.array(["NONE"] * n))
 
     path = write(tmp_path / "phase.h5", households=150)
-    sim = managed_microsimulation(dataset=str(path), allow_unmanaged=True)
+    sim = build(str(path), None, allow_unpinned=True)
     before = {
         y: np.asarray(sim.calculate("pip_dl_category", y).values) != "NONE"
         for y in (2027, 2028)
@@ -186,7 +188,8 @@ def test_parameters_that_act_through_points_are_data_limited():
 
     For each parameter path a registered measure changes, find the engine
     source files that read it; if any of them also reads assessment points,
-    which the data do not hold, the path must be covered by a DataLimit.
+    the path must be covered by a declared DataLimit (``ALL_LIMITS``),
+    which is live only on a build without points (``LIMITS_BY_BUILD``).
     """
     from pathlib import Path
 
@@ -211,9 +214,194 @@ def test_parameters_that_act_through_points_are_data_limited():
         readers = [f for f, text in sources.items() if re.search(node, text)]
         if any(any(p in sources[f] for p in points) for f in readers):
             flagged.add(path)
-            assert data_limits.limits_for_paths([path]), path
+            assert any(limit.covers(path) for limit in data_limits.ALL_LIMITS), path
     # The check is live: the points thresholds are found to act through points
     assert any("points_thresholds" in p for p in flagged)
     assert not any(
         p.endswith(("daily_living.standard", "daily_living.enhanced")) for p in flagged
     )
+
+
+def test_points_layout_scores_the_gateway_not_the_threshold_cut(tmp_path_factory):
+    """A file shaped like build 6f918b81 (2024 only; points, no category; the
+    UC limited-capability flag stored): the gateway runs over the stored
+    flag, and the threshold cut is published as not computable, never as a
+    figure."""
+    os.environ["PIP_REVIEW_NO_LOCK"] = "1"
+    path = write(
+        tmp_path_factory.mktemp("points") / "points.h5", households=300, layout="points"
+    )
+    results = pipeline.build_model_results(
+        dataset=str(path),
+        status="mock",
+        measure_ids=["uc_health_gateway"],
+        households=False,
+        allow_unpinned=True,
+    )
+    assert publication.validate_public(results) == []
+    by_id = {m["id"]: m for m in results["measures"]}
+    assert by_id["points_thresholds"]["status"] == "not-computable"
+    assert not by_id["points_thresholds"]["budgetary_impact"]
+    with pytest.raises(ValueError, match="points_thresholds"):
+        pipeline.build_model_results(
+            dataset=str(path),
+            status="mock",
+            measure_ids=["points_thresholds"],
+            households=False,
+            allow_unpinned=True,
+        )
+    gateway = by_id["uc_health_gateway"]["budgetary_impact"]
+    assert any(row["value_m"] != 0 for row in gateway)
+
+
+def test_a_named_file_that_is_not_the_pinned_build_is_refused(tmp_path):
+    from pip_review import model_run
+
+    path = write(tmp_path / "synthetic.h5", households=20)
+    with pytest.raises(RuntimeError, match="not that of build"):
+        model_run.build(str(path), None)
+
+
+def test_an_unpinned_run_cannot_be_published(results):
+    for status in ("provisional", "final"):
+        public = {**results, "status": status, "banner": "Provisional"}
+        errors = publication.validate_public(public)
+        assert any(e.startswith("$.engine.certified_pair") for e in errors)
+
+
+# Build 6f918b81's PIP points (María, data owner, 13 November 2026): drawn only
+# for people with an award, -1 otherwise; the other component of a
+# one-component recipient below 8 (daily living 4-7, mobility 0 or 4).
+DL_STANDARD = "gov.dwp.pip.daily_living.points_thresholds.standard"
+MOB_STANDARD = "gov.dwp.pip.mobility.points_thresholds.standard"
+
+
+def test_current_law_thresholds_match_the_engine():
+    from policyengine_uk import CountryTaxBenefitSystem
+
+    from pip_review.data_limits import CURRENT_LAW_THRESHOLDS
+
+    parameters = CountryTaxBenefitSystem().parameters
+    for path, value in CURRENT_LAW_THRESHOLDS.items():
+        node = parameters.get_child(path)
+        assert {entry.value for entry in node.values_list} == {value}, path
+
+
+def test_synthetic_points_match_the_build():
+    import numpy as np
+
+    from pip_review.synthetic_dataset import build
+
+    person = build(households=400, layout="points").person
+    dl = person["pip_dl_points"].to_numpy()
+    mob = person["pip_m_points"].to_numpy()
+    assessed = (dl >= 0) | (mob >= 0)
+    # not assessed: both -1, never 0-7
+    assert ((dl == -1) == (mob == -1)).all()
+    assert set(np.unique(dl[~assessed])) == {-1}
+    # every assessed person gets at least one component
+    assert ((dl[assessed] >= 8) | (mob[assessed] >= 8)).all()
+    dl_only = (dl >= 8) & (mob < 8) & assessed
+    mob_only = (mob >= 8) & (dl < 8) & assessed
+    assert set(np.unique(mob[dl_only])) <= {0, 4}
+    assert set(np.unique(dl[mob_only])) == {4, 5, 6, 7}
+    assert (dl[mob_only] >= 6).sum() >= 10  # the test below is not vacuous
+
+
+@pytest.fixture(scope="module")
+def points_file(tmp_path_factory):
+    return write(
+        tmp_path_factory.mktemp("cut") / "points.h5", households=400, layout="points"
+    )
+
+
+def _awards(path, changes=None):
+    import numpy as np
+    from policyengine_uk.utils.scenario import Scenario
+
+    from pip_review.model_run import build
+
+    scenario = Scenario(parameter_changes=changes) if changes else None
+    sim = build(str(path), scenario, allow_unpinned=True)
+    return {
+        name: np.asarray(sim.calculate(name, 2027).values) != "NONE"
+        for name in ("pip_dl_category", "pip_m_category")
+    }
+
+
+def test_threshold_cut_moves_no_non_recipient(points_file):
+    """A daily living cut to 6 moves only mobility-only recipients drawn at
+    6-7; no one holding -1 moves; a mobility cut to 6 moves no one. This is
+    why a cut is not computable: the people it should reach (turned down at
+    6-7) are not in the data."""
+    import numpy as np
+
+    from pip_review.synthetic_dataset import build
+
+    person = build(households=400, layout="points").person
+    dl = person["pip_dl_points"].to_numpy()
+    mob = person["pip_m_points"].to_numpy()
+    base = _awards(points_file)
+    dl_cut = _awards(points_file, {DL_STANDARD: {"2027": 6}})
+    mob_cut = _awards(points_file, {MOB_STANDARD: {"2027": 6}})
+    moved = dl_cut["pip_dl_category"] & ~base["pip_dl_category"]
+    assert moved.any()
+    assert not moved[dl == -1].any()
+    assert (mob[moved] >= 8).all() and set(np.unique(dl[moved])) <= {6, 7}
+    assert (moved == ((dl >= 6) & (dl < 8) & (mob >= 8))).all()
+    assert (mob_cut["pip_m_category"] == base["pip_m_category"]).all()
+    # the limit applied on the pinned build keeps the cut off the page
+    from pip_review import data_limits
+
+    assert data_limits.is_only_data_limited({DL_STANDARD: {"2027": 6}})
+    assert data_limits.is_only_data_limited({MOB_STANDARD: {"2027": 6}})
+
+
+def test_threshold_raise_stays_computable(points_file):
+    """A raise moves recipients whose drawn points fall below the new
+    threshold; it is computable under the drawn-points assumption."""
+    from pip_review import data_limits
+
+    raise_ = {DL_STANDARD: {"2027": 10}}
+    assert not data_limits.is_only_data_limited(raise_)
+    base = _awards(points_file)
+    raised = _awards(points_file, raise_)
+    lost = base["pip_dl_category"] & ~raised["pip_dl_category"]
+    assert lost.any()
+    assert not (raised["pip_dl_category"] & ~base["pip_dl_category"]).any()
+
+
+DL_ENHANCED = "gov.dwp.pip.daily_living.points_thresholds.enhanced"
+
+
+def _categories(path, changes=None):
+    import numpy as np
+    from policyengine_uk.utils.scenario import Scenario
+
+    from pip_review.model_run import build
+
+    scenario = Scenario(parameter_changes=changes) if changes else None
+    sim = build(str(path), scenario, allow_unpinned=True)
+    return np.asarray(sim.calculate("pip_dl_category", 2027).values).astype(str)
+
+
+def test_enhanced_cut_moves_only_standard_rate_recipients(points_file):
+    """An enhanced threshold of 10 (from 12) moves only daily living
+    standard-rate recipients at 10-11 to enhanced: everyone it reaches is in
+    the data, so it is computable under the drawn-points assumption, like a
+    raise. An enhanced threshold below 8 makes people below the standard
+    threshold enhanced, so it counts as a cut."""
+    from pip_review import data_limits
+    from pip_review.synthetic_dataset import build
+
+    dl = build(households=400, layout="points").person["pip_dl_points"].to_numpy()
+    cut = {DL_ENHANCED: {"2027": 10}}
+    assert data_limits.is_computable_on_data(cut)
+    base = _categories(points_file)
+    after = _categories(points_file, cut)
+    changed = base != after
+    assert changed.any()
+    assert set(base[changed]) == {"STANDARD"} and set(after[changed]) == {"ENHANCED"}
+    assert ((dl[changed] >= 10) & (dl[changed] < 12)).all()
+    assert not ((base == "NONE") & (after != "NONE")).any()
+    assert not data_limits.is_computable_on_data({DL_ENHANCED: {"2027": 7}})

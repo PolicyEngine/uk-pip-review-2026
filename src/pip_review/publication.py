@@ -22,7 +22,7 @@ from collections.abc import Iterable
 from typing import Any
 
 from pip_review import sign_off
-from pip_review.models import Reform
+from pip_review.models import Reform, data_limit_refusals
 
 STATUSES = ("placeholder", "mock", "provisional", "final")
 # Statuses under which a placeholder measure may still be in the file.
@@ -116,7 +116,36 @@ def status_of(reform: Reform) -> str:
     return "published"
 
 
+def data_limit_problems(reforms: Iterable[Reform]) -> list[str]:
+    """Computable measures that a live data limit refuses.
+
+    ``Reform``'s validator refuses these when a measure is built; this checks
+    again at publication, against the limits live now, so a measure built
+    another way (``model_construct``, a changed route) or under other limits
+    cannot reach the page with a figure.
+    """
+    problems = []
+    for reform in reforms:
+        if reform.computable and reform.parameter_changes:
+            refused = data_limit_refusals(reform.parameter_changes)
+            if refused:
+                problems.append(
+                    f"{reform.id}: computable, but data limits refuse it on the "
+                    f"pinned build ({', '.join(refused)}); route it not-computable"
+                )
+    return problems
+
+
+def refuse_data_limited(reforms: Iterable[Reform]) -> None:
+    """Raise if any computable measure is refused by a live data limit."""
+    problems = data_limit_problems(reforms)
+    if problems:
+        raise ValueError("Publication check failed:\n" + "\n".join(problems))
+
+
 def manifest(reforms: Iterable[Reform]) -> list[dict[str, Any]]:
+    reforms = list(reforms)
+    refuse_data_limited(reforms)
     return [
         {
             "id": reform.id,
@@ -198,8 +227,13 @@ def _check_floored_rows(mid: str, measure: dict[str, Any], errors: list[str]):
                 )
 
 
-def validate_public(results: dict[str, Any]) -> list[str]:
-    """Problems that block publishing the results file. Empty means it passes."""
+def validate_public(results: dict[str, Any], allow_zero: bool = False) -> list[str]:
+    """Problems that block publishing the results file. Empty means it passes.
+
+    ``allow_zero`` lets a model run write its file when a coded measure scores
+    £0 everywhere (``zero_figure_problems`` then warns), so the run is not
+    lost; the public-data guard and the page build still refuse it.
+    """
     errors: list[str] = []
     for key, where in _walk_keys(results):
         if key.lower() in FORBIDDEN_KEYS:
@@ -207,6 +241,13 @@ def validate_public(results: dict[str, Any]) -> list[str]:
         if key == "n_households":
             errors.append(f"{where}: record counts are not published")
     _check_status(results, errors)
+    if results.get("status") in ("provisional", "final") and (
+        (results.get("engine") or {}).get("certified_pair") is not True
+    ):
+        errors.append(
+            "$.engine.certified_pair: a provisional or final page needs the "
+            "pinned build and engine (data_build.DATA_BUILD)"
+        )
     measures = results.get("measures", [])
     if results.get("status") not in PLACEHOLDER_STATUSES:
         for measure in measures:
@@ -239,6 +280,8 @@ def validate_public(results: dict[str, Any]) -> list[str]:
     if results.get("package"):
         _check_floored_rows("package", results["package"], errors)
     _check_page_measures(results, errors)
+    if not allow_zero:
+        errors.extend(zero_figure_problems(results))
     return errors
 
 
@@ -262,3 +305,29 @@ def _check_page_measures(results: dict[str, Any], errors: list[str]) -> None:
     package = results.get("package")
     if package is not None and set(package.get("measure_ids", [])) != with_figures:
         errors.append("$.package: built from a different measure list than the file")
+
+
+def zero_figure_problems(results: dict[str, Any]) -> list[str]:
+    """Coded measures whose national figure is £0m in every year, unexplained."""
+    return [
+        f"{measure.get('id', '?')}.budgetary_impact: a coded measure scores £0 "
+        "in every year. If it acts only through inputs the data lack, route it "
+        "not-computable with the reason; if zero is right, say why in zero_reason"
+        for measure in results.get("measures", [])
+        if measure.get("computable")
+        and measure.get("status") != "withdrawn"
+        and _scores_zero(measure)
+        and not measure.get("zero_reason")
+    ]
+
+
+def _scores_zero(measure: dict[str, Any]) -> bool:
+    """True when a coded measure's national figure rounds to £0m in every year.
+
+    A parameter that acts only through an input the data lack scores exactly
+    zero. Shown as a costing, that zero is wrong, not small.
+    """
+    rows = measure.get("budgetary_impact") or []
+    values = [row.get("value_m") for row in rows if isinstance(row, dict)]
+    values = [v for v in values if v is not None]
+    return bool(values) and all(abs(v) < 0.5 for v in values)

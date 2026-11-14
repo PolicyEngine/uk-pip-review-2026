@@ -14,10 +14,13 @@ From G0 until the stop commit, nothing that changes the calculation path merges 
 uv sync --locked --extra dev --extra model
 (cd dashboard && bun install --frozen-lockfile)
 
-# heavy-run lock: one data-loading job or production build at a time
-until mkdir /tmp/pe-heavy.lock 2>/dev/null; do sleep 15; done; trap 'rmdir /tmp/pe-heavy.lock' EXIT
+# heavy-run lock: one data-loading job or production build at a time. A FILE
+# holding "<pid> <label>", noclobber, removed only by its owner; then 22 GB free+inactive.
+until ( set -C; echo "$$ pip-review-manual" > /tmp/pe-heavy.lock ) 2>/dev/null; do sleep 15; done
+trap '[ "$(cut -d" " -f1 /tmp/pe-heavy.lock 2>/dev/null)" = "$$" ] && rm -f /tmp/pe-heavy.lock' EXIT
+until [ "$(vm_stat | awk '/page size of/ {p=$8} /Pages free/ {f=$3} /Pages inactive/ {i=$3} END {print int((f+i)*p/1e9)}')" -ge 22 ]; do sleep 30; done
 
-uv run pip-review generate --mode model --status provisional     # takes the lock itself
+uv run pip-review generate --mode model --status provisional     # takes the lock itself (not inside the lines above)
 uv run pip-review household <preset> --reform <id>                # one household, light
 uv run pip-review reconcile --out reconciliation.csv --reasons gap_reasons.csv
 uv run python scripts/check_public_data.py                        # data/ and dashboard/public/data/
@@ -26,11 +29,13 @@ uv run python scripts/check_public_data.py ledger.csv reconciliation.csv   # any
 cd dashboard && bun run data && bun run build && bun run smoke    # build under the lock
 ```
 
+Memory: The national file holds about 78k household rows from about 16k survey households, and its memory use cannot be cut much by trimming the file; the practical fix is one year per run (María, data owner, 13 November 2026). Model mode has no per-year option yet.
+
 `generate --mode model` runs current law, each computable measure and the package, one simulation per process, inside the lock, and refuses an installed bundle other than the one recorded in `pipeline.CERTIFIED_BUNDLE`. It records machine time per run in `provenance.machine_seconds`.
 
 ## Gates
 
-1. **G0 (as soon as the date is known).** Record the start SHA, policyengine and policyengine-uk versions, dataset build id and SHA-256 (`pipeline.CERTIFIED_BUNDLE`, from the bundle manifest), and "certified bundle pair; PIP-specific validation pending (#1, #4)". If DWP's autumn 2026 benefit expenditure and caseload tables are out, swap them into `data_inputs/official/` and regenerate.
+1. **G0 (as soon as the date is known).** Record the start SHA, policyengine and policyengine-uk versions, dataset build id and SHA-256 (`pipeline.CERTIFIED_BUNDLE`, from `data_build.DATA_BUILD`), and the label "build uk-frs-calibration-attempt-20261112T133744Z-6f918b81, policyengine-uk 2.177.7, not in a policyengine.py release; PIP-specific validation pending (#1, #4)". If DWP's autumn 2026 benefit expenditure and caseload tables are out, swap them into `data_inputs/official/` and regenerate.
 2. **G1 (within 30 minutes of publication).** Read the report. Write the coverage ledger: one line per recommendation with route and cause class. Replace the placeholder measures in `reforms.py` with the report's own, set `in_report`, and keep `placeholder=True` until reconciled. A measure that moves award levels wraps its modifier in `carers_allowance_link.after(...)` so Carer's Allowance follows the cared-for person's award (#2), and in `phasing.phase(..., shares)` if the report phases it in at award review (#7).
 3. **G2.** `generate --mode model --status provisional`. Hand-check one household per measure.
 4. **G3.** Put each official costing in `data_inputs/official/costings_<source>.csv` (`measure_id,fiscal_year,value_m,basis,source`, re-based to our basis) and run `reconcile`. Every gap over 10% needs a reason and a cause class in the reasons CSV.

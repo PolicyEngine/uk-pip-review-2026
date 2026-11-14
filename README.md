@@ -20,17 +20,18 @@ The review reports to the Secretary of State and is expected to set out recommen
 - PolicyEngine UK static microsimulation on the Microcosm UK dataset. No behavioural response is modelled.
 - England and Wales only for PIP. In Scotland, Adult Disability Payment has replaced PIP.
 - Each recommendation is routed before anything is published: modelled by a parameter change, modelled by a structural change, recorded as a fiscal line from official figures, or not computable with the current data (with the reason). A measure we cannot compute is never shown as £0.
-- The data hold PIP awards (none, standard or enhanced, for each component), not assessment points. Reforms to points or descriptors need imputed points before they can be modelled.
+- The data (build 6f918b81) hold PIP assessment points only for people with a PIP award, and the model derives awards from them. A higher points threshold can be modelled, on the assumption that the drawn points place recipients correctly within their award; a lower threshold cannot, because people turned down just below it are not in the data. Reforms to descriptors or to the score in one activity need data the build does not hold.
 
 ## Data and model
 
 | Item | Version |
 |---|---|
-| policyengine | 6.17.2 (`policyengine[uk]`) |
-| policyengine-uk | 2.174.1 |
-| Dataset | Microcosm UK 2024-25 national build `20261107T020434Z-eeb6093e`, SHA-256 `0a9b77db1c0dee2693cb2d47bad68da34cb662916eee4829942bcd45de581f25` |
+| policyengine-uk | 2.177.7 (the version the build below was made and certified on) |
+| policyengine-core | 3.34.10 (likewise) |
+| policyengine.py | not used: no release covers this pair |
+| Dataset | Microcosm UK 2024-25 national build `uk-frs-calibration-attempt-20261112T133744Z-6f918b81`, SHA-256 `e268e3af7932784ad4471f008097a5acc6c3c5bc15c4c54fbb5a489b2a0ac9ae` |
 
-This is the bundle's certified pair; PIP-specific validation is pending (#1, #4). policyengine 6.17.2 pins policyengine-uk 2.174.1 and policyengine-core 3.33.3; the version is frozen again at G0. Microdata are licensed and are not stored in this repository; only aggregate outputs that pass a disclosure check are published.
+Every figure is labelled "build uk-frs-calibration-attempt-20261112T133744Z-6f918b81, policyengine-uk 2.177.7, not in a policyengine.py release"; PIP-specific validation is pending (#1, #4). The rule is the newest published build with the engine it was built on, never a build with another engine version; build `…-6f918b81` superseded `…-9e18f010` (also 2.177.7) on 13 November 2026; a build switch is a change to the one constant `DATA_BUILD` in `src/pip_review/data_build.py`. The pair is frozen again at G0. Microdata are licensed and are not stored in this repository; only aggregate outputs that pass a disclosure check are published.
 
 ## Licence
 
@@ -47,7 +48,7 @@ uv run python scripts/check_public_data.py
 cd dashboard && bun install && bun run dev   # local page on http://localhost:3000
 ```
 
-`uv sync --extra model` adds `policyengine[uk]==6.17.2` for model runs (`uv run pip-review generate --mode model`, which takes the heavy-run lock) and preset households (`uv run pip-review household <preset>`). `docs/RUNBOOK.md` has every command for the day.
+`uv sync --extra model` adds policyengine-uk 2.177.7 and policyengine-core 3.34.10 for model runs (`uv run pip-review generate --mode model`, which takes the heavy-run lock) and preset households (`uv run pip-review household <preset>`). `docs/RUNBOOK.md` has every command for the day.
 
 ## Layout
 

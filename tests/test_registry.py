@@ -36,14 +36,51 @@ def test_parameter_years_cover_policy_years(reform):
         assert sorted(values) == [str(y) for y in POLICY_YEARS], path
 
 
-def test_points_threshold_measures_are_not_computable():
-    # The brief's one concrete PIP rule: a points measure is never costed.
+def test_points_threshold_measures_follow_the_build():
+    # The brief's rule: a points measure is never costed on data that cannot
+    # support it. On the pinned build (6f918b81) points are held only for
+    # PIP recipients, so a threshold cut is not computable (data_limits).
     for reform in REFORMS:
-        paths = list(reform.parameter_changes or {})
-        if any("points_thresholds" in p for p in paths):
-            assert data_limits.is_only_data_limited(paths)
-            assert reform.route is Route.NOT_COMPUTABLE
-            assert not reform.computable
+        changes = reform.parameter_changes or {}
+        if any("points_thresholds" in p for p in changes):
+            limited = data_limits.is_only_data_limited(changes)
+            assert reform.computable is not limited
+            expected = Route.NOT_COMPUTABLE if limited else Route.DASHBOARD_PARAM
+            assert reform.route is expected
+
+
+def test_no_computable_measure_moves_only_limited_parameters():
+    # Registry-wide, so a new cut measure cannot slip through as a parameter
+    # route: any measure whose every change hits a live limit is not
+    # computable.
+    for reform in REFORMS:
+        changes = reform.parameter_changes or {}
+        if changes and data_limits.is_only_data_limited(changes):
+            assert not reform.computable, reform.id
+
+
+def test_threshold_cut_is_not_computable_on_6f918b81():
+    from pip_review.data_build import DATA_BUILD
+
+    assert DATA_BUILD.short_id == "6f918b81"
+    reform = get_reform("points_thresholds")
+    assert all(min(v.values()) < 8 for v in reform.parameter_changes.values())
+    assert reform.route is Route.NOT_COMPUTABLE
+    assert reform.data_needs == ["pip_points_of_people_turned_down"]
+    assert "pip_points_of_people_turned_down" in data_limits.MISSING_INPUTS
+    assert "not in the data" in reform.route_reason
+
+
+def test_points_limits_by_build():
+    keys = {limit.key for limit in data_limits.limits_for_build("eeb6093e")}
+    assert keys == {"pip_daily_living_points", "pip_mobility_points"}
+    assert data_limits.limits_for_build("9e18f010") == ()
+    cut = data_limits.limits_for_build("6f918b81")
+    assert {limit.key for limit in cut} == {
+        "pip_daily_living_threshold_cut",
+        "pip_mobility_threshold_cut",
+    }
+    assert all(limit.direction == "cut" for limit in cut)
 
 
 def test_computable_measures():
