@@ -14,6 +14,17 @@ from typing import Any
 from pydantic import BaseModel, Field, model_validator
 
 
+def data_limit_refusals(parameter_changes) -> list[str]:
+    """Keys of the live data limits that make these changes not computable.
+
+    A cut limit refuses a measure when it holds on any one path, even with a
+    rate change or a raise beside it (``data_limits.refusing_limits``).
+    """
+    from pip_review.data_limits import refusing_limits
+
+    return [limit.key for limit in refusing_limits(parameter_changes or {})]
+
+
 class Route(str, Enum):
     """How a measure is handled on the day (the drill ledger's route classes)."""
 
@@ -116,6 +127,14 @@ class Reform(BaseModel):
             raise ValueError(
                 f"{self.id}: a {self.route.value} measure carries no model change"
             )
+        if computable and self.parameter_changes:
+            refused = data_limit_refusals(self.parameter_changes)
+            if refused:
+                raise ValueError(
+                    f"{self.id}: not computable on the pinned build ("
+                    + ", ".join(refused)
+                    + "); route it not-computable with the reason"
+                )
         return self
 
     @property

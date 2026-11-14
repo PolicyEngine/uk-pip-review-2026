@@ -13,6 +13,13 @@ A limit with ``direction="cut"`` holds only for a change that lowers a
 parameter below current law in some year; a raise passes. Checks that get
 bare paths, with no values, cannot tell a cut from a raise and treat a
 ``cut`` limit as holding.
+
+A ``cut`` limit refuses the whole measure when it holds on any one of its
+paths (``refusing_limits``): a cut bundled with a rate change or a raise
+would otherwise be costed on the existing caseload only. A ``direction=
+"any"`` limit (a parameter that moves no one) still refuses a measure only
+when every path is limited. ``models.Reform`` and ``publication`` both
+enforce this.
 """
 
 from collections.abc import Iterable, Mapping
@@ -234,8 +241,28 @@ def limits_for_paths(changes: Iterable[str] | Mapping) -> list[DataLimit]:
 
 
 def is_only_data_limited(changes: Iterable[str] | Mapping) -> bool:
-    """True when a limit holds for every change: the measure is not computable."""
+    """True when a limit holds for every change."""
     items = _changes(changes)
     return bool(items) and all(
         limits_for_paths({path: values}) for path, values in items.items()
     )
+
+
+def refusing_limits(changes: Iterable[str] | Mapping) -> list[DataLimit]:
+    """The live limits that make a measure not computable (empty: computable).
+
+    A ``cut`` limit that holds on any one path refuses the measure, whatever
+    else it changes: the cut would be costed on the existing caseload only.
+    Otherwise the measure is refused only when a limit holds on every path
+    (a limited parameter alone moves no one).
+    """
+    held = limits_for_paths(changes)
+    cuts = [limit for limit in held if limit.direction == "cut"]
+    if cuts:
+        return cuts
+    return held if is_only_data_limited(changes) else []
+
+
+def is_computable_on_data(changes: Iterable[str] | Mapping) -> bool:
+    """False when a live data limit refuses the measure (``refusing_limits``)."""
+    return not refusing_limits(changes)

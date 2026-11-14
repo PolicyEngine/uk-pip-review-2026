@@ -277,6 +277,7 @@ def _has_figures(reform) -> bool:
 
 
 def _measure_entry(reform) -> dict[str, Any]:
+    publication.refuse_data_limited([reform])
     entry = reform.summary()
     entry["status"] = publication.status_of(reform)
     entry["receipt"] = publication.receipt(reform)
@@ -337,6 +338,7 @@ def _banner(status: str, banner: str | None) -> str:
 def build_placeholder_results(
     status: str = "placeholder", banner: str | None = None
 ) -> dict[str, Any]:
+    publication.refuse_data_limited(REFORMS)
     measures = []
     for reform in REFORMS:
         entry = _measure_entry(reform)
@@ -480,6 +482,8 @@ def build_model_results(
         missing = set(measure_ids) - {r.id for r in chosen}
         if missing:
             raise ValueError(f"Not computable or unknown: {sorted(missing)}")
+    # Before any run: a computable measure a data limit refuses never runs.
+    publication.refuse_data_limited(REFORMS)
     seconds: dict[str, float] = {}
     with heavy_lock(), tempfile.TemporaryDirectory(prefix="pip-review-") as tmp:
         tmp = Path(tmp)
