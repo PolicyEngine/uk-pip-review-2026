@@ -38,9 +38,16 @@ LIMITS: tuple[DataLimit, ...] = (
         parameters=("gov.dwp.pip.daily_living.points_thresholds",),
         missing_input="pip_dl_points",
         reason=(
-            "The data record each claimant's PIP daily living award (none, "
-            "standard or enhanced), not assessment points, and a stored award "
-            "overrides points. Changing a points threshold moves no one."
+            "On the certified build (eeb6093e) the data record each claimant's "
+            "PIP daily living award (none, standard or enhanced), not assessment "
+            "points, and a stored award overrides points, so changing a points "
+            "threshold moves no one. Build 6f918b81 stores points for PIP "
+            "recipients only (non-recipients hold -1) and has no award-category "
+            "columns; people turned down for PIP are not in the data, so a points "
+            "cut can be costed only for the existing caseload. On that build a "
+            "daily living threshold of 6 moves only mobility-only recipients whose "
+            "daily living points are drawn at 6 or 7: about 77,000 people from 88 "
+            "survey households (#18)."
         ),
         issue=3,
     ),
@@ -49,9 +56,12 @@ LIMITS: tuple[DataLimit, ...] = (
         parameters=("gov.dwp.pip.mobility.points_thresholds",),
         missing_input="pip_m_points",
         reason=(
-            "The data record each claimant's PIP mobility award, not assessment "
-            "points, and a stored award overrides points. Changing a points "
-            "threshold moves no one."
+            "On the certified build (eeb6093e) the data record each claimant's "
+            "PIP mobility award, not assessment points, and a stored award "
+            "overrides points, so changing a points threshold moves no one. "
+            "Build 6f918b81 stores points for PIP recipients only (non-recipients "
+            "hold -1) and has no award-category columns; people turned down for PIP are not in the data, so a points "
+            "cut can be costed only for the existing caseload (#18)."
         ),
         issue=3,
     ),

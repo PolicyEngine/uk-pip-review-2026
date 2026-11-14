@@ -365,7 +365,7 @@
       "recommendation": "Recalibrate activities, descriptors and points",
       "in_report": "not-yet-published",
       "route": "not-computable",
-      "route_reason": "The parameter exists but moves no one: the data hold awards, not points, and a stored award overrides points.",
+      "route_reason": "On the certified build (eeb6093e) the parameter exists but moves no one: the data hold awards, not points, and a stored award overrides points. Build 6f918b81 stores points for PIP recipients only and has no award-category columns, so there a cut can be costed only for the existing caseload (#18).",
       "placeholder": true,
       "computable": false,
       "publishable": false,
@@ -382,7 +382,7 @@
         "gov.dwp.pip.mobility.points_thresholds.standard"
       ],
       "status": "not-computable",
-      "receipt": "5a735ae9cfa0f2b04fce6bbd36836da0f18e2514b4a33efea1dc9d02a9b04779",
+      "receipt": "f35346ca157c33d998810f31018fd8bb664850208186190e75d7eb0e5ab1757a",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -730,7 +730,7 @@
       "recommendation": "Move from child DLA to PIP at 18",
       "in_report": "not-yet-published",
       "route": "needs-pe-uk-first",
-      "route_reason": "Held until a check is done: moving people aged 16 and 17 from PIP to the matching child DLA awards should leave their income unchanged, but a national run does not, and the cause is not yet found. About 133 survey records hold PIP at those ages in the certified build (eeb6093e), 146 in the newer 6f918b81 build.",
+      "route_reason": "Held until a check is done: moving people aged 16 and 17 from PIP to the matching child DLA awards should leave their income unchanged, but a national run does not, and the cause is not yet found. About 133 records hold PIP at those ages in the certified build (eeb6093e; basis not rechecked); in the newer 6f918b81 build 146 person rows do, from only 32 survey households.",
       "placeholder": true,
       "computable": false,
       "publishable": false,
@@ -739,7 +739,7 @@
       "issues": [],
       "parameters": [],
       "status": "needs-pe-uk-first",
-      "receipt": "1f22cb2ca3f80d92dad1cf6cb29cb855a87f6fe589e491cb7c16f4b027af7245",
+      "receipt": "783cd24028eba45da61b49b0626dad11a6cca32079d90842afe1dfeca9d9cf8a",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -885,13 +885,13 @@
     {
       "key": "pip_daily_living_points",
       "missing_input": "pip_dl_points",
-      "reason": "The data record each claimant's PIP daily living award (none, standard or enhanced), not assessment points, and a stored award overrides points. Changing a points threshold moves no one.",
+      "reason": "On the certified build (eeb6093e) the data record each claimant's PIP daily living award (none, standard or enhanced), not assessment points, and a stored award overrides points, so changing a points threshold moves no one. Build 6f918b81 stores points for PIP recipients only (non-recipients hold -1) and has no award-category columns; people turned down for PIP are not in the data, so a points cut can be costed only for the existing caseload. On that build a daily living threshold of 6 moves only mobility-only recipients whose daily living points are drawn at 6 or 7: about 77,000 people from 88 survey households (#18).",
       "issue": 3
     },
     {
       "key": "pip_mobility_points",
       "missing_input": "pip_m_points",
-      "reason": "The data record each claimant's PIP mobility award, not assessment points, and a stored award overrides points. Changing a points threshold moves no one.",
+      "reason": "On the certified build (eeb6093e) the data record each claimant's PIP mobility award, not assessment points, and a stored award overrides points, so changing a points threshold moves no one. Build 6f918b81 stores points for PIP recipients only (non-recipients hold -1) and has no award-category columns; people turned down for PIP are not in the data, so a points cut can be costed only for the existing caseload (#18).",
       "issue": 3
     }
   ],
