@@ -26,7 +26,9 @@ Rate measures are written as changes to each year's current-law rate (`reforms.C
 
 ## What the data hold
 
-PIP awards by component (none, standard or enhanced), not assessment points (#3). No health condition or hospital stays (#5). Carer's Allowance does not follow the cared-for person's award (#2). The UC health element follows a stored disability flag, not PIP (#6, #7); the gateway measure wraps that flag. The modelled caseload is close to DWP's in 2025-26 but flat afterwards, so it falls below DWP's growing forecast in later years (#4).
+PIP awards by component (none, standard or enhanced), not assessment points (#3). No health condition or hospital stays (#5). Carer's Allowance does not follow the cared-for person's award (#2). The UC health element follows a stored disability flag, not PIP (#6, #7); the gateway measure wraps that flag. The modelled caseload is close to DWP's in 2025-26 but flat afterwards, so it falls below DWP's growing forecast in later years (#4). The gap comes from the projection, not the base year: weights grow with ONS population and PIP status is fixed (policyengine-uk#2889 item 6). Any figure scaled by the ratio of DWP's caseload to the modelled caseload assumes the missing claimants look like the modelled ones, with the same award mix, ages and incomes.
+
+These statements describe the certified build `eeb6093e`. On `6f918b81` four of them change: PIP points are stored for PIP recipients only (non-recipients hold −1) and there are no award-category columns, so a points cut can be costed only for the existing caseload (people turned down for PIP are not in the data); LCW and LCWRA come from the FRS UC admin record, carers carry `cares_for_severely_disabled_person`, and `is_severely_disabled_for_benefits` is no longer stored (#18).
 
 ## Not modelled
 

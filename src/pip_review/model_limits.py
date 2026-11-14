@@ -90,7 +90,12 @@ LIMITS: tuple[ModelLimit, ...] = (
         reason=(
             "Projected years copy the base-year inputs forward and grow weights "
             "with population (extend_single_year_dataset), so the caseload does "
-            "not follow DWP's forecast path (policyengine-uk #2889, item 6)."
+            "not follow DWP's forecast path (policyengine-uk #2889, item 6). "
+            "The gap comes from the projection, not the base year. Scaling a "
+            "figure by the ratio of DWP's caseload to the modelled caseload is "
+            "a stopgap that assumes the missing claimants look like the "
+            "modelled ones (same award mix, ages and incomes); state that "
+            "assumption wherever a scaled figure is shown."
         ),
         public_reason=(
             "The PIP caseload is calibrated to the OBR's PIP forecast for "

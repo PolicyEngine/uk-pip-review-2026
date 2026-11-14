@@ -20,7 +20,7 @@ The review reports to the Secretary of State and is expected to set out recommen
 - PolicyEngine UK static microsimulation on the Microcosm UK dataset. No behavioural response is modelled.
 - England and Wales only for PIP. In Scotland, Adult Disability Payment has replaced PIP.
 - Each recommendation is routed before anything is published: modelled by a parameter change, modelled by a structural change, recorded as a fiscal line from official figures, or not computable with the current data (with the reason). A measure we cannot compute is never shown as £0.
-- The data hold PIP awards (none, standard or enhanced, for each component), not assessment points. Reforms to points or descriptors need imputed points before they can be modelled.
+- On the certified build (`eeb6093e`) the data hold PIP awards (none, standard or enhanced, for each component), not assessment points, so reforms to points or descriptors need imputed points before they can be modelled. Build `6f918b81` stores points for PIP recipients only, so there a points cut can be costed only for the existing caseload (#18).
 
 ## Data and model
 

@@ -195,8 +195,11 @@ REFORMS: list[Reform] = [
         likelihood=Likelihood.MEDIUM,
         route=Route.NOT_COMPUTABLE,
         route_reason=(
-            "The parameter exists but moves no one: the data hold awards, not "
-            "points, and a stored award overrides points."
+            "On the certified build (eeb6093e) the parameter exists but moves no "
+            "one: the data hold awards, not points, and a stored award overrides "
+            "points. Build 6f918b81 stores points for PIP recipients only and has "
+            "no award-category columns, so there a cut can be costed only for the "
+            "existing caseload (#18)."
         ),
         parameter_changes=_THRESHOLDS,
         data_needs=["pip_dl_points", "pip_m_points"],
@@ -303,8 +306,9 @@ REFORMS: list[Reform] = [
             "Held until a check is done: moving people aged 16 and 17 from PIP "
             "to the matching child DLA awards should leave their income "
             "unchanged, but a national run does not, and the cause is not yet "
-            "found. About 133 survey records hold PIP at those ages in the "
-            "certified build (eeb6093e), 146 in the newer 6f918b81 build."
+            "found. About 133 records hold PIP at those ages in the certified "
+            "build (eeb6093e; basis not rechecked); in the newer 6f918b81 build "
+            "146 person rows do, from only 32 survey households."
         ),
     ),
 ]
