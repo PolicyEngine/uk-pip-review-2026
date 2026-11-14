@@ -895,13 +895,13 @@
     {
       "key": "pip_daily_living_threshold_cut",
       "missing_input": "pip_points_of_people_turned_down",
-      "reason": "The data hold assessment points only for people who get PIP. People turned down for daily living are not in the data, so a lower daily living threshold could only be costed for people who already get the mobility component, whose daily living points the data build spread evenly over 4 to 7. A threshold cut is not costed. A higher threshold is costed, on the assumption that the drawn points place recipients correctly within their award.",
+      "reason": "The data hold assessment points only for people who get PIP. People turned down for daily living are not in the data, so a lower daily living standard threshold could only be costed for people who already get the mobility component, whose daily living points the data build drew below 8 (mostly 4 to 7). A cut to the standard threshold is not costed, alone or with other changes. A higher threshold, or an enhanced threshold lowered but kept at 8 or more, is costed on the assumption that the drawn points place recipients correctly within their award.",
       "issue": 3
     },
     {
       "key": "pip_mobility_threshold_cut",
       "missing_input": "pip_points_of_people_turned_down",
-      "reason": "The data hold assessment points only for people who get PIP. People turned down for mobility are not in the data, and people who get only the daily living component hold mobility points of 0 or 4 drawn by the data build, so a mobility threshold of 6 moves no one. A threshold cut is not costed. A higher threshold is costed, on the assumption that the drawn points place recipients correctly within their award.",
+      "reason": "The data hold assessment points only for people who get PIP. People turned down for mobility are not in the data, and people who get only the daily living component hold mobility points of 0 or 4 drawn by the data build, so a mobility standard threshold of 5 to 7 moves no one (4 or lower moves only those drawn at 4). A cut to the standard threshold is not costed, alone or with other changes. A higher threshold, or an enhanced threshold lowered but kept at 8 or more, is costed on the assumption that the drawn points place recipients correctly within their award.",
       "issue": 3
     }
   ],

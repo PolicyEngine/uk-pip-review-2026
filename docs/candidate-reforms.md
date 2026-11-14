@@ -9,7 +9,7 @@ Probable recommendations, from the terms of reference (October 2025), the interi
 | `fast_track_serious_conditions` | Fast track (both components enhanced) for well-evidenced serious conditions | High | not-computable | health condition | #5 |
 | `hospital_rule` | Review the 28-day hospital rule | High | ledger | hospital stays | #5 |
 | `cost_category_tiers` | Awards that reflect extra-cost categories (cash part as re-tiered rates) | Medium | dashboard-param (placeholder) | none for the cash part | #1 |
-| `points_thresholds` | Recalibrate activities, descriptors and points | Medium | not-computable (a cut; a raise would be computable on the drawn points) | points of people turned down | #3 |
+| `points_thresholds` | Recalibrate activities, descriptors and points | Medium | not-computable (a standard-threshold cut; a raise, or an enhanced cut kept at 8 or more, would be computable on the drawn points) | points of people turned down | #3 |
 | `single_activity_minimum` | Minimum score in one activity (not expected in the report) | Low | not-computable | per-activity scores | #3 |
 | `standard_daily_living_rate` | Change to component rates | Low | dashboard-param (placeholder) | none | #1, #4 |
 | `uc_health_gateway` | PIP as the gateway to the UC health element | Medium | dashboard-structural (placeholder) | none | #6, #7 |

@@ -128,3 +128,47 @@ def test_any_limits_keep_the_every_path_rule(monkeypatch):
     assert data_limits.limits_for_paths(changes)
     assert data_limits.is_computable_on_data(changes)
     assert not data_limits.is_computable_on_data(_threshold(DL_STANDARD, 6))
+
+
+DL_ENHANCED = "gov.dwp.pip.daily_living.points_thresholds.enhanced"
+MOB_ENHANCED = "gov.dwp.pip.mobility.points_thresholds.enhanced"
+
+
+def test_enhanced_cut_kept_at_8_or_more_is_computable():
+    # REVIEW2 P2: it moves only standard-rate recipients of the same
+    # component, all in the data; the drawn-points assumption is stated.
+    for path in (DL_ENHANCED, MOB_ENHANCED):
+        changes = _threshold(path, 10)
+        assert data_limits.is_computable_on_data(changes), path
+        assert not data_limits.limits_for_paths(changes), path
+        fields, bundled = _bundled_with_rate(path, 8)
+        assert Reform(id="enhanced_cut", parameter_changes=bundled, **fields).computable
+
+
+def test_enhanced_threshold_below_8_counts_as_a_cut():
+    for path in (DL_ENHANCED, MOB_ENHANCED):
+        assert not data_limits.is_computable_on_data(_threshold(path, 7)), path
+    fields, changes = _bundled_with_rate(DL_ENHANCED, 6)
+    with pytest.raises(ValueError, match="threshold_cut"):
+        Reform(id="enhanced_below_standard", parameter_changes=changes, **fields)
+
+
+def test_standard_cut_stays_not_computable():
+    for path in (DL_STANDARD, MOB_STANDARD):
+        assert not data_limits.is_computable_on_data(_threshold(path, 7)), path
+
+
+def test_cut_reasons_state_the_assumption():
+    reasons = {limit.key: limit.reason for limit in data_limits.LIMITS}
+    for reason in reasons.values():
+        assert "enhanced threshold lowered but kept at 8 or more" in reason
+        assert "drawn points place recipients correctly" in reason
+    assert "mostly 4 to 7" in reasons["pip_daily_living_threshold_cut"]
+    assert "5 to 7 moves no one" in reasons["pip_mobility_threshold_cut"]
+
+
+def test_parent_threshold_path_says_which_leaf():
+    with pytest.raises(KeyError, match=r"\.standard or \.enhanced"):
+        data_limits.is_computable_on_data(
+            {"gov.dwp.pip.daily_living.points_thresholds": {"2027": 6}}
+        )

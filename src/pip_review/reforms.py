@@ -21,7 +21,7 @@ needs-pe-uk-first, with the reason shown on the page.
 
 import warnings
 
-from pip_review.data_limits import is_only_data_limited, limits_for_paths
+from pip_review.data_limits import is_computable_on_data, limits_for_paths
 from pip_review.measure_templates import (
     DataLimitedWarning,
     merge,
@@ -99,10 +99,11 @@ with warnings.catch_warnings():
     )
 # Build-aware (data_limits.LIMITS_BY_BUILD). On a build that stores only
 # awards (eeb6093e) no threshold change is computable. On 6f918b81, which
-# stores points drawn only for PIP recipients, a cut is not computable (people
-# turned down at 6-7 points are not in the data) and a raise is, under the
-# drawn-points assumption. This placeholder is a cut (8 to 6).
-_THRESHOLDS_LIMITED = is_only_data_limited(_THRESHOLDS)
+# stores points drawn only for PIP recipients, a standard-threshold cut is not
+# computable (people turned down at 6-7 points are not in the data), alone or
+# bundled; a raise, or an enhanced cut kept at 8 or more, is, under the
+# drawn-points assumption. This placeholder is a standard cut (8 to 6).
+_THRESHOLDS_LIMITED = not is_computable_on_data(_THRESHOLDS)
 _POINTS_MISSING = any(
     limit.direction == "any" for limit in limits_for_paths(_THRESHOLDS)
 )

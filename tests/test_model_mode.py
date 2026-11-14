@@ -369,3 +369,39 @@ def test_threshold_raise_stays_computable(points_file):
     lost = base["pip_dl_category"] & ~raised["pip_dl_category"]
     assert lost.any()
     assert not (raised["pip_dl_category"] & ~base["pip_dl_category"]).any()
+
+
+DL_ENHANCED = "gov.dwp.pip.daily_living.points_thresholds.enhanced"
+
+
+def _categories(path, changes=None):
+    import numpy as np
+    from policyengine_uk.utils.scenario import Scenario
+
+    from pip_review.model_run import build
+
+    scenario = Scenario(parameter_changes=changes) if changes else None
+    sim = build(str(path), scenario, allow_unpinned=True)
+    return np.asarray(sim.calculate("pip_dl_category", 2027).values).astype(str)
+
+
+def test_enhanced_cut_moves_only_standard_rate_recipients(points_file):
+    """An enhanced threshold of 10 (from 12) moves only daily living
+    standard-rate recipients at 10-11 to enhanced: everyone it reaches is in
+    the data, so it is computable under the drawn-points assumption, like a
+    raise. An enhanced threshold below 8 makes people below the standard
+    threshold enhanced, so it counts as a cut."""
+    from pip_review import data_limits
+    from pip_review.synthetic_dataset import build
+
+    dl = build(households=400, layout="points").person["pip_dl_points"].to_numpy()
+    cut = {DL_ENHANCED: {"2027": 10}}
+    assert data_limits.is_computable_on_data(cut)
+    base = _categories(points_file)
+    after = _categories(points_file, cut)
+    changed = base != after
+    assert changed.any()
+    assert set(base[changed]) == {"STANDARD"} and set(after[changed]) == {"ENHANCED"}
+    assert ((dl[changed] >= 10) & (dl[changed] < 12)).all()
+    assert not ((base == "NONE") & (after != "NONE")).any()
+    assert not data_limits.is_computable_on_data({DL_ENHANCED: {"2027": 7}})
