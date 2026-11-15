@@ -11,3 +11,7 @@ uc_health_gateway,either,,static cash fiscal E&W,Needs pe-uk first
 carers_allowance_link,saving,,static cash fiscal E&W,Needs pe-uk first; DWP SS25 put 150k carers affected
 existing_claimants_phasing,either,,static cash fiscal E&W,Needs pe-uk first
 transition_age_18,saving,,static cash fiscal E&W,Needs pe-uk first; small
+mock6_dl_standard_rate,cost,,static cash fiscal E&W,Drill 6 mock
+mock6_m_standard_rate,cost,,static cash fiscal E&W,Drill 6 mock
+mock6_dl_enhanced_hold,saving,,static cash fiscal E&W,Drill 6 mock
+mock6_uc_health_gateway,saving,,static cash fiscal E&W,Drill 6 mock

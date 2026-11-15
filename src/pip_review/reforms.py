@@ -27,8 +27,8 @@ from pip_review.measure_templates import (
     rate_change,
     threshold_change,
 )
-from pip_review.measures import uc_health_gateway
-from pip_review.models import Likelihood, Reform, Route
+from pip_review.measures import mock6_uc_health_gateway, uc_health_gateway  # noqa: F401
+from pip_review.models import InReport, Likelihood, Reform, Route
 from pip_review.years import POLICY_YEARS
 
 DL = "gov.dwp.pip.daily_living"
@@ -99,211 +99,167 @@ with warnings.catch_warnings():
 
 
 REFORMS: list[Reform] = [
+    # Drill 6 (mock): the template placeholders are replaced by the mock
+    # statement's measures. Every id starts mock6_. Rates are cash levels by
+    # fiscal year: the stated 2027-28 rate, then the previous year's rate times
+    # the installed CPI uprating factor, rounded to the nearest 5p.
     Reform(
-        id="fluctuating_conditions",
-        name="Assess fluctuating conditions over time",
-        description=(
-            "Replace the rule that a descriptor must apply on more than half of "
-            "days with a test of fluctuating and cumulative impact."
-        ),
-        recommendation="Change how fluctuating conditions are assessed",
+        id="mock6_dl_standard_rate",
+        name="Raise the standard daily living rate (mock R6)",
+        description="Standard daily living £84.00 a week from April 2027, then CPI uprated and rounded to 5p.",
+        recommendation="R6 (mock)",
         likelihood=Likelihood.HIGH,
-        route=Route.NOT_COMPUTABLE,
-        route_reason=(
-            "Acts through assessment points and the share of days a descriptor "
-            "applies; the data hold neither."
-        ),
-        data_needs=["pip_dl_points", "pip_m_points", "pip_activity_points"],
-        issues=[3],
-    ),
-    Reform(
-        id="fewer_award_reviews",
-        name="Fewer award reviews for lifelong conditions",
-        description=(
-            "Longer or ongoing awards for lifelong and degenerative conditions."
-        ),
-        recommendation="Fewer award reviews for lifelong or degenerative conditions",
-        likelihood=Likelihood.HIGH,
-        route=Route.LEDGER,
-        route_reason=(
-            "Changes flows on and off PIP over time; the model is static. Recorded "
-            "as a fiscal line from any official figure."
-        ),
-        data_needs=["award_review_state"],
-    ),
-    Reform(
-        id="fast_track_serious_conditions",
-        name="Fast track for serious conditions",
-        description=(
-            "A fast-track pathway, paying both components at the enhanced rate, "
-            "for well-evidenced serious conditions and end-of-life care."
-        ),
-        recommendation="A fast-track pathway for well-evidenced serious conditions",
-        likelihood=Likelihood.HIGH,
-        route=Route.NOT_COMPUTABLE,
-        route_reason=(
-            "The data have no health-condition group to select people by. "
-            "Recorded as a fiscal line from any official figure."
-        ),
-        data_needs=["health_condition"],
-        issues=[5],
-    ),
-    Reform(
-        id="hospital_rule",
-        name="Change the 28-day hospital rule",
-        description=(
-            "Lengthen or remove the period after which PIP stops during an "
-            "in-patient hospital stay."
-        ),
-        recommendation="Review the 28-day hospitalisation rule",
-        likelihood=Likelihood.HIGH,
-        route=Route.LEDGER,
-        route_reason="No hospital stays in the data or the model.",
-        data_needs=["hospital_stay"],
-        issues=[5],
-    ),
-    Reform(
-        id="cost_category_tiers",
-        name="Re-tier awards (illustrative)",
-        description=(
-            "Illustrative stand-in for awards set by cost categories: the "
-            "standard daily living rate £8.30 a week above current law and the "
-            "enhanced rate £4.60 a week below it. The values are placeholders, "
-            "not a proposal."
-        ),
-        recommendation="Awards that reflect the extra costs of disability",
-        likelihood=Likelihood.MEDIUM,
-        route=Route.DASHBOARD_PARAM,
-        route_reason=(
-            "The cash part can be approximated by changing the four rates; any "
-            "non-cash support is not modelled."
-        ),
-        parameter_changes=merge(
-            rate_change(f"{DL}.standard", _current_law_plus(f"{DL}.standard", 8.30)),
-            rate_change(f"{DL}.enhanced", _current_law_plus(f"{DL}.enhanced", -4.60)),
-        ),
-        issues=[1],
-    ),
-    Reform(
-        id="points_thresholds",
-        name="Lower the standard-rate points threshold (illustrative)",
-        description=(
-            "Illustrative: the standard rate of each component from 6 points "
-            "rather than 8."
-        ),
-        recommendation="Recalibrate activities, descriptors and points",
-        likelihood=Likelihood.MEDIUM,
-        route=Route.NOT_COMPUTABLE,
-        route_reason=(
-            "The parameter exists but moves no one: the data hold awards, not "
-            "points, and a stored award overrides points."
-        ),
-        parameter_changes=_THRESHOLDS,
-        data_needs=["pip_dl_points", "pip_m_points"],
-        issues=[3],
-    ),
-    Reform(
-        id="single_activity_minimum",
-        name="Minimum score in one daily living activity",
-        description=(
-            "Daily living paid only to people who score at least 4 points in one "
-            "activity."
-        ),
-        recommendation="A minimum score in one daily living activity",
-        likelihood=Likelihood.LOW,
-        route=Route.NOT_COMPUTABLE,
-        route_reason="Needs a score for each activity, which the data do not hold.",
-        data_needs=["pip_activity_points"],
-        issues=[3],
-    ),
-    Reform(
-        id="standard_daily_living_rate",
-        name="Raise the standard daily living rate (illustrative)",
-        description=(
-            "Illustrative: standard daily living 5% above its current-law rate "
-            "in each year from 2027-28."
-        ),
-        recommendation="Rates that contribute fairly to extra costs",
-        likelihood=Likelihood.LOW,
+        in_report=InReport.YES,
         route=Route.DASHBOARD_PARAM,
         route_reason="A rate is a parameter; modelled directly.",
         parameter_changes=rate_change(
-            f"{DL}.standard", _current_law_plus(f"{DL}.standard", factor=1.05)
+            f"{DL}.standard", {2027: 84.00, 2028: 86.85, 2029: 88.60, 2030: 90.55}
         ),
         issues=[1, 4],
     ),
     Reform(
-        id="uc_health_gateway",
-        name="PIP as the gateway to the UC health element",
-        description=(
-            "A PIP daily living award, rather than a Work Capability Assessment, "
-            "unlocks the Universal Credit health element."
+        id="mock6_m_standard_rate",
+        name="Raise the standard mobility rate (mock R7)",
+        description="Standard mobility £34.50 a week from April 2027 (corrected at 15:15), then CPI uprated and rounded to 5p.",
+        recommendation="R7 (mock)",
+        likelihood=Likelihood.HIGH,
+        in_report=InReport.YES,
+        route=Route.DASHBOARD_PARAM,
+        route_reason="A rate is a parameter; modelled directly.",
+        parameter_changes=rate_change(
+            f"{MOB}.standard", {2027: 34.50, 2028: 35.65, 2029: 36.35, 2030: 37.15}
         ),
-        recommendation="PIP as the single gateway to health-related support",
-        likelihood=Likelihood.MEDIUM,
-        route=Route.DASHBOARD_STRUCTURAL,
-        route_reason=(
-            "Modelled by treating working-age people as having limited "
-            "capability for work-related activity when they hold a PIP daily "
-            "living award. Disability premiums in other benefits do not follow."
-        ),
-        simulation_modifier=uc_health_gateway.modifier,
-        issues=[6, 7],
+        issues=[1, 4],
     ),
     Reform(
-        id="carers_allowance_link",
-        name="Carer's Allowance follows the PIP award",
-        description=(
-            "Carer's Allowance and the UC carer element follow the cared-for "
-            "person's daily living award."
+        id="mock6_dl_enhanced_hold",
+        name="Hold the enhanced daily living rate in 2027-28 and 2028-29 (mock R10)",
+        description="Enhanced daily living held at £114.60 in 2027-28 and 2028-29 (corrected at 15:15); CPI uprating from April 2029 on £114.60, rounded to 5p.",
+        recommendation="R10 (mock)",
+        likelihood=Likelihood.HIGH,
+        in_report=InReport.YES,
+        route=Route.DASHBOARD_PARAM,
+        route_reason="A rate is a parameter; modelled directly.",
+        parameter_changes=rate_change(
+            f"{DL}.enhanced", {2027: 114.60, 2028: 114.60, 2029: 116.90, 2030: 119.45}
         ),
-        recommendation="Knock-on to passported support",
-        likelihood=Likelihood.MEDIUM,
-        route=Route.LEDGER,
+        issues=[1, 4],
+    ),
+    Reform(
+        id="mock6_uc_health_gateway",
+        name="Enhanced daily living as the UC health element test (mock R11)",
+        description="From April 2029, only an enhanced daily living award (or the fast track) gives the UC health element.",
+        recommendation="R11 (mock)",
+        likelihood=Likelihood.HIGH,
+        in_report=InReport.YES,
+        route=Route.DASHBOARD_STRUCTURAL,
         route_reason=(
-            "A knock-on, not a measure on its own: any measure that moves award "
-            "levels applies the link (carers in the same household lose "
-            "Carer's Allowance when no one there qualifies any more). Carers "
-            "of someone outside the household are a fiscal line from the "
-            "official figure."
+            "Modelled by setting limited capability for work-related activity, "
+            "for working-age people from 2029-30, to whether they hold an "
+            "enhanced daily living award. The fast-track route is not modelled "
+            "(no condition data); disability premiums in other benefits do not follow."
         ),
-        data_needs=["cared_for_outside_household"],
+        simulation_modifier=mock6_uc_health_gateway.modifier,
+        issues=[5, 6, 7],
+    ),
+    Reform(
+        id="mock6_fluctuating",
+        name="Fluctuating conditions test (mock R1)",
+        recommendation="R1 (mock)",
+        likelihood=Likelihood.HIGH,
+        in_report=InReport.YES,
+        route=Route.NOT_COMPUTABLE,
+        route_reason="Acts through descriptors and the share of days they apply; the data hold awards, not points.",
+        data_needs=['pip_dl_points', 'pip_m_points'],
+        issues=[3],
+    ),
+    Reform(
+        id="mock6_aids_points",
+        name="Aids and appliances score 1 point (mock R2)",
+        recommendation="R2 (mock)",
+        likelihood=Likelihood.HIGH,
+        in_report=InReport.YES,
+        route=Route.NOT_COMPUTABLE,
+        route_reason="A points measure; the data hold awards, not points.",
+        data_needs=['pip_dl_points', 'pip_m_points'],
+        issues=[3],
+    ),
+    Reform(
+        id="mock6_fast_track",
+        name="Fast track for serious conditions (mock R3)",
+        recommendation="R3 (mock)",
+        likelihood=Likelihood.HIGH,
+        in_report=InReport.YES,
+        route=Route.NOT_COMPUTABLE,
+        route_reason="The data have no health-condition group to select people by.",
+        data_needs=['health_condition'],
+        issues=[5],
+    ),
+    Reform(
+        id="mock6_ongoing_awards",
+        name="Ongoing awards for lifelong conditions (mock R4)",
+        recommendation="R4 (mock)",
+        likelihood=Likelihood.HIGH,
+        in_report=InReport.YES,
+        route=Route.LEDGER,
+        route_reason="Changes flows on and off PIP over time; the model is static.",
+        data_needs=[],
+        issues=[],
+    ),
+    Reform(
+        id="mock6_hospital_84_days",
+        name="PIP for 84 days in hospital (mock R5)",
+        recommendation="R5 (mock)",
+        likelihood=Likelihood.HIGH,
+        in_report=InReport.YES,
+        route=Route.LEDGER,
+        route_reason="No hospital stays in the data or the model.",
+        data_needs=[],
+        issues=[5],
+    ),
+    Reform(
+        id="mock6_carers_either_component",
+        name="Carer's Allowance for either component (mock R8)",
+        recommendation="R8 (mock)",
+        likelihood=Likelihood.HIGH,
+        in_report=InReport.YES,
+        route=Route.LEDGER,
+        route_reason="Carer's Allowance in the model does not test the cared-for person's award, so carer effects are a ledger line.",
+        data_needs=[],
         issues=[2],
     ),
     Reform(
-        id="existing_claimants_phasing",
-        name="Apply changes at award review",
-        description=(
-            "New rules apply to new claims at once and to existing claimants at "
-            "their next award review."
-        ),
-        recommendation="How recommendations apply to people already claiming",
+        id="mock6_advocacy",
+        name="Independent advocacy service (mock R9)",
+        recommendation="R9 (mock)",
         likelihood=Likelihood.HIGH,
+        in_report=InReport.YES,
         route=Route.LEDGER,
-        route_reason=(
-            "A rule for how other measures apply, not a measure on its own: a "
-            "measure that moves award levels can be phased in at award review, "
-            "with the yearly shares taken from official figures. Disability "
-            "premiums in other benefits do not follow the new awards."
-        ),
+        route_reason="Departmental spending on a service, not a benefit rule.",
+        data_needs=[],
+        issues=[],
+    ),
+    Reform(
+        id="mock6_existing_claimants",
+        name="Existing claimants at award review (mock R12)",
+        recommendation="R12 (mock)",
+        likelihood=Likelihood.HIGH,
+        in_report=InReport.YES,
+        route=Route.LEDGER,
+        route_reason="A rule for how other measures apply; the assessment measures it phases are not computable.",
+        data_needs=[],
         issues=[7],
     ),
     Reform(
-        id="transition_age_18",
-        name="Move from child DLA to PIP at 18",
-        description="Young people stay on child DLA until 18 rather than 16.",
-        recommendation="Move from child DLA to PIP at 18",
-        likelihood=Likelihood.LOW,
-        # Held: measures/transition_age_18.py is written, but a national run
-        # gives a net saving that a single-household check does not. Restore
-        # route=DASHBOARD_STRUCTURAL and the modifier once the knock-on is found.
-        route=Route.NEEDS_PE_UK_FIRST,
-        route_reason=(
-            "Held until a check is done: moving people aged 16 and 17 from PIP "
-            "to the matching child DLA awards should leave their income "
-            "unchanged, but a national run does not, and the cause is not yet "
-            "found. About 111 survey records hold PIP at those ages."
-        ),
+        id="mock6_transitional_protection",
+        name="52-week transitional protection (mock R13)",
+        recommendation="R13 (mock)",
+        likelihood=Likelihood.HIGH,
+        in_report=InReport.YES,
+        route=Route.LEDGER,
+        route_reason="Protects award falls from the assessment measures, which are not computable; the model holds no review dates.",
+        data_needs=[],
+        issues=[7],
     ),
 ]
 
