@@ -1,0 +1,620 @@
+{
+  "build": "build b891aa69, policyengine-uk 2.179.2, certified in policyengine 6.20.3",
+  "year": 2029,
+  "pip_profile": {
+    "recipients_any": {
+      "value": 4309960.431126539,
+      "n": 2255
+    },
+    "recipients_dl": {
+      "value": 4142462.479776291,
+      "n": 2157
+    },
+    "recipients_m": {
+      "value": 3428289.5511821294,
+      "n": 1784
+    },
+    "spend_dl_bn": 22.837425029399355,
+    "spend_m_bn": 12.013856522886917,
+    "dl_by_category": {
+      "ENHANCED": {
+        "value": 2232263.1857873946,
+        "n": 1154
+      },
+      "NONE": {
+        "value": 65646916.23959918,
+        "n": 15755
+      },
+      "STANDARD": {
+        "value": 1910199.2939888965,
+        "n": 1109
+      }
+    },
+    "m_by_category": {
+      "ENHANCED": {
+        "value": 2168458.1040268224,
+        "n": 1202
+      },
+      "NONE": {
+        "value": 66361089.16819335,
+        "n": 15859
+      },
+      "STANDARD": {
+        "value": 1259831.447155307,
+        "n": 656
+      }
+    },
+    "working_age_recipients": {
+      "value": 3620856.3538583163,
+      "n": 1721
+    },
+    "working_age_in_work": {
+      "value": 653375.0343898516,
+      "n": 532
+    },
+    "recipients_on_uc": {
+      "value": 2570756.747182317,
+      "n": 1139
+    },
+    "recipients_in_abs_poverty_bhc": {
+      "value": 443629.585256014,
+      "n": 363
+    },
+    "by_decile": {
+      "1": {
+        "value": 318757.89344620705,
+        "n": 295
+      },
+      "2": {
+        "value": 471931.25983691216,
+        "n": 321
+      },
+      "3": {
+        "value": 598451.7095367294,
+        "n": 423
+      },
+      "4": {
+        "value": 715524.1012012139,
+        "n": 468
+      },
+      "5": {
+        "value": 678104.9989439994,
+        "n": 461
+      },
+      "6": {
+        "value": 525001.9911035784,
+        "n": 327
+      },
+      "7": {
+        "value": 411695.64734438807,
+        "n": 240
+      },
+      "8": {
+        "value": 276713.2766508907,
+        "n": 165
+      },
+      "9": {
+        "value": 193359.96234035492,
+        "n": 125
+      },
+      "10": {
+        "value": 120419.59072226472,
+        "n": 197
+      }
+    },
+    "by_country": {
+      "ENGLAND": {
+        "value": 3518356.8134182617,
+        "n": 1457
+      },
+      "NORTHERN_IRELAND": {
+        "value": 181883.15343098342,
+        "n": 388
+      },
+      "SCOTLAND": {
+        "value": 326722.4151068665,
+        "n": 211
+      },
+      "WALES": {
+        "value": 282998.049170427,
+        "n": 199
+      }
+    }
+  },
+  "full": {
+    "uc_change_bn": -3.0718405725763316,
+    "net_income_change_bn": -3.0649949950316784,
+    "benefit_cap_reduction_change_bn": 0.35944504049162684,
+    "benunits_newly_capped": {
+      "value": 45137.27588596195,
+      "n": 28
+    },
+    "benunits_losing": {
+      "value": 703248.8792550452,
+      "n": 459
+    },
+    "benunits_gaining": {
+      "value": 222499.71278473735,
+      "n": 168
+    },
+    "benunits_gaining_new_uc_award": {
+      "value": 5655.764656811953,
+      "n": 8
+    },
+    "avg_uc_loss_per_losing_benunit": {
+      "value": 5185.74392006098,
+      "n": 459
+    },
+    "avg_uc_gain_per_gaining_benunit": {
+      "value": 2570.6950647175386,
+      "n": 168
+    },
+    "claimants_losing": {
+      "value": 703248.8792550452,
+      "n": 459
+    },
+    "claimants_gaining": {
+      "value": 227113.79584050179,
+      "n": 168
+    },
+    "losing_16_24": {
+      "value": 36858.0415558517,
+      "n": 30
+    },
+    "losing_25_49": {
+      "value": 396289.2056855522,
+      "n": 200
+    },
+    "losing_50_plus": {
+      "value": 270101.6320136413,
+      "n": 237
+    },
+    "gaining_16_24": {
+      "value": 25377.040322314948,
+      "n": 18
+    },
+    "losing_pip_mobility_only": {
+      "value": 67140.39799748361,
+      "n": 41
+    },
+    "losing_no_pip": {
+      "value": 636108.4812575616,
+      "n": 418
+    },
+    "losing_single_no_children": {
+      "value": 513303.81072112545,
+      "n": 328
+    },
+    "losing_single_with_children": {
+      "value": 87464.20530837774,
+      "n": 61
+    },
+    "losing_couple_no_children": {
+      "value": 38521.64500761032,
+      "n": 31
+    },
+    "losing_couple_with_children": {
+      "value": 63959.21821793169,
+      "n": 40
+    },
+    "losing_by_country": {
+      "ENGLAND": {
+        "value": 577816.4811028615,
+        "n": 315
+      },
+      "NORTHERN_IRELAND": {
+        "value": 17281.784185077995,
+        "n": 46
+      },
+      "SCOTLAND": {
+        "value": 64735.221762403846,
+        "n": 63
+      },
+      "WALES": {
+        "value": 43415.3922047019,
+        "n": 35
+      }
+    },
+    "people_hh_worse": {
+      "value": 1663012.9215941355,
+      "n": 460
+    },
+    "people_hh_better": {
+      "value": 752805.263864737,
+      "n": 171
+    },
+    "better_off_not_gaining_element_benunit": {
+      "value": 263563.37428042665,
+      "n": 52
+    },
+    "in_poverty_bhc": {
+      "people": 147822.15340468287,
+      "pp": 0.2118118202471451,
+      "n": 108,
+      "children": 8070.145585343242,
+      "children_pp": 0.05721730995886765,
+      "n_children": 27
+    },
+    "in_poverty_ahc": {
+      "people": 113334.72304935753,
+      "pp": 0.1623953746673671,
+      "n": 83,
+      "children": 38998.37766302377,
+      "children_pp": 0.27649839015181854,
+      "n_children": 24
+    },
+    "deciles": {
+      "1": {
+        "avg": -291.9380439553348,
+        "n": 149
+      },
+      "2": {
+        "avg": -203.99217346758476,
+        "n": 139
+      },
+      "3": {
+        "avg": -147.54509875272254,
+        "n": 111
+      },
+      "4": {
+        "avg": -132.71932959333617,
+        "n": 100
+      },
+      "5": {
+        "avg": -96.426881657286,
+        "n": 67
+      },
+      "6": {
+        "avg": -69.43749009638893,
+        "n": 60
+      },
+      "7": {
+        "avg": -5.974494339784026,
+        "n": 29
+      },
+      "8": {
+        "avg": -30.98415188084854,
+        "n": 24
+      },
+      "9": {
+        "avg": -14.567574285699399,
+        "n": 5
+      },
+      "10": {
+        "avg": -12.900845799383056,
+        "n": 13
+      }
+    }
+  },
+  "protected": {
+    "uc_change_bn": 0.5719789135567941,
+    "net_income_change_bn": 0.580527421394847,
+    "benefit_cap_reduction_change_bn": 0.0,
+    "benunits_newly_capped": {
+      "value": null,
+      "n": 0
+    },
+    "benunits_losing": {
+      "value": null,
+      "n": 0
+    },
+    "benunits_gaining": {
+      "value": 222499.71278473735,
+      "n": 168
+    },
+    "benunits_gaining_new_uc_award": {
+      "value": 5655.764656811953,
+      "n": 8
+    },
+    "avg_uc_loss_per_losing_benunit": {
+      "value": null,
+      "n": 0
+    },
+    "avg_uc_gain_per_gaining_benunit": {
+      "value": 2570.6950647175386,
+      "n": 168
+    },
+    "claimants_losing": {
+      "value": null,
+      "n": 0
+    },
+    "claimants_gaining": {
+      "value": 227113.79584050179,
+      "n": 168
+    },
+    "losing_16_24": {
+      "value": null,
+      "n": 0
+    },
+    "losing_25_49": {
+      "value": null,
+      "n": 0
+    },
+    "losing_50_plus": {
+      "value": null,
+      "n": 0
+    },
+    "gaining_16_24": {
+      "value": 25377.040322314948,
+      "n": 18
+    },
+    "losing_pip_mobility_only": {
+      "value": null,
+      "n": 0
+    },
+    "losing_no_pip": {
+      "value": null,
+      "n": 0
+    },
+    "losing_single_no_children": {
+      "value": null,
+      "n": 0
+    },
+    "losing_single_with_children": {
+      "value": null,
+      "n": 0
+    },
+    "losing_couple_no_children": {
+      "value": null,
+      "n": 0
+    },
+    "losing_couple_with_children": {
+      "value": null,
+      "n": 0
+    },
+    "losing_by_country": {
+      "ENGLAND": {
+        "value": null,
+        "n": 0
+      },
+      "NORTHERN_IRELAND": {
+        "value": null,
+        "n": 0
+      },
+      "SCOTLAND": {
+        "value": null,
+        "n": 0
+      },
+      "WALES": {
+        "value": null,
+        "n": 0
+      }
+    },
+    "people_hh_worse": {
+      "value": null,
+      "n": 0
+    },
+    "people_hh_better": {
+      "value": 643898.253042642,
+      "n": 168
+    },
+    "better_off_not_gaining_element_benunit": {
+      "value": 153570.88880564272,
+      "n": 49
+    },
+    "in_poverty_bhc": {
+      "people": -75185.77418246865,
+      "pp": -0.1077324022109327,
+      "n": 17,
+      "children": -31847.195632100105,
+      "children_pp": -0.22579652926113414,
+      "n_children": 6
+    },
+    "in_poverty_ahc": {
+      "people": -53023.10553293303,
+      "pp": -0.07597589562466237,
+      "n": 23,
+      "children": -11776.691458024085,
+      "children_pp": -0.08349670998098277,
+      "n_children": 7
+    },
+    "deciles": {
+      "1": {
+        "avg": 26.801958014898794,
+        "n": 28
+      },
+      "2": {
+        "avg": 54.99974313273328,
+        "n": 36
+      },
+      "3": {
+        "avg": 20.934547191561663,
+        "n": 29
+      },
+      "4": {
+        "avg": 31.27268094266143,
+        "n": 34
+      },
+      "5": {
+        "avg": 17.874710948375593,
+        "n": 15
+      },
+      "6": {
+        "avg": 27.027191769801238,
+        "n": 18
+      },
+      "7": {
+        "avg": 7.7803644740959355,
+        "n": 6
+      },
+      "8": {
+        "avg": 9.19646935324134,
+        "n": 3
+      },
+      "9": {
+        "avg": null,
+        "n": 0
+      },
+      "10": {
+        "avg": null,
+        "n": 1
+      }
+    }
+  },
+  "new_claims": {
+    "uc_change_bn": 0.21846439877279916,
+    "net_income_change_bn": 0.22701273039863573,
+    "benefit_cap_reduction_change_bn": 0.011672192790841932,
+    "benunits_newly_capped": {
+      "value": 2611.7128858342767,
+      "n": 4
+    },
+    "benunits_losing": {
+      "value": 133612.6196589209,
+      "n": 122
+    },
+    "benunits_gaining": {
+      "value": 222499.71278473735,
+      "n": 168
+    },
+    "benunits_gaining_new_uc_award": {
+      "value": 5655.764656811953,
+      "n": 8
+    },
+    "avg_uc_loss_per_losing_benunit": {
+      "value": 2668.6379057637473,
+      "n": 122
+    },
+    "avg_uc_gain_per_gaining_benunit": {
+      "value": 2570.6950647175386,
+      "n": 168
+    },
+    "claimants_losing": {
+      "value": 133612.6196589209,
+      "n": 122
+    },
+    "claimants_gaining": {
+      "value": 227113.79584050179,
+      "n": 168
+    },
+    "losing_16_24": {
+      "value": 7071.041665315628,
+      "n": 14
+    },
+    "losing_25_49": {
+      "value": 88156.94086964428,
+      "n": 43
+    },
+    "losing_50_plus": {
+      "value": 38384.637123961,
+      "n": 65
+    },
+    "gaining_16_24": {
+      "value": 25377.040322314948,
+      "n": 18
+    },
+    "losing_pip_mobility_only": {
+      "value": 7045.101860553026,
+      "n": 14
+    },
+    "losing_no_pip": {
+      "value": 126567.51779836789,
+      "n": 108
+    },
+    "losing_single_no_children": {
+      "value": 77295.49321776256,
+      "n": 87
+    },
+    "losing_single_with_children": {
+      "value": 8992.717575222254,
+      "n": 11
+    },
+    "losing_couple_no_children": {
+      "value": 13394.74045073986,
+      "n": 11
+    },
+    "losing_couple_with_children": {
+      "value": 33929.66841519624,
+      "n": 13
+    },
+    "losing_by_country": {
+      "ENGLAND": {
+        "value": 116248.93305527419,
+        "n": 87
+      },
+      "NORTHERN_IRELAND": {
+        "value": 3319.8747963272035,
+        "n": 13
+      },
+      "SCOTLAND": {
+        "value": 9194.387264505029,
+        "n": 14
+      },
+      "WALES": {
+        "value": 4849.424542814493,
+        "n": 8
+      }
+    },
+    "people_hh_worse": {
+      "value": 386602.0536037572,
+      "n": 122
+    },
+    "people_hh_better": {
+      "value": 754976.2131701149,
+      "n": 173
+    },
+    "better_off_not_gaining_element_benunit": {
+      "value": 264648.8489331156,
+      "n": 54
+    },
+    "in_poverty_bhc": {
+      "people": -51961.85685797036,
+      "pp": -0.07445525065771119,
+      "n": 28,
+      "children": -27923.719482153654,
+      "children_pp": -0.19797909417106285,
+      "n_children": 9
+    },
+    "in_poverty_ahc": {
+      "people": -17948.213576212525,
+      "pp": -0.02571768642386496,
+      "n": 32,
+      "children": 8158.268337897956,
+      "children_pp": 0.05784210003161542,
+      "n_children": 9
+    },
+    "deciles": {
+      "1": {
+        "avg": 1.5463447991547163,
+        "n": 68
+      },
+      "2": {
+        "avg": 26.45871271272044,
+        "n": 58
+      },
+      "3": {
+        "avg": 10.39645415078382,
+        "n": 53
+      },
+      "4": {
+        "avg": -7.360706053153626,
+        "n": 47
+      },
+      "5": {
+        "avg": 11.479775163939701,
+        "n": 23
+      },
+      "6": {
+        "avg": 25.118097174618676,
+        "n": 27
+      },
+      "7": {
+        "avg": 4.821974487843772,
+        "n": 11
+      },
+      "8": {
+        "avg": 8.217597727703778,
+        "n": 6
+      },
+      "9": {
+        "avg": null,
+        "n": 0
+      },
+      "10": {
+        "avg": -1.2784073097640607,
+        "n": 7
+      }
+    }
+  },
+  "note": "Survey households (n) per cell; any figure resting on fewer than 3 is null. Values: people or benefit units (weighted), \u00a3bn, or \u00a3 a year as named."
+}
