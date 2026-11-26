@@ -3,7 +3,8 @@
 for the Timms Review post. Current law, certified bundle (policyengine 6.20.3,
 build b891aa69). Counts people who are UC claimants whose award includes the
 LCWRA element on their account (claimant with LCWRA, award has element), and
-people receiving PIP daily living. Disclosure floor: 3 survey households per cell.
+people receiving PIP daily living or any PIP, for the UK, Great Britain and
+England and Wales. Disclosure floor: 3 survey households per cell.
 """
 import json, os, sys, time
 from pathlib import Path
@@ -50,7 +51,12 @@ def main():
             uc = np.asarray(sim.calculate("universal_credit", y, map_to="person"), dtype=float) > 0
             health = claimant & lcwra & elem_bu & uc
             pipdl = a("pip_dl") > 0
-            groups = {"all": np.ones_like(age, bool), "16_24": (age >= 16) & (age <= 24), "25_64": (age >= 25) & (age <= 64)}
+            anypip = pipdl | (a("pip_m") > 0)
+            country = np.asarray(sim.calculate("country", y, map_to="person")).astype(str)
+            gb = country != "NORTHERN_IRELAND"
+            ew = (country == "ENGLAND") | (country == "WALES")
+            groups = {"all": np.ones_like(age, bool), "16_24": (age >= 16) & (age <= 24), "25_64": (age >= 25) & (age <= 64),
+                      "great_britain": gb, "england_and_wales": ew}
             res = {}
             for g, m in groups.items():
                 cells = {
@@ -58,6 +64,7 @@ def main():
                     "health_and_pipdl": health & pipdl & m,
                     "health_no_pipdl": health & ~pipdl & m,
                     "uc_claimant_pipdl_no_health": claimant & uc & pipdl & ~health & m,
+                    "health_and_any_pip": health & anypip & m,
                 }
                 r = {}
                 for k, mask in cells.items():
@@ -65,6 +72,8 @@ def main():
                     r[k] = {"people": float(np.sum(w[mask])) if n >= FLOOR else None, "survey_households": n}
                 h = r["health"]["people"]; b = r["health_and_pipdl"]["people"]
                 r["share_with_pipdl"] = (b / h) if h and b else None
+                ap = r["health_and_any_pip"]["people"]
+                r["share_with_any_pip"] = (ap / h) if h and ap else None
                 res[g] = r
             out["years"][y] = res
             print(y, json.dumps(res), flush=True)

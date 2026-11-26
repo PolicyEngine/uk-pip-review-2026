@@ -19,7 +19,12 @@
           "people": 217321.26885968074,
           "survey_households": 161
         },
-        "share_with_pipdl": 0.7420141024561087
+        "health_and_any_pip": {
+          "people": 2188897.336402258,
+          "survey_households": 1006
+        },
+        "share_with_pipdl": 0.7420141024561087,
+        "share_with_any_pip": 0.7690408033031129
       },
       "16_24": {
         "health": {
@@ -38,7 +43,12 @@
           "people": 25056.301854416728,
           "survey_households": 17
         },
-        "share_with_pipdl": 0.822496292854865
+        "health_and_any_pip": {
+          "people": 172106.95419426076,
+          "survey_households": 93
+        },
+        "share_with_pipdl": 0.822496292854865,
+        "share_with_any_pip": 0.8317248639543333
       },
       "25_64": {
         "health": {
@@ -57,7 +67,60 @@
           "people": 188068.58099835739,
           "survey_households": 141
         },
-        "share_with_pipdl": 0.7385112156275163
+        "health_and_any_pip": {
+          "people": 1925934.2831070088,
+          "survey_households": 887
+        },
+        "share_with_pipdl": 0.7385112156275163,
+        "share_with_any_pip": 0.7658065960389363
+      },
+      "great_britain": {
+        "health": {
+          "people": 2746912.4132947735,
+          "survey_households": 1200
+        },
+        "health_and_pipdl": {
+          "people": 2031531.8055949286,
+          "survey_households": 798
+        },
+        "health_no_pipdl": {
+          "people": 715380.607699845,
+          "survey_households": 420
+        },
+        "uc_claimant_pipdl_no_health": {
+          "people": 214512.4429271184,
+          "survey_households": 141
+        },
+        "health_and_any_pip": {
+          "people": 2107163.7977733985,
+          "survey_households": 831
+        },
+        "share_with_pipdl": 0.7395691962228296,
+        "share_with_any_pip": 0.7671026522632984
+      },
+      "england_and_wales": {
+        "health": {
+          "people": 2501233.2907292657,
+          "survey_households": 1041
+        },
+        "health_and_pipdl": {
+          "people": 1850471.322249867,
+          "survey_households": 702
+        },
+        "health_no_pipdl": {
+          "people": 650761.9684793986,
+          "survey_households": 356
+        },
+        "uc_claimant_pipdl_no_health": {
+          "people": 203814.59615671262,
+          "survey_households": 128
+        },
+        "health_and_any_pip": {
+          "people": 1924830.5443478301,
+          "survey_households": 731
+        },
+        "share_with_pipdl": 0.7398235618838813,
+        "share_with_any_pip": 0.7695525849116704
       }
     },
     "2029": {
@@ -78,7 +141,12 @@
           "people": 220050.61087022722,
           "survey_households": 162
         },
-        "share_with_pipdl": 0.7455064003097004
+        "health_and_any_pip": {
+          "people": 2225974.2828990184,
+          "survey_households": 1014
+        },
+        "share_with_pipdl": 0.7455064003097004,
+        "share_with_any_pip": 0.7723330523904507
       },
       "16_24": {
         "health": {
@@ -97,7 +165,12 @@
           "people": 25184.30194393918,
           "survey_households": 17
         },
-        "share_with_pipdl": 0.8222026633400965
+        "health_and_any_pip": {
+          "people": 172642.67840667814,
+          "survey_households": 92
+        },
+        "share_with_pipdl": 0.8222026633400965,
+        "share_with_any_pip": 0.8314465003118079
       },
       "25_64": {
         "health": {
@@ -116,9 +189,62 @@
           "people": 187171.62384675816,
           "survey_households": 140
         },
-        "share_with_pipdl": 0.7405881607516944
+        "health_and_any_pip": {
+          "people": 1942989.0756965838,
+          "survey_households": 892
+        },
+        "share_with_pipdl": 0.7405881607516944,
+        "share_with_any_pip": 0.767854904108827
+      },
+      "great_britain": {
+        "health": {
+          "people": 2782912.999221254,
+          "survey_households": 1208
+        },
+        "health_and_pipdl": {
+          "people": 2067594.9869974516,
+          "survey_households": 804
+        },
+        "health_no_pipdl": {
+          "people": 715318.0122238025,
+          "survey_households": 422
+        },
+        "uc_claimant_pipdl_no_health": {
+          "people": 217013.33070306107,
+          "survey_households": 141
+        },
+        "health_and_any_pip": {
+          "people": 2143613.3466533087,
+          "survey_households": 837
+        },
+        "share_with_pipdl": 0.7429606989424495,
+        "share_with_any_pip": 0.7702768096786204
+      },
+      "england_and_wales": {
+        "health": {
+          "people": 2534769.4403488375,
+          "survey_households": 1048
+        },
+        "health_and_pipdl": {
+          "people": 1884793.872583624,
+          "survey_households": 707
+        },
+        "health_no_pipdl": {
+          "people": 649975.5677652135,
+          "survey_households": 358
+        },
+        "uc_claimant_pipdl_no_health": {
+          "people": 206260.83389021456,
+          "survey_households": 128
+        },
+        "health_and_any_pip": {
+          "people": 1959532.9601943456,
+          "survey_households": 736
+        },
+        "share_with_pipdl": 0.743576059653077,
+        "share_with_any_pip": 0.7730616161778693
       }
     }
   },
-  "note": "Current law. survey_households per cell; any count resting on fewer than 3 is null."
+  "note": "Current law. survey_households per cell; any count resting on fewer than 3 is null. Groups: all (UK), 16_24, 25_64, great_britain, england_and_wales."
 }
