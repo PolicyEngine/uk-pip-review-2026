@@ -10,7 +10,13 @@ UC rebalancing step (static, otherwise current law):
   protected   every existing award keeps the element.
 In all three, awards with a claimant on PIP daily living but no element gain
 it at the new-claimant rate (£217.26 a month in 2029-30). LCWRA status is
-unchanged. Also writes a current-law PIP profile.
+unchanged. Reg. 29(4) applies on both sides: a claimant in respect of whom the
+health element is included has only that element, not the carer element. The
+engine applies it to awards that keep or lose the element; for an award that
+gains it, the element is taken to be included in respect of a claimant on PIP
+daily living who isn't a carer if there is one, otherwise the elder, and the
+carer element for that claimant is removed. Also writes a current-law PIP
+profile.
 
 Disclosure floor: a published figure needs at least 3 survey households.
 
@@ -52,6 +58,23 @@ def make_modifier(version):
             new_claim = np.asarray(sim.calculate("uc_receives_new_claimant_health_element", Y), dtype=bool)
             new = np.where(has, np.where(passes | ~new_claim, element, 0.0), gain)
         set_model_value(sim, "uc_LCWRA_element", Y, new)
+        # Reg. 29(4) on awards that gain the element (see the docstring). The
+        # engine's own rule covers the rest once the element is set.
+        carer = claimant & np.asarray(person("is_carer_for_benefits", per))
+        age = np.asarray(person("age", per))
+        gaining = np.asarray(benunit.project(gain > 0))
+        chosen_rank = person.get_rank(benunit, np.where(carer, 1_000, 0) - age, condition=claimant & pip_dl)
+        chosen = gaining & claimant & pip_dl & (chosen_rank == 0)
+        limited = claimant & np.asarray(person("uc_limited_capability_for_WRA", per))
+        included = np.asarray(benunit.project(new > 0))
+        lcwra_rank = person.get_rank(benunit, np.where(carer, 1_000, 0) - age, condition=limited)
+        engine_lcwra_claimant = limited & included & (lcwra_rank == 0) & ~gaining
+        qualifies = carer & ~engine_lcwra_claimant & ~chosen
+        same = np.asarray(benunit("partners_care_for_same_severely_disabled_person", per))
+        count = np.asarray(benunit.sum(qualifies))
+        count = np.where(same, np.minimum(count, 1), count)
+        carer_amount = sim.tax_benefit_system.parameters.gov.dwp.universal_credit.elements.carer.amount(f"{Y}-04-01") * 12
+        set_model_value(sim, "uc_carer_element", Y, count * carer_amount)
         return sim
     return modifier
 
@@ -96,6 +119,8 @@ def main():
         b = {k: c(base, k).astype(float) for k in ("household_net_income",)}
         b_uc_b = c(base, "universal_credit").astype(float); b_el_b = c(base, "uc_LCWRA_element").astype(float)
         b_cap_b = c(base, "benefit_cap_reduction").astype(float)
+        b_car_b = c(base, "uc_carer_element").astype(float)
+        carer_p = claimant & c(base, "is_carer_for_benefits").astype(bool)
         b_uc_p = c(base, "universal_credit", "person").astype(float); b_el_p = c(base, "uc_LCWRA_element", "person").astype(float)
         b_pov = {k: c(base, k).astype(bool) for k in ("in_poverty_bhc", "in_poverty_ahc")}
         decile = c(base, "household_income_decile").astype(float)
@@ -138,6 +163,14 @@ def main():
             gain_p = (el_p > b_el_p + 0.5) & (uc_p > b_uc_p + 0.5)
             lc = lose_p & claimant & lcwra & ~pipdl
             gc = gain_p & claimant & pipdl
+            car_b = c(sim, "uc_carer_element").astype(float)
+            added_p = el_p > b_el_p + 0.5
+            on_uc_b = (uc_b > 0.5) | (b_uc_b > 0.5)
+            rem_b = (el_b < b_el_b - 0.5) & on_uc_b
+            add_b = (el_b > b_el_b + 0.5) & on_uc_b
+            on_uc_p = (uc_p > 0.5) | (b_uc_p > 0.5)
+            gc_any = added_p & claimant & pipdl & on_uc_p
+            hh_gain = np.zeros(len(hw), bool); np.logical_or.at(hh_gain, b2h, el_b > b_el_b + 0.5)
             res = {
                 "uc_change_bn": float(((uc_b - b_uc_b) * bw).sum() / 1e9),
                 "net_income_change_bn": float((dnet * hw).sum() / 1e9),
@@ -159,6 +192,19 @@ def main():
                 "losing_by_country": {k: cell_p(lc & (country == k)) for k in sorted(set(country))},
                 "people_hh_worse": cell_p(dnet[p2h] < -1), "people_hh_better": cell_p(dnet[p2h] > 1),
                 "better_off_not_gaining_element_benunit": cell_p((dnet[p2h] > 1) & ~gain_p),
+                "people_hh_better_with_gaining_award": cell_p((dnet[p2h] > 1) & hh_gain[p2h]),
+                "people_hh_worse_with_gaining_award": cell_p((dnet[p2h] < -1) & hh_gain[p2h]),
+                "awards_element_removed": cell_b_sum(np.ones_like(bw), rem_b),
+                "awards_element_removed_uc_rises": cell_b_sum(np.ones_like(bw), rem_b & (uc_b > b_uc_b + 0.5)),
+                "awards_element_removed_carer_element_added": cell_b_sum(np.ones_like(bw), rem_b & (car_b > b_car_b + 0.5)),
+                "avg_uc_loss_losing_with_carer_element": cell_b_mean(b_uc_b - uc_b, lose_b & (car_b > b_car_b + 0.5)),
+                "avg_uc_loss_losing_without_carer_element": cell_b_mean(b_uc_b - uc_b, lose_b & ~(car_b > b_car_b + 0.5)),
+                "awards_element_added": cell_b_sum(np.ones_like(bw), add_b),
+                "awards_element_added_carer_element_removed": cell_b_sum(np.ones_like(bw), add_b & (car_b < b_car_b - 0.5)),
+                "awards_element_added_uc_falls": cell_b_sum(np.ones_like(bw), add_b & (uc_b < b_uc_b - 0.5)),
+                "avg_uc_fall_awards_element_added_uc_falls": cell_b_mean(b_uc_b - uc_b, add_b & (uc_b < b_uc_b - 0.5)),
+                "claimants_with_element_added": cell_p(gc_any),
+                "claimants_with_element_added_carers": cell_p(gc_any & carer_p),
             }
             for k in ("in_poverty_bhc", "in_poverty_ahc"):
                 d0 = b_pov[k][p2h]; d1 = pov[k][p2h]; ch = d0 != d1
